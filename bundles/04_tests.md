@@ -1,6 +1,6 @@
 # 04_tests
 
-> Generated snapshot containing 16 file(s).
+> Generated snapshot containing 22 file(s).
 
 ## Table of Contents
 
@@ -15,11 +15,17 @@
 - [`tests/core/storageHierarchy.test.ts`](#tests-core-storagehierarchy-test-ts)
 - [`tests/core/volcanoSimd.test.ts`](#tests-core-volcanosimd-test-ts)
 - [`tests/features/bitInspector/BitInspectorModule.test.tsx`](#tests-features-bitinspector-bitinspectormodule-test-tsx)
+- [`tests/features/bitInspector/useBitInspectorViewModel.test.ts`](#tests-features-bitinspector-usebitinspectorviewmodel-test-ts)
 - [`tests/features/queryPipeline/QueryPipelineModule.test.tsx`](#tests-features-querypipeline-querypipelinemodule-test-tsx)
+- [`tests/features/queryPipeline/useQueryPipelineViewModel.test.ts`](#tests-features-querypipeline-usequerypipelineviewmodel-test-ts)
 - [`tests/features/slottedPage/SlottedPageModule.test.tsx`](#tests-features-slottedpage-slottedpagemodule-test-tsx)
+- [`tests/features/slottedPage/useSlottedPageViewModel.test.ts`](#tests-features-slottedpage-useslottedpageviewmodel-test-ts)
 - [`tests/features/storageHierarchy/StorageHierarchyModule.test.tsx`](#tests-features-storagehierarchy-storagehierarchymodule-test-tsx)
+- [`tests/features/storageHierarchy/useStorageHierarchyViewModel.test.ts`](#tests-features-storagehierarchy-usestoragehierarchyviewmodel-test-ts)
+- [`tests/features/volcanoSimd/useVolcanoSimdViewModel.test.ts`](#tests-features-volcanosimd-usevolcanosimdviewmodel-test-ts)
 - [`tests/features/volcanoSimd/VolcanoVsSimdModule.test.tsx`](#tests-features-volcanosimd-volcanovssimdmodule-test-tsx)
 - [`tests/setup.ts`](#tests-setup-ts)
+- [`tests/useAppViewModel.test.ts`](#tests-useappviewmodel-test-ts)
 
 ---
 
@@ -461,6 +467,31 @@ describe('BitInspectorModule component', () => {
 });
 ````
 
+## `tests/features/bitInspector/useBitInspectorViewModel.test.ts`
+
+````typescript
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { useBitInspectorViewModel } from '../../../src/features/bitInspector/useBitInspectorViewModel';
+
+describe('useBitInspectorViewModel', () => {
+  it('toggles column null state and alignment mode', () => {
+    const { result } = renderHook(() => useBitInspectorViewModel());
+
+    expect(result.current.bitmapBits).toBe('1110');
+    expect(result.current.payloadBytes).toBe(12);
+    expect(result.current.alignMode).toBe('good');
+
+    act(() => result.current.toggleNull(3));
+    expect(result.current.bitmapBits).toBe('1111');
+    expect(result.current.payloadBytes).toBe(16);
+
+    act(() => result.current.setAlignMode('bad'));
+    expect(result.current.alignMode).toBe('bad');
+  });
+});
+````
+
 ## `tests/features/queryPipeline/QueryPipelineModule.test.tsx`
 
 ````tsx
@@ -524,6 +555,46 @@ describe('QueryPipelineModule component', () => {
 });
 ````
 
+## `tests/features/queryPipeline/useQueryPipelineViewModel.test.ts`
+
+````typescript
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { useQueryPipelineViewModel } from '../../../src/features/queryPipeline/useQueryPipelineViewModel';
+
+describe('useQueryPipelineViewModel', () => {
+  it('steps stages, toggles play/pause, switches execution target, and resets', () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() => useQueryPipelineViewModel('pt'));
+
+    expect(result.current.stage).toBe(0);
+    expect(result.current.tokens).toHaveLength(10);
+    expect(result.current.opcodes).toHaveLength(8);
+
+    act(() => result.current.stepStage());
+    expect(result.current.stage).toBe(1);
+
+    act(() => result.current.togglePlay());
+    expect(result.current.isPlaying).toBe(true);
+
+    act(() => vi.advanceTimersByTime(1800 * 4));
+    expect(result.current.stage).toBe(4);
+    expect(result.current.isPlaying).toBe(false);
+
+    act(() => result.current.setExecTarget('jit'));
+    expect(result.current.execTarget).toBe('jit');
+
+    act(() => result.current.stepVm());
+    expect(result.current.vmPc).toBe(1);
+
+    act(() => result.current.reset());
+    expect(result.current.stage).toBe(0);
+    expect(result.current.vmPc).toBe(0);
+    vi.useRealTimers();
+  });
+});
+````
+
 ## `tests/features/slottedPage/SlottedPageModule.test.tsx`
 
 ````tsx
@@ -552,6 +623,34 @@ describe('SlottedPageModule component', () => {
     await user.click(screen.getByText(I18N.pt.m3.compactBtn));
     expect(screen.queryByText('LP_DEAD (0)')).not.toBeInTheDocument();
     expect(screen.getByText('pd_lower: 36 B')).toBeInTheDocument();
+  });
+});
+````
+
+## `tests/features/slottedPage/useSlottedPageViewModel.test.ts`
+
+````typescript
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { useSlottedPageViewModel } from '../../../src/features/slottedPage/useSlottedPageViewModel';
+
+describe('useSlottedPageViewModel', () => {
+  it('inserts tuples, marks dead tuples, compacts, and tracks hovered slot', () => {
+    const { result } = renderHook(() => useSlottedPageViewModel());
+
+    expect(result.current.metrics.pdLower).toBe(36);
+
+    act(() => result.current.insert());
+    expect(result.current.tuples).toHaveLength(4);
+
+    act(() => result.current.markDead(2));
+    expect(result.current.tuples[1].alive).toBe(false);
+
+    act(() => result.current.compact());
+    expect(result.current.tuples).toHaveLength(3);
+
+    act(() => result.current.setHoveredSlot(1));
+    expect(result.current.hoveredSlot).toBe(1);
   });
 });
 ````
@@ -596,6 +695,70 @@ describe('StorageHierarchyModule component', () => {
     // Evict buffer pool
     await user.click(screen.getByText(I18N.en.m2.evictBtn));
     expect(screen.getByText('0/3 frames')).toBeInTheDocument();
+  });
+});
+````
+
+## `tests/features/storageHierarchy/useStorageHierarchyViewModel.test.ts`
+
+````typescript
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { useStorageHierarchyViewModel } from '../../../src/features/storageHierarchy/useStorageHierarchyViewModel';
+
+describe('useStorageHierarchyViewModel', () => {
+  it('manages pulse state, page size, buffer fetches, and eviction', () => {
+    const { result } = renderHook(() => useStorageHierarchyViewModel('en'));
+
+    expect(result.current.pulsing).toBe(true);
+    expect(result.current.byteOffset).toBe(16384);
+
+    act(() => result.current.togglePulsing());
+    expect(result.current.pulsing).toBe(false);
+
+    act(() => result.current.fetchPage(0));
+    expect(result.current.lastStatus).toBe('hit');
+
+    act(() => result.current.fetchPage(2));
+    expect(result.current.lastStatus).toBe('miss');
+    expect(result.current.bufferPool).toEqual([0, 3, 2]);
+
+    act(() => result.current.setPageSizeKb(4));
+    expect(result.current.byteOffset).toBe(8192);
+
+    act(() => result.current.clearBufferPool());
+    expect(result.current.bufferPool).toEqual([]);
+    expect(result.current.lastStatus).toBeNull();
+  });
+});
+````
+
+## `tests/features/volcanoSimd/useVolcanoSimdViewModel.test.ts`
+
+````typescript
+import { act, renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { useVolcanoSimdViewModel } from '../../../src/features/volcanoSimd/useVolcanoSimdViewModel';
+
+describe('useVolcanoSimdViewModel', () => {
+  it('steps race, switches SIMD lane width, and auto-completes on play', () => {
+    vi.useFakeTimers();
+    const { result } = renderHook(() => useVolcanoSimdViewModel());
+
+    act(() => result.current.step());
+    expect(result.current.volcanoCycles).toBe(18);
+    expect(result.current.simdCycles).toBe(2);
+
+    act(() => result.current.selectLaneWidth(16));
+    expect(result.current.simdLane).toBe(16);
+    expect(result.current.volcanoCycles).toBe(0);
+
+    act(() => result.current.toggleRunning());
+    expect(result.current.running).toBe(true);
+
+    act(() => vi.advanceTimersByTime(420 * 35));
+    expect(result.current.running).toBe(false);
+    vi.useRealTimers();
   });
 });
 ````
@@ -650,5 +813,49 @@ import { afterEach } from 'vitest';
 
 afterEach(() => {
   cleanup();
+});
+````
+
+## `tests/useAppViewModel.test.ts`
+
+````typescript
+import { act, fireEvent, renderHook } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { useAppViewModel } from '../src/useAppViewModel';
+
+describe('useAppViewModel', () => {
+  it('initializes with pt locale, module 0, and closed modal', () => {
+    const { result } = renderHook(() => useAppViewModel());
+    expect(result.current.lang).toBe('pt');
+    expect(result.current.activeModule).toBe(0);
+    expect(result.current.presMode).toBe(false);
+    expect(result.current.showDeployModal).toBe(false);
+    expect(result.current.progressPct).toBe(20);
+  });
+
+  it('handles language toggle, presentation mode, modal, and keyboard navigation', () => {
+    const { result } = renderHook(() => useAppViewModel());
+
+    act(() => result.current.toggleLang());
+    expect(result.current.lang).toBe('en');
+
+    act(() => result.current.togglePresMode());
+    expect(result.current.presMode).toBe(true);
+
+    act(() => result.current.openDeployModal());
+    expect(result.current.showDeployModal).toBe(true);
+    act(() => result.current.closeDeployModal());
+    expect(result.current.showDeployModal).toBe(false);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'ArrowRight' });
+    });
+    expect(result.current.activeModule).toBe(1);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'ArrowLeft' });
+    });
+    expect(result.current.activeModule).toBe(0);
+  });
 });
 ````
