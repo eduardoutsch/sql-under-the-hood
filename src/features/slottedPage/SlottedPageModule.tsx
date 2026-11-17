@@ -17,44 +17,50 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
-        <div className="flex flex-wrap items-center gap-4 font-mono text-xs">
-          <span className="px-2.5 py-1 rounded bg-violet-500/15 text-violet-300 border border-violet-500/30">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-4 rounded-xl">
+        <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+          <span className="px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-bold">
             Page Size: 8192 B
           </span>
-          <span className="text-cyan-400">pd_lower: {pdLower} B</span>
-          <span className="text-emerald-400">pd_upper: {pdUpper} B</span>
-          <span className="text-amber-300">Free: {freeBytes} B</span>
+          <span className="px-2 py-1 rounded bg-blue-100 text-blue-950 font-semibold border border-stone-900">
+            pd_lower: {pdLower} B
+          </span>
+          <span className="px-2 py-1 rounded bg-emerald-100 text-emerald-950 font-semibold border border-stone-900">
+            pd_upper: {pdUpper} B
+          </span>
+          <span className="px-2 py-1 rounded bg-amber-100 text-amber-950 font-semibold border border-stone-900">
+            Free: {freeBytes} B
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={vm.insert}
             disabled={vm.isPageFull}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-semibold text-xs sm:text-sm transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-semibold text-xs sm:text-sm transition cursor-pointer"
           >
             <Plus className="w-4 h-4" /> {t.m3.insertBtn}
           </button>
           <button
             onClick={vm.compact}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-semibold text-xs sm:text-sm transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-amber-300 hover:bg-amber-400 text-stone-950 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] font-semibold text-xs sm:text-sm transition cursor-pointer"
           >
             <Zap className="w-4 h-4" /> {t.m3.compactBtn}
           </button>
         </div>
       </div>
 
-      <div className="bg-slate-900/90 border-2 border-slate-700 rounded-2xl p-5 space-y-5 relative overflow-hidden">
-        <div className="flex justify-between text-[11px] font-mono text-slate-400">
+      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5 relative overflow-hidden">
+        <div className="flex justify-between text-[11px] font-mono font-semibold text-stone-600">
           <span>Byte 0x0000 (0)</span>
           <span>{t.m3.clickDelete}</span>
           <span>Byte 0x2000 (8192)</span>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="p-3 rounded-xl bg-violet-950/70 border border-violet-400/60 font-mono text-xs shrink-0">
-            <div className="font-bold text-violet-300">PageHeaderData</div>
-            <div className="text-[10px] text-violet-200/80">24 Bytes [0..23]</div>
+          <div className="p-3 rounded-lg bg-[#1C1917] border-2 border-stone-900 font-mono text-xs shrink-0 text-amber-200">
+            <div className="font-bold">PageHeaderData</div>
+            <div className="text-[10px] text-stone-400">24 Bytes [0..23]</div>
           </div>
 
           {vm.tuples.map((item) => (
@@ -63,36 +69,36 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
               onMouseEnter={() => vm.setHoveredSlot(item.slot)}
               onMouseLeave={() => vm.setHoveredSlot(null)}
               onClick={() => vm.markDead(item.slot)}
-              className={`p-2.5 rounded-xl border font-mono text-left transition-all cursor-pointer ${
+              className={`p-2.5 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
                 !item.alive
-                  ? 'bg-rose-950/40 border-rose-500/40 text-rose-400 line-through opacity-70'
+                  ? 'bg-rose-100 text-rose-800 line-through opacity-75'
                   : vm.hoveredSlot === item.slot
-                  ? 'bg-cyan-500/30 border-cyan-300 scale-105 shadow-lg'
-                  : 'bg-cyan-950/50 border-cyan-500/40 text-cyan-300'
+                  ? 'bg-blue-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
+                  : 'bg-blue-50 text-blue-950'
               }`}
             >
               <div className="text-[10px] font-bold">Slot #{item.slot} (4B)</div>
-              <div className="text-[10px] text-slate-300">
+              <div className="text-[10px] text-stone-700">
                 {item.alive ? `off:${item.offset} len:${item.len}` : 'LP_DEAD (0)'}
               </div>
             </button>
           ))}
 
-          <div className="flex items-center text-cyan-400 font-mono text-xs px-2 animate-pulse">
+          <div className="flex items-center text-blue-800 font-mono font-bold text-xs px-2 animate-pulse">
             pd_lower →
           </div>
         </div>
 
-        <div className="py-6 rounded-xl border border-dashed border-slate-700 bg-slate-950/50 text-center font-mono">
-          <div className="text-xs text-slate-400 uppercase tracking-widest">{t.m3.freeDesc}</div>
-          <div className="text-lg font-bold text-slate-200 mt-1">
+        <div className="py-6 rounded-lg border-2 border-dashed border-stone-900/40 bg-[#EFE9DC]/60 text-center font-mono">
+          <div className="text-xs text-stone-600 uppercase tracking-widest font-semibold">{t.m3.freeDesc}</div>
+          <div className="text-lg font-bold text-stone-900 mt-1">
             {freeBytes} Bytes ({((freeBytes / PAGE_SIZE_BYTES) * 100).toFixed(1)}%)
           </div>
-          {vm.isPageFull && <div className="text-xs text-amber-400 mt-1">{t.m3.pageFull}</div>}
+          {vm.isPageFull && <div className="text-xs text-[#B83B1D] font-bold mt-1">{t.m3.pageFull}</div>}
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <div className="flex items-center text-emerald-400 font-mono text-xs px-2 animate-pulse">
+          <div className="flex items-center text-emerald-800 font-mono font-bold text-xs px-2 animate-pulse">
             ← pd_upper
           </div>
 
@@ -102,22 +108,22 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
               onMouseEnter={() => vm.setHoveredSlot(item.slot)}
               onMouseLeave={() => vm.setHoveredSlot(null)}
               onClick={() => vm.markDead(item.slot)}
-              className={`p-3 rounded-xl border font-mono text-left transition-all cursor-pointer ${
+              className={`p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
                 !item.alive
-                  ? 'bg-rose-950/30 border-rose-500/30 text-rose-400/70 opacity-60'
+                  ? 'bg-rose-100 text-rose-800 opacity-70'
                   : vm.hoveredSlot === item.slot
-                  ? 'bg-emerald-500/30 border-emerald-300 scale-105 shadow-lg'
-                  : 'bg-emerald-950/50 border-emerald-500/40 text-emerald-200'
+                  ? 'bg-emerald-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
+                  : 'bg-emerald-50 text-emerald-950'
               }`}
             >
               <div className="flex items-center justify-between gap-3 text-[10px]">
-                <span className="font-bold text-emerald-300">Tuple #{item.slot}</span>
-                <span className="text-slate-400">@{item.offset}</span>
+                <span className="font-bold text-emerald-900">Tuple #{item.slot}</span>
+                <span className="text-stone-600">@{item.offset}</span>
               </div>
-              <div className="text-xs text-white mt-1">
+              <div className="text-xs font-bold text-stone-900 mt-1">
                 ('{item.name}', ${item.price})
               </div>
-              <div className="text-[10px] text-slate-400 mt-0.5">
+              <div className="text-[10px] text-stone-600 mt-0.5">
                 {item.alive ? `${item.len}B HeapTuple` : 'Dead Space (Awaiting VACUUM)'}
               </div>
             </button>
@@ -126,13 +132,13 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
-        <div className="p-3 rounded-xl bg-slate-900/60 border border-violet-500/30 text-violet-200">
+        <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
           {t.m3.headerDesc}
         </div>
-        <div className="p-3 rounded-xl bg-slate-900/60 border border-cyan-500/30 text-cyan-200">
+        <div className="p-3 rounded-lg bg-blue-50 border-2 border-stone-900 text-blue-950">
           {t.m3.slotsDesc}
         </div>
-        <div className="p-3 rounded-xl bg-slate-900/60 border border-emerald-500/30 text-emerald-200">
+        <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-emerald-950">
           {t.m3.tuplesDesc}
         </div>
       </div>
