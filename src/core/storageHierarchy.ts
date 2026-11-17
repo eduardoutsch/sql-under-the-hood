@@ -1,0 +1,105 @@
+/**
+ * Pure domain logic for Module 2 (Storage Hierarchy & Buffer Pool Simulator).
+ * Models hardware latency tiers, physical heap-file byte offsets, and a fixed-capacity
+ * FIFO/LRU-style page frame pool without touching React state.
+ */
+
+import type { Locale } from './i18n';
+
+export const BUFFER_POOL_CAPACITY = 3;
+
+export type BufferFetchStatus = 'hit' | 'miss';
+
+export interface HardwareTier {
+  name: string;
+  real: string;
+  human: string;
+  barWidth: string;
+  color: string;
+  text: string;
+  animDurationSec: number;
+}
+
+export interface BufferFetchResult {
+  status: BufferFetchStatus;
+  nextPool: number[];
+}
+
+/**
+ * Build the 5 hardware memory/storage tiers with localized human-scale equivalents.
+ */
+export function getHardwareTiers(locale: Locale): HardwareTier[] {
+  const isPt = locale === 'pt';
+  return [
+    {
+      name: 'L1 Cache',
+      real: '1 ns',
+      human: isPt ? '1 seg' : '1 sec',
+      barWidth: 'w-[6%]',
+      color: 'bg-cyan-400',
+      text: 'text-cyan-400',
+      animDurationSec: 0.45,
+    },
+    {
+      name: 'L2 Cache',
+      real: '4 ns',
+      human: isPt ? '4 seg' : '4 sec',
+      barWidth: 'w-[14%]',
+      color: 'bg-emerald-400',
+      text: 'text-emerald-400',
+      animDurationSec: 0.9,
+    },
+    {
+      name: 'DRAM (Buffer Pool)',
+      real: '100 ns',
+      human: isPt ? '100 seg' : '100 sec',
+      barWidth: 'w-[32%]',
+      color: 'bg-violet-400',
+      text: 'text-violet-400',
+      animDurationSec: 2.0,
+    },
+    {
+      name: 'NVMe SSD',
+      real: '16,000 ns',
+      human: isPt ? '4,4 horas' : '4.4 hours',
+      barWidth: 'w-[68%]',
+      color: 'bg-amber-400',
+      text: 'text-amber-400',
+      animDurationSec: 4.5,
+    },
+    {
+      name: 'HDD Magnético',
+      real: '2,000,000 ns',
+      human: isPt ? '3,3 semanas' : '3.3 weeks',
+      barWidth: 'w-full',
+      color: 'bg-rose-500',
+      text: 'text-rose-400',
+      animDurationSec: 9.0,
+    },
+  ];
+}
+
+/**
+ * Compute the physical byte offset of a page in a heap file.
+ */
+export function computeByteOffset(pageNumber: number, pageSizeKb: number): number {
+  if (pageNumber < 0 || pageSizeKb <= 0) return 0;
+  return pageNumber * pageSizeKb * 1024;
+}
+
+/**
+ * Simulate fetching a page into the 3-frame DRAM Buffer Pool.
+ * Returns a cache hit if present, or evicts the oldest frame on miss when full.
+ */
+export function fetchBufferPage(
+  currentPool: readonly number[],
+  pageNumber: number,
+  capacity: number = BUFFER_POOL_CAPACITY
+): BufferFetchResult {
+  if (currentPool.includes(pageNumber)) {
+    return { status: 'hit', nextPool: [...currentPool] };
+  }
+  const next = [...currentPool, pageNumber];
+  const nextPool = next.length > capacity ? next.slice(next.length - capacity) : next;
+  return { status: 'miss', nextPool };
+}
