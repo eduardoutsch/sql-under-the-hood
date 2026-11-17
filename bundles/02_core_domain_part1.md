@@ -159,6 +159,7 @@ export interface TranslationBundle {
     unrolledOffsets: string;
     exprEval: string;
     threeInstructions: string;
+    stageNotesLabel: string;
     stages: PipelineStageCopy[];
     seqScan: string;
     idxScan: string;
@@ -202,6 +203,7 @@ export interface TranslationBundle {
     slotPrefix: string;
     tuplePrefix: string;
     deadSpace: string;
+    legendSectionLabel: string;
   };
   m4: {
     subtitle: string;
@@ -285,6 +287,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       unrolledOffsets: 'Offsets Nativos Desenrolados',
       exprEval: 'Avaliação de Expressão',
       threeInstructions: '3 Instruções de CPU',
+      stageNotesLabel: 'Notas Técnicas do Estágio',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -352,6 +355,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       slotPrefix: 'Slot',
       tuplePrefix: 'Tupla',
       deadSpace: 'Espaço Morto (Aguardando VACUUM)',
+      legendSectionLabel: 'Anatomia da Página de 8 KB (Legenda)',
     },
     m4: {
       subtitle:
@@ -441,6 +445,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       unrolledOffsets: 'Unrolled Native Offsets',
       exprEval: 'Expr Eval',
       threeInstructions: '3 CPU Instructions',
+      stageNotesLabel: 'Stage Technical Notes',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -508,6 +513,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       slotPrefix: 'Slot',
       tuplePrefix: 'Tuple',
       deadSpace: 'Dead Space (Awaiting VACUUM)',
+      legendSectionLabel: '8 KB Page Anatomy (Legend)',
     },
     m4: {
       subtitle:

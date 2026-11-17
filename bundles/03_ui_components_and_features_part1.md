@@ -5,6 +5,7 @@
 ## Table of Contents
 
 - [`src/App.tsx`](#src-app-tsx)
+- [`src/components/AccordionPanel.tsx`](#src-components-accordionpanel-tsx)
 - [`src/components/DeployModal.tsx`](#src-components-deploymodal-tsx)
 - [`src/components/Navbar.tsx`](#src-components-navbar-tsx)
 - [`src/components/README.md`](#src-components-readme-md)
@@ -12,7 +13,6 @@
 - [`src/features/bitInspector/useBitInspectorViewModel.ts`](#src-features-bitinspector-usebitinspectorviewmodel-ts)
 - [`src/features/queryPipeline/PipelineStageViews.tsx`](#src-features-querypipeline-pipelinestageviews-tsx)
 - [`src/features/queryPipeline/QueryPipelineModule.tsx`](#src-features-querypipeline-querypipelinemodule-tsx)
-- [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 
 ---
 
@@ -114,6 +114,68 @@ export default function App() {
         t={vm.t}
         onClose={vm.closeDeployModal}
       />
+    </div>
+  );
+}
+````
+
+## `src/components/AccordionPanel.tsx`
+
+````tsx
+import { type ReactNode, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+
+export interface AccordionPanelProps {
+  title: string;
+  badge?: string;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}
+
+/**
+ * Collapsible hardware-manual drawer with smooth CSS grid-row expansion.
+ * Keeps secondary explanations tucked away until the user chooses to inspect them.
+ */
+export function AccordionPanel({
+  title,
+  badge,
+  defaultOpen = false,
+  children,
+}: AccordionPanelProps) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="bg-[#FFFDF8] border-2 border-stone-900 rounded-xl shadow-[3px_3px_0px_#1c1917] overflow-hidden">
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((prev) => !prev)}
+        className="w-full flex items-center justify-between gap-3 px-4 py-3.5 bg-[#EFE9DC]/80 hover:bg-[#EFE9DC] text-left transition-colors cursor-pointer"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          {badge && (
+            <span className="px-2 py-0.5 rounded bg-[#1C1917] text-amber-300 font-mono text-xs font-bold shrink-0">
+              {badge}
+            </span>
+          )}
+          <span className="font-bold text-sm sm:text-base text-stone-900 truncate">{title}</span>
+        </div>
+        <ChevronDown
+          className={`w-5 h-5 text-stone-900 shrink-0 transition-transform duration-300 ${
+            open ? 'rotate-180' : 'rotate-0'
+          }`}
+        />
+      </button>
+
+      <div
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+          open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="p-4 sm:p-5 border-t-2 border-stone-900/15">{children}</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -310,6 +372,7 @@ Stateless UI components used by the top-level application shell:
 
 ````tsx
 import { ArrowRight } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { TranslationBundle } from '../../core/i18n';
 import { useBitInspectorViewModel } from './useBitInspectorViewModel';
 
@@ -397,10 +460,9 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
         </div>
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h4 className="font-bold text-base sm:text-lg text-stone-900">{t.m4.alignTitle}</h4>
-          <div className="flex items-center gap-2">
+      <AccordionPanel title={t.m4.alignTitle} badge="64-BIT" defaultOpen={false}>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             <button
               onClick={() => vm.setAlignMode('good')}
               className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
@@ -422,52 +484,52 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
               ✕ {t.m4.badAlign}
             </button>
           </div>
-        </div>
 
-        {vm.alignMode === 'good' ? (
-          <div className="space-y-3">
-            <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
-              {[0, 1, 2, 3].map((b) => (
-                <div
-                  key={b}
-                  className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
-                >
-                  <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
-                  <div className="font-bold mt-0.5">id[{b}]</div>
-                </div>
-              ))}
-              {[4, 5, 6, 7].map((b) => (
-                <div
-                  key={b}
-                  className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
-                >
-                  <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
-                  <div className="font-bold mt-0.5">price[{b - 4}]</div>
-                </div>
-              ))}
+          {vm.alignMode === 'good' ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
+                {[0, 1, 2, 3].map((b) => (
+                  <div
+                    key={b}
+                    className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
+                  >
+                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="font-bold mt-0.5">id[{b}]</div>
+                  </div>
+                ))}
+                {[4, 5, 6, 7].map((b) => (
+                  <div
+                    key={b}
+                    className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
+                  >
+                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="font-bold mt-0.5">price[{b - 4}]</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm text-emerald-950 font-mono font-semibold">{t.m4.goodDesc}</p>
             </div>
-            <p className="text-xs sm:text-sm text-emerald-950 font-mono font-semibold">{t.m4.goodDesc}</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-1 overflow-x-auto font-mono text-xs sm:text-sm text-center pb-1">
-              <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
-                {t.m4.flag1Bit}
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-1 overflow-x-auto font-mono text-xs sm:text-sm text-center pb-1">
+                <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
+                  {t.m4.flag1Bit}
+                </div>
+                <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
+                  id (32 bits) [Bit 1..32]
+                </div>
+                <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
+                  {t.m4.flag1Bit}
+                </div>
+                <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
+                  {t.m4.straddlesWarning}
+                </div>
               </div>
-              <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
-                id (32 bits) [Bit 1..32]
-              </div>
-              <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
-                {t.m4.flag1Bit}
-              </div>
-              <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
-                {t.m4.straddlesWarning}
-              </div>
+              <p className="text-xs sm:text-sm text-rose-950 font-mono font-semibold">{t.m4.badDesc}</p>
             </div>
-            <p className="text-xs sm:text-sm text-rose-950 font-mono font-semibold">{t.m4.badDesc}</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </AccordionPanel>
     </div>
   );
 }
@@ -521,8 +583,8 @@ export function LexerStageView({ tokens, banner }: { tokens: readonly SqlToken[]
         {tokens.map((tok, i) => (
           <div
             key={i}
-            style={{ animationDelay: `${i * 70}ms` }}
-            className={`px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
+            style={{ animationDelay: `${i * 55}ms` }}
+            className={`animate-springIn px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
           >
             <div className="text-base font-bold">{tok.text}</div>
             <div className="text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
@@ -757,7 +819,8 @@ export function ExecutionStageView({
 ## `src/features/queryPipeline/QueryPipelineModule.tsx`
 
 ````tsx
-import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import {
   AstStageView,
@@ -847,15 +910,7 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
-      <div className="bg-[#EFE9DC] border-2 border-stone-900 rounded-xl p-4 flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-[#D94E28] shrink-0 mt-0.5" />
-        <div>
-          <h4 className="text-base font-bold text-stone-900">{t.m1.stages[vm.stage].name}</h4>
-          <p className="text-sm sm:text-base text-stone-800 mt-0.5 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
-        </div>
-      </div>
-
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[340px] flex flex-col justify-center">
+      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[320px] flex flex-col justify-center">
         {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
         {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
         {vm.stage === 3 && <OptimizerStageView t={t} />}
@@ -871,75 +926,15 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
           />
         )}
       </div>
+
+      <AccordionPanel
+        title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
+        badge={`0${vm.stage + 1}`}
+        defaultOpen={false}
+      >
+        <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
+      </AccordionPanel>
     </div>
   );
-}
-````
-
-## `src/features/queryPipeline/useQueryPipelineViewModel.ts`
-
-````typescript
-import { useEffect, useState } from 'react';
-import type { Locale } from '../../core/i18n';
-import {
-  advancePipelineStage,
-  getSqlTokens,
-  getVdbeOpcodes,
-  stepVmProgramCounter,
-} from '../../core/queryPipeline';
-
-/**
- * ViewModel for Module 1 (Query Pipeline).
- * Owns stage playback timer, execution target toggle, and VDBE program counter.
- */
-export function useQueryPipelineViewModel(lang: Locale) {
-  const [stage, setStage] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
-  const [vmPc, setVmPc] = useState(0);
-
-  const tokens = getSqlTokens();
-  const opcodes = getVdbeOpcodes(lang);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    const timer = setInterval(() => {
-      setStage((prev) => {
-        if (prev < 4) return prev + 1;
-        setIsPlaying(false);
-        return prev;
-      });
-    }, 1800);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
-
-  return {
-    stage,
-    isPlaying,
-    execTarget,
-    vmPc,
-    tokens,
-    opcodes,
-    setExecTarget,
-    setVmPc,
-    selectStage: (idx: number) => {
-      setIsPlaying(false);
-      setStage(idx);
-    },
-    togglePlay: () => {
-      if (stage === 4) setStage(0);
-      setIsPlaying((prev) => !prev);
-    },
-    stepStage: () => {
-      setIsPlaying(false);
-      setStage((prev) => advancePipelineStage(prev));
-    },
-    stepVm: () => setVmPc((pc) => stepVmProgramCounter(pc, opcodes.length)),
-    reset: () => {
-      setIsPlaying(false);
-      setStage(0);
-      setVmPc(0);
-    },
-  };
 }
 ````

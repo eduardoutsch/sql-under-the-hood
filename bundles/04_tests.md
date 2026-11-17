@@ -1,10 +1,11 @@
 # 04_tests
 
-> Generated snapshot containing 23 file(s).
+> Generated snapshot containing 24 file(s).
 
 ## Table of Contents
 
 - [`tests/App.test.tsx`](#tests-app-test-tsx)
+- [`tests/components/AccordionPanel.test.tsx`](#tests-components-accordionpanel-test-tsx)
 - [`tests/components/DeployModal.test.tsx`](#tests-components-deploymodal-test-tsx)
 - [`tests/components/Navbar.test.tsx`](#tests-components-navbar-test-tsx)
 - [`tests/core/appNavigation.test.ts`](#tests-core-appnavigation-test-ts)
@@ -66,6 +67,48 @@ describe('App integration', () => {
     expect(screen.getByText('Deploy to Cloudflare Pages + Vite')).toBeInTheDocument();
     await user.click(screen.getByText('Close'));
     expect(screen.queryByText('Deploy to Cloudflare Pages + Vite')).not.toBeInTheDocument();
+  });
+});
+````
+
+## `tests/components/AccordionPanel.test.tsx`
+
+````tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it } from 'vitest';
+import { AccordionPanel } from '../../src/components/AccordionPanel';
+
+describe('AccordionPanel component', () => {
+  it('starts collapsed when defaultOpen is false and expands on click', async () => {
+    const user = userEvent.setup();
+    render(
+      <AccordionPanel title="Details" badge="01" defaultOpen={false}>
+        <p>Hidden technical content</p>
+      </AccordionPanel>
+    );
+
+    const toggle = screen.getByRole('button', { name: /Details/i });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText('Hidden technical content')).toBeVisible();
+  });
+
+  it('starts expanded when defaultOpen is true and collapses on click', async () => {
+    const user = userEvent.setup();
+    render(
+      <AccordionPanel title="Open Panel" defaultOpen={true}>
+        <p>Visible content</p>
+      </AccordionPanel>
+    );
+
+    const toggle = screen.getByRole('button', { name: /Open Panel/i });
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
   });
 });
 ````

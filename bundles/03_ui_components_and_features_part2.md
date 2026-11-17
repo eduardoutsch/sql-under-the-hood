@@ -4,6 +4,7 @@
 
 ## Table of Contents
 
+- [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 - [`src/features/README.md`](#src-features-readme-md)
 - [`src/features/slottedPage/SlottedPageModule.tsx`](#src-features-slottedpage-slottedpagemodule-tsx)
 - [`src/features/slottedPage/useSlottedPageViewModel.ts`](#src-features-slottedpage-useslottedpageviewmodel-ts)
@@ -13,9 +14,76 @@
 - [`src/features/volcanoSimd/VolcanoVsSimdModule.tsx`](#src-features-volcanosimd-volcanovssimdmodule-tsx)
 - [`src/index.css`](#src-index-css)
 - [`src/main.tsx`](#src-main-tsx)
-- [`src/useAppViewModel.ts`](#src-useappviewmodel-ts)
 
 ---
+
+## `src/features/queryPipeline/useQueryPipelineViewModel.ts`
+
+````typescript
+import { useEffect, useState } from 'react';
+import type { Locale } from '../../core/i18n';
+import {
+  advancePipelineStage,
+  getSqlTokens,
+  getVdbeOpcodes,
+  stepVmProgramCounter,
+} from '../../core/queryPipeline';
+
+/**
+ * ViewModel for Module 1 (Query Pipeline).
+ * Owns stage playback timer, execution target toggle, and VDBE program counter.
+ */
+export function useQueryPipelineViewModel(lang: Locale) {
+  const [stage, setStage] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
+  const [vmPc, setVmPc] = useState(0);
+
+  const tokens = getSqlTokens();
+  const opcodes = getVdbeOpcodes(lang);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const timer = setInterval(() => {
+      setStage((prev) => {
+        if (prev < 4) return prev + 1;
+        setIsPlaying(false);
+        return prev;
+      });
+    }, 1800);
+    return () => clearInterval(timer);
+  }, [isPlaying]);
+
+  return {
+    stage,
+    isPlaying,
+    execTarget,
+    vmPc,
+    tokens,
+    opcodes,
+    setExecTarget,
+    setVmPc,
+    selectStage: (idx: number) => {
+      setIsPlaying(false);
+      setStage(idx);
+    },
+    togglePlay: () => {
+      if (stage === 4) setStage(0);
+      setIsPlaying((prev) => !prev);
+    },
+    stepStage: () => {
+      setIsPlaying(false);
+      setStage((prev) => advancePipelineStage(prev));
+    },
+    stepVm: () => setVmPc((pc) => stepVmProgramCounter(pc, opcodes.length)),
+    reset: () => {
+      setIsPlaying(false);
+      setStage(0);
+      setVmPc(0);
+    },
+  };
+}
+````
 
 ## `src/features/README.md`
 
@@ -38,6 +106,7 @@ Each feature folder follows **Model-View-ViewModel (MVVM)**:
 
 ````tsx
 import { Plus, Zap } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { TranslationBundle } from '../../core/i18n';
 import { PAGE_SIZE_BYTES } from '../../core/slottedPage';
 import { useSlottedPageViewModel } from './useSlottedPageViewModel';
@@ -147,7 +216,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
               onMouseEnter={() => vm.setHoveredSlot(item.slot)}
               onMouseLeave={() => vm.setHoveredSlot(null)}
               onClick={() => vm.markDead(item.slot)}
-              className={`p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
+              className={`animate-springIn p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
                 !item.alive
                   ? 'bg-rose-100 text-rose-900 opacity-80'
                   : vm.hoveredSlot === item.slot
@@ -170,17 +239,19 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
-        <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
-          {t.m3.headerDesc}
+      <AccordionPanel title={t.m3.legendSectionLabel} badge="8 KB" defaultOpen={false}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
+          <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
+            {t.m3.headerDesc}
+          </div>
+          <div className="p-3 rounded-lg bg-blue-50 border-2 border-stone-900 text-blue-950">
+            {t.m3.slotsDesc}
+          </div>
+          <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-emerald-950">
+            {t.m3.tuplesDesc}
+          </div>
         </div>
-        <div className="p-3 rounded-lg bg-blue-50 border-2 border-stone-900 text-blue-950">
-          {t.m3.slotsDesc}
-        </div>
-        <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-emerald-950">
-          {t.m3.tuplesDesc}
-        </div>
-      </div>
+      </AccordionPanel>
     </div>
   );
 }
@@ -228,6 +299,7 @@ export function useSlottedPageViewModel() {
 
 ````tsx
 import { Activity, HardDrive, Layers, Pause, Play } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import { useStorageHierarchyViewModel } from './useStorageHierarchyViewModel';
 
@@ -245,47 +317,6 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="font-bold text-base sm:text-lg text-stone-900 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-[#D94E28]" />
-            {t.m2.realLatency} vs. {t.m2.humanScale}
-          </h3>
-          <button
-            onClick={vm.togglePulsing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-xs sm:text-sm font-mono font-semibold text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
-          >
-            {vm.pulsing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {vm.pulsing ? t.pause : t.m2.startPulse}
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {vm.tiers.map((tier) => (
-            <div key={tier.name} className="bg-[#EFE9DC]/60 border-2 border-stone-900/80 rounded-lg p-3">
-              <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm font-mono mb-2 gap-2">
-                <span className={`font-bold ${tier.text}`}>{tier.name}</span>
-                <div className="flex items-center gap-4">
-                  <span className="text-stone-800 font-semibold">{tier.real}</span>
-                  <span className="px-2.5 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
-                    ⏱ {tier.human}
-                  </span>
-                </div>
-              </div>
-              <div className="relative h-3.5 bg-stone-200 rounded-full overflow-hidden border border-stone-900">
-                <div className={`h-full opacity-30 ${tier.color} ${tier.barWidth}`} />
-                {vm.pulsing && (
-                  <div
-                    style={{ animation: `pulseRace ${tier.animDurationSec}s linear infinite` }}
-                    className={`absolute top-0 bottom-0 w-8 rounded-full ${tier.color}`}
-                  />
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -322,7 +353,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         {vm.lastStatus && (
           <div
-            className={`px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
+            className={`animate-springIn px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
               vm.lastStatus === 'hit'
                 ? 'bg-emerald-100 text-emerald-950'
                 : 'bg-amber-100 text-amber-950'
@@ -333,6 +364,10 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </span>
             <span>{vm.lastStatus === 'hit' ? '~100 ns' : '~16,000 ns'}</span>
           </div>
+        )}
+
+        {vm.lastStatus === 'miss' && (
+          <div className="h-1.5 w-full rounded-full animate-busFlow" aria-hidden="true" />
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -385,7 +420,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                     key={frameIdx}
                     className={`p-3 rounded-lg border-2 font-mono text-center transition-all ${
                       occupied
-                        ? 'bg-stone-800 border-amber-400 text-amber-100'
+                        ? 'animate-springIn bg-stone-800 border-amber-400 text-amber-100'
                         : 'bg-stone-900/60 border-dashed border-stone-600 text-stone-300'
                     }`}
                   >
@@ -401,6 +436,53 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           </div>
         </div>
       </div>
+
+      <AccordionPanel
+        title={`${t.m2.realLatency} vs. ${t.m2.humanScale}`}
+        badge="L1 → HDD"
+        defaultOpen={false}
+      >
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-stone-700 flex items-center gap-2 font-semibold">
+              <Activity className="w-4 h-4 text-[#D94E28]" />
+              {t.m2.humanScale}
+            </span>
+            <button
+              onClick={vm.togglePulsing}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-xs sm:text-sm font-mono font-semibold text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
+            >
+              {vm.pulsing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              {vm.pulsing ? t.pause : t.m2.startPulse}
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {vm.tiers.map((tier) => (
+              <div key={tier.name} className="bg-[#EFE9DC]/60 border-2 border-stone-900/80 rounded-lg p-3">
+                <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm font-mono mb-2 gap-2">
+                  <span className={`font-bold ${tier.text}`}>{tier.name}</span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-stone-800 font-semibold">{tier.real}</span>
+                    <span className="px-2.5 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
+                      ⏱ {tier.human}
+                    </span>
+                  </div>
+                </div>
+                <div className="relative h-3.5 bg-stone-200 rounded-full overflow-hidden border border-stone-900">
+                  <div className={`h-full opacity-30 ${tier.color} ${tier.barWidth}`} />
+                  {vm.pulsing && (
+                    <div
+                      style={{ animation: `pulseRace ${tier.animDurationSec}s linear infinite` }}
+                      className={`absolute top-0 bottom-0 w-8 rounded-full ${tier.color}`}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </AccordionPanel>
     </div>
   );
 }
@@ -623,7 +705,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
                   key={idx}
                   className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     current
-                      ? 'bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
+                      ? 'animate-laneSweep bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
                       : processed
                       ? match
                         ? 'bg-emerald-100 border-stone-900 text-emerald-950 font-bold'
@@ -678,7 +760,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
                   key={idx}
                   className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     inNextVector
-                      ? 'bg-blue-100 border-stone-900 text-blue-950 font-semibold'
+                      ? 'animate-laneSweep bg-blue-100 border-stone-900 text-blue-950 font-semibold'
                       : processed
                       ? match
                         ? 'bg-emerald-700 border-stone-900 text-white font-bold'
@@ -752,8 +834,58 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
   }
 }
 
+@keyframes springIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes busFlow {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 28px 0;
+  }
+}
+
+@keyframes laneSweep {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 78, 40, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(217, 78, 40, 0);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-springIn {
+  animation: springIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-busFlow {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #d94e28 0px,
+    #d94e28 10px,
+    transparent 10px,
+    transparent 18px
+  );
+  background-size: 28px 4px;
+  animation: busFlow 0.7s linear infinite;
+}
+
+.animate-laneSweep {
+  animation: laneSweep 1.3s ease-in-out infinite;
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -779,54 +911,4 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>
 );
-````
-
-## `src/useAppViewModel.ts`
-
-````typescript
-import { useEffect, useState } from 'react';
-import { computeProgressPct, stepModuleIndex } from './core/appNavigation';
-import { DEFAULT_LOCALE, getTranslations, type Locale, toggleLocale } from './core/i18n';
-
-/**
- * ViewModel for the top-level App shell.
- * Manages locale, active module index, presentation mode, modal state, and keyboard shortcuts.
- */
-export function useAppViewModel() {
-  const [lang, setLang] = useState<Locale>(DEFAULT_LOCALE);
-  const [activeModule, setActiveModule] = useState(0);
-  const [presMode, setPresMode] = useState(false);
-  const [showDeployModal, setShowDeployModal] = useState(false);
-
-  const t = getTranslations(lang);
-  const progressPct = computeProgressPct(activeModule, t.modules.length);
-  const subtitles = [t.m1.subtitle, t.m2.subtitle, t.m3.subtitle, t.m4.subtitle, t.m5.subtitle];
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') setActiveModule((m) => stepModuleIndex(m, 1));
-      else if (e.key === 'ArrowLeft') setActiveModule((m) => stepModuleIndex(m, -1));
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
-
-  return {
-    lang,
-    t,
-    activeModule,
-    presMode,
-    showDeployModal,
-    progressPct,
-    activeTitle: t.modules[activeModule].title,
-    activeSubtitle: subtitles[activeModule],
-    selectModule: setActiveModule,
-    prevModule: () => setActiveModule((m) => stepModuleIndex(m, -1)),
-    nextModule: () => setActiveModule((m) => stepModuleIndex(m, 1)),
-    toggleLang: () => setLang((prev) => toggleLocale(prev)),
-    togglePresMode: () => setPresMode((prev) => !prev),
-    openDeployModal: () => setShowDeployModal(true),
-    closeDeployModal: () => setShowDeployModal(false),
-  };
-}
 ````
