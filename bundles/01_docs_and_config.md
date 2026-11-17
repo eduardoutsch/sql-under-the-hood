@@ -1,6 +1,6 @@
 # 01_docs_and_config
 
-> Generated snapshot containing 13 file(s).
+> Generated snapshot containing 12 file(s).
 
 ## Table of Contents
 
@@ -11,7 +11,6 @@
 - [`package.json`](#package-json)
 - [`public/_headers`](#public-headers)
 - [`public/_redirects`](#public-redirects)
-- [`public/favicon.svg`](#public-favicon-svg)
 - [`README.md`](#readme-md)
 - [`tsconfig.json`](#tsconfig-json)
 - [`vite.config.ts`](#vite-config-ts)
@@ -112,8 +111,9 @@ Clean code does NOT substitute for thorough technical documentation.
       name="description"
       content="Visualizador interativo da arquitetura interna de bancos de dados SQL: Pipeline, Buffer Pool, Slotted Page 8KB, Null Bitmaps e SIMD."
     />
-    <link rel="icon" type="image/jpeg" href="/assets/logo.jpg" />
-    <link rel="apple-touch-icon" href="/assets/logo.jpg" />
+    <link rel="icon" type="image/jpeg" href="/assets/logo.jpg?v=2" />
+    <link rel="shortcut icon" type="image/jpeg" href="/assets/logo.jpg?v=2" />
+    <link rel="apple-touch-icon" href="/assets/logo.jpg?v=2" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -391,17 +391,6 @@ Clean code does NOT substitute for thorough technical documentation.
 
 ````text
 /* /index.html 200
-````
-
-## `public/favicon.svg`
-
-````xml
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#0f172a"/>
-  <ellipse cx="16" cy="9" rx="9" ry="3.5" stroke="#22d3ee" stroke-width="2"/>
-  <path d="M7 9v14c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5V9" stroke="#22d3ee" stroke-width="2"/>
-  <path d="M7 16c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5" stroke="#a78bfa" stroke-width="2"/>
-</svg>
 ````
 
 ## `README.md`

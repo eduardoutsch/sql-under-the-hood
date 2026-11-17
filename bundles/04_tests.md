@@ -463,7 +463,7 @@ describe('BitInspectorModule component', () => {
 
     expect(screen.getByText(I18N.en.m4.goodDesc)).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /Naive Per-Attribute/i }));
+    await user.click(screen.getByRole('button', { name: /1-Bit Flag per Column/i }));
     expect(screen.getByText(/STRADDLES 64-BIT WORD BOUNDARY/i)).toBeInTheDocument();
   });
 });
@@ -516,7 +516,7 @@ describe('QueryPipelineModule component', () => {
 
     // Step to Rewriter
     await user.click(screen.getByText(I18N.pt.step));
-    expect(screen.getByText(/Árvore de Consulta Reescrita/i)).toBeInTheDocument();
+    expect(screen.getByText(I18N.pt.m1.rewriterHeading)).toBeInTheDocument();
 
     // Step to Optimizer (CBO)
     await user.click(screen.getByText(I18N.pt.step));
