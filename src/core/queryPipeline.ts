@@ -43,9 +43,9 @@ const VDBE_OPCODES: Record<Locale, readonly VdbeOpcode[]> = {
     { addr: 2, op: 'Rewind', p1: 0, p2: 6, p3: 0, comment: 'Posiciona cursor na 1ª tupla' },
     { addr: 3, op: 'Column', p1: 0, p2: 2, p3: 1, comment: 'Extrai col[2] (price) -> Reg[1]' },
     { addr: 4, op: 'Le', p1: 100, p2: 5, p3: 1, comment: 'Se Reg[1] <= 100, pula para Next (5)' },
-    { addr: 5, op: 'ResultRow', p1: 2, p2: 2, p3: 0, comment: 'Emite linha (id, name) para aplicação!' },
+    { addr: 5, op: 'ResultRow', p1: 2, p2: 2, p3: 0, comment: 'Devolve (id, name) para quem pediu' },
     { addr: 6, op: 'Next', p1: 0, p2: 3, p3: 0, comment: 'Avança cursor e volta p/ addr 3' },
-    { addr: 7, op: 'Halt', p1: 0, p2: 0, p3: 0, comment: 'Fim da execução' },
+    { addr: 7, op: 'Halt', p1: 0, p2: 0, p3: 0, comment: 'Fim do programa' },
   ],
   en: [
     { addr: 0, op: 'Init', p1: 0, p2: 7, p3: 0, comment: 'Start bytecode program' },
