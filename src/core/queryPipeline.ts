@@ -24,16 +24,16 @@ export interface VdbeOpcode {
 }
 
 const SQL_TOKENS: readonly SqlToken[] = [
-  { text: 'SELECT', type: 'KEYWORD', color: 'text-cyan-400 border-cyan-500/40 bg-cyan-950/50' },
-  { text: 'id', type: 'IDENT', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-950/50' },
-  { text: ',', type: 'PUNCT', color: 'text-slate-400 border-slate-600 bg-slate-900' },
-  { text: 'name', type: 'IDENT', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-950/50' },
-  { text: 'FROM', type: 'KEYWORD', color: 'text-cyan-400 border-cyan-500/40 bg-cyan-950/50' },
-  { text: 'users', type: 'IDENT', color: 'text-violet-400 border-violet-500/40 bg-violet-950/50' },
-  { text: 'WHERE', type: 'KEYWORD', color: 'text-cyan-400 border-cyan-500/40 bg-cyan-950/50' },
-  { text: 'price', type: 'IDENT', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-950/50' },
-  { text: '>', type: 'OPERATOR', color: 'text-amber-400 border-amber-500/40 bg-amber-950/50' },
-  { text: '100', type: 'NUMBER', color: 'text-rose-400 border-rose-500/40 bg-rose-950/50' },
+  { text: 'SELECT', type: 'KEYWORD', color: 'text-[#B83B1D] border-stone-900 bg-[#FDE8E1]' },
+  { text: 'id', type: 'IDENT', color: 'text-emerald-900 border-stone-900 bg-emerald-100' },
+  { text: ',', type: 'PUNCT', color: 'text-stone-700 border-stone-900 bg-[#EFE9DC]' },
+  { text: 'name', type: 'IDENT', color: 'text-emerald-900 border-stone-900 bg-emerald-100' },
+  { text: 'FROM', type: 'KEYWORD', color: 'text-[#B83B1D] border-stone-900 bg-[#FDE8E1]' },
+  { text: 'users', type: 'IDENT', color: 'text-blue-900 border-stone-900 bg-blue-100' },
+  { text: 'WHERE', type: 'KEYWORD', color: 'text-[#B83B1D] border-stone-900 bg-[#FDE8E1]' },
+  { text: 'price', type: 'IDENT', color: 'text-emerald-900 border-stone-900 bg-emerald-100' },
+  { text: '>', type: 'OPERATOR', color: 'text-amber-900 border-stone-900 bg-amber-100' },
+  { text: '100', type: 'NUMBER', color: 'text-rose-900 border-stone-900 bg-rose-100' },
 ];
 
 const VDBE_OPCODES: Record<Locale, readonly VdbeOpcode[]> = {
