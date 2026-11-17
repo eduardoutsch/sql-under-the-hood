@@ -1,6 +1,6 @@
 # 04_tests
 
-> Generated snapshot containing 22 file(s).
+> Generated snapshot containing 23 file(s).
 
 ## Table of Contents
 
@@ -24,6 +24,7 @@
 - [`tests/features/storageHierarchy/useStorageHierarchyViewModel.test.ts`](#tests-features-storagehierarchy-usestoragehierarchyviewmodel-test-ts)
 - [`tests/features/volcanoSimd/useVolcanoSimdViewModel.test.ts`](#tests-features-volcanosimd-usevolcanosimdviewmodel-test-ts)
 - [`tests/features/volcanoSimd/VolcanoVsSimdModule.test.tsx`](#tests-features-volcanosimd-volcanovssimdmodule-test-tsx)
+- [`tests/README.md`](#tests-readme-md)
 - [`tests/setup.ts`](#tests-setup-ts)
 - [`tests/useAppViewModel.test.ts`](#tests-useappviewmodel-test-ts)
 
@@ -802,6 +803,21 @@ describe('VolcanoVsSimdModule component', () => {
     vi.useRealTimers();
   });
 });
+````
+
+## `tests/README.md`
+
+````markdown
+# `tests/` — Test Suites
+
+Vitest + Testing Library suites mirroring `src/`:
+
+- `tests/core/`: Unit tests for deterministic domain helpers.
+- `tests/components/`: Component tests for `Navbar` and `DeployModal`.
+- `tests/features/`: ViewModel hook tests (`renderHook`) and feature UI tests.
+- `tests/useAppViewModel.test.ts` & `tests/App.test.tsx`: App ViewModel and end-to-end integration tests.
+
+Run with `npm test` or `npm run test:coverage`.
 ````
 
 ## `tests/setup.ts`

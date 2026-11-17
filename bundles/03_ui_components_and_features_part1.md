@@ -1,12 +1,13 @@
 # 03_ui_components_and_features_part1
 
-> Generated snapshot containing 8 file(s).
+> Generated snapshot containing 9 file(s).
 
 ## Table of Contents
 
 - [`src/App.tsx`](#src-app-tsx)
 - [`src/components/DeployModal.tsx`](#src-components-deploymodal-tsx)
 - [`src/components/Navbar.tsx`](#src-components-navbar-tsx)
+- [`src/components/README.md`](#src-components-readme-md)
 - [`src/features/bitInspector/BitInspectorModule.tsx`](#src-features-bitinspector-bitinspectormodule-tsx)
 - [`src/features/bitInspector/useBitInspectorViewModel.ts`](#src-features-bitinspector-usebitinspectorviewmodel-ts)
 - [`src/features/queryPipeline/PipelineStageViews.tsx`](#src-features-querypipeline-pipelinestageviews-tsx)
@@ -290,6 +291,17 @@ export function Navbar({
     </header>
   );
 }
+````
+
+## `src/components/README.md`
+
+````markdown
+# `src/components/` — Shared Shell Components
+
+Stateless UI components used by the top-level application shell:
+
+- `Navbar.tsx`: Sticky header with branding, module tabs, presentation mode toggle, and PT-BR/EN language switcher.
+- `DeployModal.tsx`: Modal displaying Cloudflare Pages + Vite build and deployment steps.
 ````
 
 ## `src/features/bitInspector/BitInspectorModule.tsx`
