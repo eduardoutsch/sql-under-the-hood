@@ -19,7 +19,7 @@ describe('Navbar component', () => {
   it('renders brand title, logo image, 5 module tabs, and PT-BR toggle by default', () => {
     render(<Navbar {...baseProps} />);
     expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
-    expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.jpg');
+    expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.png');
     expect(screen.getByText('PT-BR')).toBeInTheDocument();
     expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(7);
   });

@@ -44,9 +44,9 @@ export function Navbar({
       <div className={`${containerWidth} mx-auto h-16 flex items-center justify-between gap-3`}>
         <div className="flex items-center gap-3 min-w-0">
           <img
-            src="/assets/logo.jpg"
+            src="/assets/logo.png"
             alt={t.brandTitle}
-            className="w-11 h-11 rounded-lg border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-cover bg-[#F6F2EA] shrink-0"
+            className="w-11 h-11 rounded-full border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-contain bg-[#F6F2EA] p-0.5 shrink-0"
           />
           <div className="truncate">
             <div className="text-xs font-mono font-semibold uppercase tracking-[0.12em] text-[#B83B1D]">
