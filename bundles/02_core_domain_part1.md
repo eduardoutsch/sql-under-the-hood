@@ -304,7 +304,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       unrolledOffsets: 'Offsets Nativos',
       exprEval: 'Avaliação do Filtro',
       threeInstructions: '3 Instruções de CPU',
-      stageNotesLabel: 'Notas do Estágio',
+      stageNotesLabel: 'Mensagem',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -496,7 +496,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       unrolledOffsets: 'Native Offsets',
       exprEval: 'Filter Eval',
       threeInstructions: '3 CPU Instructions',
-      stageNotesLabel: 'Stage Notes',
+      stageNotesLabel: 'Message',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -755,6 +755,25 @@ export function advancePipelineStage(currentStage: number): number {
 export function stepVmProgramCounter(currentPc: number, opcodeCount: number): number {
   if (opcodeCount <= 0) return 0;
   return (currentPc + 1) % opcodeCount;
+}
+
+export interface ChatBubblePlacement {
+  side: 'left' | 'right';
+  alignClass: string;
+}
+
+const ALIGN_CLASSES = ['lg:self-start', 'lg:self-center', 'lg:self-end'] as const;
+
+/**
+ * Pick a side (left/right) and vertical alignment for the stage Message chat bubble.
+ */
+export function pickChatBubblePlacement(
+  sideRand: number = Math.random(),
+  alignRand: number = Math.random()
+): ChatBubblePlacement {
+  const side = sideRand < 0.5 ? 'left' : 'right';
+  const alignIdx = Math.min(ALIGN_CLASSES.length - 1, Math.floor(alignRand * ALIGN_CLASSES.length));
+  return { side, alignClass: ALIGN_CLASSES[alignIdx] };
 }
 ````
 

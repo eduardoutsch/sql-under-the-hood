@@ -109,66 +109,89 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
-      {/* Stage Notes Chat Bubble Trigger & Animated Bubble */}
-      <div className="relative flex flex-col items-start gap-3">
-        <button
-          type="button"
-          onClick={vm.toggleNotes}
-          aria-expanded={vm.notesOpen}
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-[#FFFDF8] font-mono text-xs sm:text-sm font-bold transition cursor-pointer"
-        >
-          <MessageCircle className="w-4 h-4 text-amber-300" />
-          <span>{t.m1.stageNotesLabel}</span>
-          <span className="px-1.5 py-0.5 rounded bg-[#D94E28] text-white text-xs">
-            0{vm.stage + 1}
-          </span>
-        </button>
-
-        {vm.notesOpen && (
-          <div
-            role="status"
-            className="animate-springIn relative max-w-2xl bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl rounded-tl-sm p-4 pr-10"
-          >
-            <button
-              type="button"
-              onClick={vm.toggleNotes}
-              aria-label="Close stage note"
-              className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-            <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
-              0{vm.stage + 1} • {t.m1.stages[vm.stage].name}
-            </div>
-            <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">
-              {t.m1.stages[vm.stage].desc}
-            </p>
-          </div>
-        )}
-      </div>
-
-      <AccordionPanel
-        title={t.m1.stages[vm.stage].name}
-        badge={`0${vm.stage + 1}`}
-        defaultOpen={true}
+      {/* Main Stage Content + Side-Positioned Message Chat Bubble (All 5 Steps) */}
+      <div
+        className={`flex flex-col gap-4 ${
+          vm.bubblePlacement.side === 'left' ? 'lg:flex-row-reverse' : 'lg:flex-row'
+        } lg:items-stretch`}
       >
-        <div className="min-h-[280px] flex flex-col justify-center">
-          {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
-          {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
-          {vm.stage === 3 && <OptimizerStageView t={t} />}
-          {vm.stage === 4 && (
-            <ExecutionStageView
-              t={t}
-              execTarget={vm.execTarget}
-              vmPc={vm.vmPc}
-              opcodes={vm.opcodes}
-              onSetExecTarget={vm.setExecTarget}
-              onStepVm={vm.stepVm}
-              onSelectPc={vm.setVmPc}
-            />
+        <div className="flex-1 min-w-0">
+          <AccordionPanel
+            title={t.m1.stages[vm.stage].name}
+            badge={`0${vm.stage + 1}`}
+            defaultOpen={true}
+          >
+            <div className="min-h-[280px] flex flex-col justify-center">
+              {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
+              {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
+              {vm.stage === 3 && <OptimizerStageView t={t} />}
+              {vm.stage === 4 && (
+                <ExecutionStageView
+                  t={t}
+                  execTarget={vm.execTarget}
+                  vmPc={vm.vmPc}
+                  opcodes={vm.opcodes}
+                  onSetExecTarget={vm.setExecTarget}
+                  onStepVm={vm.stepVm}
+                  onSelectPc={vm.setVmPc}
+                />
+              )}
+            </div>
+          </AccordionPanel>
+        </div>
+
+        <div
+          className={`flex flex-col gap-2.5 lg:w-72 shrink-0 ${vm.bubblePlacement.alignClass} ${
+            vm.bubblePlacement.side === 'left' ? 'lg:items-end' : 'lg:items-start'
+          }`}
+        >
+          <button
+            type="button"
+            onClick={vm.toggleNotes}
+            aria-expanded={vm.notesOpen}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-[#FFFDF8] font-mono text-xs sm:text-sm font-bold transition cursor-pointer"
+          >
+            <MessageCircle className="w-4 h-4 text-amber-300" />
+            <span>{t.m1.stageNotesLabel}</span>
+            <span className="px-1.5 py-0.5 rounded bg-[#D94E28] text-white text-xs">
+              0{vm.stage + 1}
+            </span>
+          </button>
+
+          {vm.notesOpen && (
+            <div
+              role="status"
+              className={`animate-springIn relative w-full bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl p-4 pr-10 ${
+                vm.bubblePlacement.side === 'left' ? 'lg:rounded-tr-sm' : 'lg:rounded-tl-sm'
+              }`}
+            >
+              {/* Speech-bubble pointer tail */}
+              <span
+                aria-hidden="true"
+                className={`hidden lg:block absolute top-4 w-3 h-3 bg-[#FFFDF8] border-stone-900 rotate-45 ${
+                  vm.bubblePlacement.side === 'left'
+                    ? '-right-[7px] border-t-2 border-r-2'
+                    : '-left-[7px] border-b-2 border-l-2'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={vm.toggleNotes}
+                aria-label="Close stage note"
+                className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+                0{vm.stage + 1} • {t.m1.stages[vm.stage].name}
+              </div>
+              <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">
+                {t.m1.stages[vm.stage].desc}
+              </p>
+            </div>
           )}
         </div>
-      </AccordionPanel>
+      </div>
     </div>
   );
 }
@@ -183,6 +206,7 @@ import {
   advancePipelineStage,
   getSqlTokens,
   getVdbeOpcodes,
+  pickChatBubblePlacement,
   stepVmProgramCounter,
 } from '../../core/queryPipeline';
 
@@ -196,6 +220,7 @@ export function useQueryPipelineViewModel(lang: Locale) {
   const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
   const [vmPc, setVmPc] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [bubblePlacement] = useState(() => pickChatBubblePlacement());
 
   const tokens = getSqlTokens();
   const opcodes = getVdbeOpcodes(lang);
@@ -218,6 +243,7 @@ export function useQueryPipelineViewModel(lang: Locale) {
     execTarget,
     vmPc,
     notesOpen,
+    bubblePlacement,
     tokens,
     opcodes,
     setExecTarget,
