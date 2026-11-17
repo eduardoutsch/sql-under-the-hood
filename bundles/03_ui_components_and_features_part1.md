@@ -561,9 +561,9 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
       <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6">
         <div
           aria-hidden="true"
-          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center text-5xl sm:text-6xl shrink-0 animate-springIn select-none"
+          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center font-mono text-2xl sm:text-3xl font-bold text-[#B83B1D] shrink-0 animate-springIn select-none"
         >
-          😊
+          {'{^_^}'}
         </div>
         <div className="space-y-3 text-center md:text-left">
           <span className="inline-block px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-mono text-xs font-bold tracking-wider">
