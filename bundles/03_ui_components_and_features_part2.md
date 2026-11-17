@@ -1,25 +1,275 @@
 # 03_ui_components_and_features_part2
 
-> Generated snapshot containing 8 file(s).
+> Generated snapshot containing 7 file(s).
 
 ## Table of Contents
 
+- [`src/features/queryPipeline/PipelineStageViews.tsx`](#src-features-querypipeline-pipelinestageviews-tsx)
 - [`src/features/queryPipeline/QueryPipelineModule.tsx`](#src-features-querypipeline-querypipelinemodule-tsx)
 - [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 - [`src/features/README.md`](#src-features-readme-md)
 - [`src/features/slottedPage/SlottedPageModule.tsx`](#src-features-slottedpage-slottedpagemodule-tsx)
 - [`src/features/slottedPage/useSlottedPageViewModel.ts`](#src-features-slottedpage-useslottedpageviewmodel-ts)
 - [`src/features/storageHierarchy/StorageHierarchyModule.tsx`](#src-features-storagehierarchy-storagehierarchymodule-tsx)
-- [`src/features/storageHierarchy/useStorageHierarchyViewModel.ts`](#src-features-storagehierarchy-usestoragehierarchyviewmodel-ts)
-- [`src/features/volcanoSimd/useVolcanoSimdViewModel.ts`](#src-features-volcanosimd-usevolcanosimdviewmodel-ts)
 
 ---
+
+## `src/features/queryPipeline/PipelineStageViews.tsx`
+
+````tsx
+import { Terminal } from 'lucide-react';
+import type { TranslationBundle } from '../../core/i18n';
+import type { SqlToken, VdbeOpcode } from '../../core/queryPipeline';
+
+export function LexerStageView({ tokens, banner }: { tokens: readonly SqlToken[]; banner: string }) {
+  return (
+    <div className="space-y-5 animate-fadeIn">
+      <div className="text-sm font-mono font-semibold uppercase tracking-wider text-stone-700 text-center">
+        {banner}
+      </div>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        {tokens.map((tok, i) => (
+          <div
+            key={i}
+            style={{ animationDelay: `${i * 55}ms` }}
+            className={`animate-springIn px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
+          >
+            <div className="text-base font-bold">{tok.text}</div>
+            <div className="text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: TranslationBundle }) {
+  const heading = isRewriter ? t.m1.rewriterHeading : t.m1.astHeading;
+
+  return (
+    <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="text-sm font-mono font-semibold text-stone-700 uppercase tracking-wider text-center">
+        {heading}
+      </div>
+      <div className="w-full max-w-2xl flex flex-col items-center">
+        <div className="px-4 py-2 rounded-lg bg-[#1C1917] border-2 border-stone-900 text-[#FFFDF8] font-mono text-sm font-bold shadow-[3px_3px_0px_#D94E28]">
+          SELECT_QUERY {isRewriter && <span className="text-xs text-amber-300 ml-1">[OID:16384]</span>}
+        </div>
+        <div className="w-0.5 h-5 bg-stone-900" />
+        <div className="w-3/4 h-0.5 bg-stone-900" />
+        <div className="grid grid-cols-3 gap-3 w-full mt-0">
+          <div className="flex flex-col items-center">
+            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
+              <div className="text-xs font-mono text-emerald-950 font-bold">TARGET_LIST</div>
+              <div className="text-xs font-mono text-stone-800 mt-1">
+                col[0]: id (INT4)
+                <br />
+                col[1]: name (TEXT)
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-0.5 h-4 bg-stone-900" />
+            <div
+              className={`p-3 rounded-lg border-2 border-stone-900 text-center w-full transition-all shadow-[2px_2px_0px_#1c1917] ${
+                isRewriter ? 'bg-blue-100' : 'bg-blue-50'
+              }`}
+            >
+              <div className="text-xs font-mono text-blue-950 font-bold">FROM_CLAUSE</div>
+              <div className="text-xs font-mono text-stone-900 mt-1">rel: "users"</div>
+              {isRewriter && (
+                <div className="mt-1.5 text-xs font-mono bg-blue-900 text-white px-1.5 py-0.5 rounded">
+                  + AND deleted_at IS NULL
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col items-center">
+            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="p-3 rounded-lg bg-amber-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
+              <div className="text-xs font-mono text-amber-950 font-bold">QUAL (WHERE)</div>
+              <div className="text-xs font-mono text-stone-900 mt-1">OpExpr [&gt;]</div>
+              <div className="text-xs font-mono text-amber-950 mt-1">Var(price) | Const(100)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function OptimizerStageView({ t }: { t: TranslationBundle }) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900/60 flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-950 border border-rose-900/40">
+              {t.m1.candidatePlanA}
+            </span>
+            <span className="font-mono text-sm text-rose-900 font-bold">{t.m1.costLabel}: 1,840.00</span>
+          </div>
+          <h5 className="font-bold text-base text-stone-900 mt-3">{t.m1.seqScan}</h5>
+          <p className="text-xs sm:text-sm text-stone-800 mt-1 font-mono">{t.m1.seqFormula}</p>
+        </div>
+        <div className="mt-4">
+          <div className="w-full bg-stone-300 h-3 rounded-full overflow-hidden border border-stone-900">
+            <div className="bg-rose-700 h-full w-[92%]" />
+          </div>
+          <div className="text-xs font-mono text-stone-800 mt-1.5">{t.m1.seqIo}</div>
+        </div>
+      </div>
+      <div className="p-4 rounded-xl bg-emerald-50 border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] flex flex-col justify-between">
+        <div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-700 text-white font-bold">
+              ✓ {t.m1.winner}
+            </span>
+            <span className="font-mono text-sm text-emerald-900 font-bold">{t.m1.costLabel}: 42.65</span>
+          </div>
+          <h5 className="font-bold text-base text-stone-900 mt-3">{t.m1.idxScan}</h5>
+          <p className="text-xs sm:text-sm text-stone-800 mt-1 font-mono">{t.m1.idxSelectivity}</p>
+        </div>
+        <div className="mt-4">
+          <div className="w-full bg-stone-200 h-3 rounded-full overflow-hidden border border-stone-900">
+            <div className="bg-emerald-700 h-full w-[12%]" />
+          </div>
+          <div className="text-xs font-mono text-emerald-950 font-semibold mt-1.5">{t.m1.idxSpeedup}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface ExecutionStageViewProps {
+  t: TranslationBundle;
+  execTarget: 'sqlite' | 'jit';
+  vmPc: number;
+  opcodes: readonly VdbeOpcode[];
+  onSetExecTarget: (target: 'sqlite' | 'jit') => void;
+  onStepVm: () => void;
+  onSelectPc: (pc: number) => void;
+}
+
+export function ExecutionStageView({
+  t,
+  execTarget,
+  vmPc,
+  opcodes,
+  onSetExecTarget,
+  onStepVm,
+  onSelectPc,
+}: ExecutionStageViewProps) {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-stone-900/15 pb-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => onSetExecTarget('sqlite')}
+            className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold transition cursor-pointer ${
+              execTarget === 'sqlite'
+                ? 'bg-[#1C1917] text-[#FFFDF8] shadow-[2px_2px_0px_#D94E28]'
+                : 'bg-[#EFE9DC] text-stone-900 hover:bg-stone-200'
+            }`}
+          >
+            {t.m1.sqliteMode}
+          </button>
+          <button
+            onClick={() => onSetExecTarget('jit')}
+            className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold transition cursor-pointer ${
+              execTarget === 'jit'
+                ? 'bg-[#D94E28] text-[#FFFDF8] shadow-[2px_2px_0px_#1c1917]'
+                : 'bg-[#EFE9DC] text-stone-900 hover:bg-stone-200'
+            }`}
+          >
+            {t.m1.jitMode}
+          </button>
+        </div>
+        {execTarget === 'sqlite' && (
+          <button
+            onClick={onStepVm}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-700 hover:bg-emerald-800 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-mono text-xs sm:text-sm font-bold cursor-pointer"
+          >
+            <Terminal className="w-4 h-4" /> {t.m1.stepVm} [PC={vmPc}]
+          </button>
+        )}
+      </div>
+
+      {execTarget === 'sqlite' ? (
+        <div className="overflow-x-auto bg-[#1C1917] rounded-lg border-2 border-stone-900 p-3">
+          <table className="w-full text-left font-mono text-xs sm:text-sm">
+            <thead>
+              <tr className="text-stone-300 border-b border-stone-700">
+                <th className="py-2 px-2">addr</th>
+                <th className="py-2 px-2">opcode</th>
+                <th className="py-2 px-2">p1</th>
+                <th className="py-2 px-2">p2</th>
+                <th className="py-2 px-2">p3</th>
+                <th className="py-2 px-2">comment (sqlite3_prepare_v2)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {opcodes.map((row, idx) => {
+                const active = idx === vmPc;
+                return (
+                  <tr
+                    key={row.addr}
+                    onClick={() => onSelectPc(idx)}
+                    className={`cursor-pointer transition ${
+                      active ? 'bg-[#D94E28]/35 text-amber-100 font-bold' : 'text-stone-100 hover:bg-stone-800'
+                    }`}
+                  >
+                    <td className="py-2 px-2">{active ? '▶ ' : '  '}{row.addr}</td>
+                    <td className="py-2 px-2 text-amber-300">{row.op}</td>
+                    <td className="py-2 px-2">{row.p1}</td>
+                    <td className="py-2 px-2">{row.p2}</td>
+                    <td className="py-2 px-2">{row.p3}</td>
+                    <td className="py-2 px-2 text-stone-300">{row.comment}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+          <div className="bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm space-y-1.5 text-stone-100">
+            <div className="text-amber-400 font-bold mb-2">; LLVM IR -&gt; x86_64 Native JIT Function</div>
+            <div><span className="text-amber-300">eval_qual_jit:</span></div>
+            <div className="pl-4">mov eax, dword ptr [rdi + 16] <span className="text-stone-300">; Direct offset col price</span></div>
+            <div className="pl-4">cmp eax, 100 <span className="text-stone-300">; Hardware ALU compare</span></div>
+            <div className="pl-4">setg al <span className="text-stone-300">; Branchless boolean 0/1</span></div>
+            <div className="pl-4">ret <span className="text-emerald-300">; 0 virtual dispatch!</span></div>
+          </div>
+          <div className="space-y-3">
+            <div className="p-3.5 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-sm sm:text-base text-stone-900 leading-relaxed">
+              {t.m1.jitDesc}
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm font-mono">
+              <div className="p-2.5 rounded-lg bg-[#FFFDF8] border-2 border-stone-900">
+                <span className="text-stone-700 block">{t.m1.tupleDeforming}</span>
+                <span className="text-emerald-900 font-bold">{t.m1.unrolledOffsets}</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-[#FFFDF8] border-2 border-stone-900">
+                <span className="text-stone-700 block">{t.m1.exprEval}</span>
+                <span className="text-emerald-900 font-bold">{t.m1.threeInstructions}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+````
 
 ## `src/features/queryPipeline/QueryPipelineModule.tsx`
 
 ````tsx
-import { CheckCircle2, ChevronRight, MessageCircle, Pause, Play, RotateCcw, X } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
+import { StageMessageBubble } from '../../components/StageMessageBubble';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import {
   AstStageView,
@@ -134,46 +384,15 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
           </div>
         </AccordionPanel>
 
-        <div
-          className={`mt-3 lg:mt-0 lg:absolute lg:z-30 flex flex-col gap-2 ${vm.bubblePlacement.alignClass} ${
-            vm.bubblePlacement.side === 'left' ? 'lg:left-6 lg:items-start' : 'lg:right-16 lg:items-end'
-          }`}
-        >
-          <button
-            type="button"
-            onClick={vm.toggleNotes}
-            aria-expanded={vm.notesOpen}
-            aria-label={t.m1.stageNotesLabel}
-            title={t.m1.stageNotesLabel}
-            className="w-10 h-10 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-amber-300 flex items-center justify-center transition cursor-pointer hover:scale-105"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </button>
-
-          {vm.notesOpen && (
-            <div
-              role="status"
-              className={`animate-springIn relative w-full lg:w-72 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl p-4 pr-10 ${
-                vm.bubblePlacement.side === 'left' ? 'lg:rounded-tl-sm' : 'lg:rounded-tr-sm'
-              }`}
-            >
-              <button
-                type="button"
-                onClick={vm.toggleNotes}
-                aria-label="Close stage note"
-                className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
-                0{vm.stage + 1} • {t.m1.stages[vm.stage].name}
-              </div>
-              <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">
-                {t.m1.stages[vm.stage].desc}
-              </p>
-            </div>
-          )}
-        </div>
+        <StageMessageBubble
+          label={t.m1.stageNotesLabel}
+          badge={`0${vm.stage + 1}`}
+          title={t.m1.stages[vm.stage].name}
+          body={t.m1.stages[vm.stage].desc}
+          open={vm.notesOpen}
+          placement={vm.bubblePlacement}
+          onToggle={vm.toggleNotes}
+        />
       </div>
     </div>
   );
@@ -276,6 +495,7 @@ Each feature folder follows **Model-View-ViewModel (MVVM)**:
 ````tsx
 import { Plus, Zap } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
+import { StageMessageBubble } from '../../components/StageMessageBubble';
 import type { TranslationBundle } from '../../core/i18n';
 import { PAGE_SIZE_BYTES } from '../../core/slottedPage';
 import { useSlottedPageViewModel } from './useSlottedPageViewModel';
@@ -327,7 +547,8 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         </div>
       </div>
 
-      <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
+      <div className="relative">
+        <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
         <div className="space-y-5 relative overflow-hidden">
           <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
             <span>Byte 0x0000 (0)</span>
@@ -410,6 +631,17 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         </div>
       </AccordionPanel>
 
+        <StageMessageBubble
+          label={t.m1.stageNotesLabel}
+          badge="03"
+          title={t.m3.messageTitle}
+          body={t.m3.messageBody}
+          open={vm.notesOpen}
+          placement={vm.bubblePlacement}
+          onToggle={vm.toggleNotes}
+        />
+      </div>
+
       <AccordionPanel title={t.m3.legendSectionLabel} badge="8 KB" defaultOpen={false}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
           <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
@@ -432,6 +664,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
 
 ````typescript
 import { useState } from 'react';
+import { pickChatBubblePlacement } from '../../core/queryPipeline';
 import {
   compactSlottedPage,
   computePageMetrics,
@@ -444,11 +677,13 @@ import {
 
 /**
  * ViewModel for Module 3 (8 KB PostgreSQL Slotted Page Layout).
- * Manages tuple list, hover highlight, and page compaction actions.
+ * Manages tuple list, hover highlight, page compaction, and message bubble state.
  */
 export function useSlottedPageViewModel() {
   const [tuples, setTuples] = useState<SlottedTuple[]>([...INITIAL_TUPLES]);
   const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [bubblePlacement] = useState(() => pickChatBubblePlacement());
 
   const metrics = computePageMetrics(tuples);
   const isPageFull = tuples.length >= MAX_TUPLES;
@@ -458,6 +693,9 @@ export function useSlottedPageViewModel() {
     hoveredSlot,
     metrics,
     isPageFull,
+    notesOpen,
+    bubblePlacement,
+    toggleNotes: () => setNotesOpen((prev) => !prev),
     setHoveredSlot,
     insert: () => setTuples((prev) => insertTuple(prev)),
     markDead: (slot: number) => setTuples((prev) => markTupleDead(prev, slot)),
@@ -471,6 +709,7 @@ export function useSlottedPageViewModel() {
 ````tsx
 import { Activity, HardDrive, Layers, Pause, Play } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
+import { StageMessageBubble } from '../../components/StageMessageBubble';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import { useStorageHierarchyViewModel } from './useStorageHierarchyViewModel';
 
@@ -488,7 +727,16 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
+      <div className="relative bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
+        <StageMessageBubble
+          label={t.m1.stageNotesLabel}
+          badge="02"
+          title={t.m2.messageTitle}
+          body={t.m2.messageBody}
+          open={vm.notesOpen}
+          placement={vm.bubblePlacement}
+          onToggle={vm.toggleNotes}
+        />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-bold text-base sm:text-lg text-stone-900">{t.m2.bufferSimTitle}</h3>
@@ -656,121 +904,5 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
       </AccordionPanel>
     </div>
   );
-}
-````
-
-## `src/features/storageHierarchy/useStorageHierarchyViewModel.ts`
-
-````typescript
-import { useState } from 'react';
-import type { Locale } from '../../core/i18n';
-import {
-  type BufferFetchStatus,
-  computeByteOffset,
-  fetchBufferPage,
-  getHardwareTiers,
-} from '../../core/storageHierarchy';
-
-/**
- * ViewModel for Module 2 (Storage Hierarchy & Buffer Pool Simulator).
- * Encapsulates pulse animation toggle, page size selection, and Buffer Pool state.
- */
-export function useStorageHierarchyViewModel(lang: Locale) {
-  const [pulsing, setPulsing] = useState(true);
-  const [pageSizeKb, setPageSizeKb] = useState(8);
-  const [bufferPool, setBufferPool] = useState<number[]>([0, 3]);
-  const [activePage, setActivePage] = useState(2);
-  const [lastStatus, setLastStatus] = useState<BufferFetchStatus | null>(null);
-
-  const tiers = getHardwareTiers(lang);
-  const byteOffset = computeByteOffset(activePage, pageSizeKb);
-
-  return {
-    pulsing,
-    pageSizeKb,
-    bufferPool,
-    activePage,
-    lastStatus,
-    tiers,
-    byteOffset,
-    togglePulsing: () => setPulsing((prev) => !prev),
-    setPageSizeKb,
-    fetchPage: (pageNum: number) => {
-      setActivePage(pageNum);
-      const result = fetchBufferPage(bufferPool, pageNum);
-      setLastStatus(result.status);
-      setBufferPool(result.nextPool);
-    },
-    clearBufferPool: () => {
-      setBufferPool([]);
-      setLastStatus(null);
-    },
-  };
-}
-````
-
-## `src/features/volcanoSimd/useVolcanoSimdViewModel.ts`
-
-````typescript
-import { useEffect, useState } from 'react';
-import {
-  computeExecutionMetrics,
-  computeSurvivingIndices,
-  DATASET_PRICES,
-  type SimdLaneWidth,
-  stepExecutionRace,
-} from '../../core/volcanoSimd';
-
-/**
- * ViewModel for Module 5 (Volcano Iterator vs. Vectorized SIMD Race).
- * Manages race timer, SIMD lane width, and derived cycle/selection-vector metrics.
- */
-export function useVolcanoSimdViewModel() {
-  const [simdLane, setSimdLane] = useState<SimdLaneWidth>(8);
-  const [running, setRunning] = useState(false);
-  const [progress, setProgress] = useState({ volcanoIdx: 0, simdIdx: 0 });
-
-  useEffect(() => {
-    if (!running) return;
-    if (progress.volcanoIdx >= DATASET_PRICES.length && progress.simdIdx >= DATASET_PRICES.length) {
-      setRunning(false);
-      return;
-    }
-    const timer = setInterval(() => {
-      setProgress((prev) => stepExecutionRace(prev, simdLane));
-    }, 420);
-    return () => clearInterval(timer);
-  }, [running, progress.volcanoIdx, progress.simdIdx, simdLane]);
-
-  const reset = () => {
-    setRunning(false);
-    setProgress({ volcanoIdx: 0, simdIdx: 0 });
-  };
-
-  const survivingIndices = computeSurvivingIndices(DATASET_PRICES, progress.simdIdx);
-  const { volcanoCycles, simdCycles } = computeExecutionMetrics(
-    progress.volcanoIdx,
-    progress.simdIdx,
-    simdLane
-  );
-
-  return {
-    simdLane,
-    running,
-    progress,
-    survivingIndices,
-    volcanoCycles,
-    simdCycles,
-    step: () => setProgress((prev) => stepExecutionRace(prev, simdLane)),
-    reset,
-    toggleRunning: () => {
-      if (progress.volcanoIdx >= DATASET_PRICES.length) reset();
-      setRunning((prev) => !prev);
-    },
-    selectLaneWidth: (width: SimdLaneWidth) => {
-      reset();
-      setSimdLane(width);
-    },
-  };
 }
 ````

@@ -196,6 +196,8 @@ export interface TranslationBundle {
     bufferPoolTitle: string;
     emptyFrame: string;
     pinnedPtr: string;
+    messageTitle: string;
+    messageBody: string;
   };
   m3: {
     subtitle: string;
@@ -213,6 +215,8 @@ export interface TranslationBundle {
     tuplePrefix: string;
     deadSpace: string;
     legendSectionLabel: string;
+    messageTitle: string;
+    messageBody: string;
   };
   m4: {
     subtitle: string;
@@ -231,6 +235,12 @@ export interface TranslationBundle {
     bytePrefix: string;
     flag1Bit: string;
     straddlesWarning: string;
+    clickPrompt: string;
+    presentBadge: string;
+    nullBadge: string;
+    alignExplain: string;
+    oneReadLabel: string;
+    twoReadsLabel: string;
   };
   m5: {
     subtitle: string;
@@ -355,6 +365,9 @@ export const I18N: Record<Locale, TranslationBundle> = {
       bufferPoolTitle: 'BUFFER POOL EM MEMÓRIA (3 Frames LRU)',
       emptyFrame: 'VAZIO',
       pinnedPtr: 'Pont. Fixado ✓',
+      messageTitle: 'Como o Buffer Pool funciona',
+      messageBody:
+        'Ler do disco é muito lento. O banco guarda as páginas mais usadas na memória RAM (Buffer Pool). Se a página já está na RAM, ele responde em 100 ns sem tocar no disco.',
     },
     m3: {
       subtitle:
@@ -373,6 +386,9 @@ export const I18N: Record<Locale, TranslationBundle> = {
       tuplePrefix: 'Tupla',
       deadSpace: 'Espaço Morto (Aguardando VACUUM)',
       legendSectionLabel: 'Anatomia da Página de 8 KB (Legenda)',
+      messageTitle: 'Por que usar Slotted Page?',
+      messageBody:
+        'Os ponteiros (Slot #) crescem da esquerda e os dados (Tupla #) crescem da direita. Assim o espaço livre fica todo junto no meio, e o VACUUM limpa linhas apagadas.',
     },
     m4: {
       subtitle:
@@ -393,6 +409,13 @@ export const I18N: Record<Locale, TranslationBundle> = {
       bytePrefix: 'Byte',
       flag1Bit: 'Flag 1-bit',
       straddlesWarning: '⚠ price [Bit 34..65] ATRAVESSA A FRONTEIRA DE 64 BITS!',
+      clickPrompt: 'Clique em qualquer coluna para alternar entre Valor e NULL:',
+      presentBadge: 'Valor Salvo',
+      nullBadge: 'NULL (0B)',
+      alignExplain:
+        'A CPU lê a memória em blocos de 8 bytes (64 bits). Campos alinhados cabem em 1 leitura; campos desalinhados cruzam blocos e exigem leituras extras.',
+      oneReadLabel: '1 Leitura da CPU (Bloco de 8 Bytes)',
+      twoReadsLabel: '2 Leituras da CPU (Cruza o bloco de 8 Bytes)',
     },
     m5: {
       subtitle:
@@ -547,6 +570,9 @@ export const I18N: Record<Locale, TranslationBundle> = {
       bufferPoolTitle: 'MEMORY BUFFER POOL (3 Frames LRU)',
       emptyFrame: 'EMPTY',
       pinnedPtr: 'Pinned ptr ✓',
+      messageTitle: 'How the Buffer Pool works',
+      messageBody:
+        'Disk reads are slow. The database keeps hot 8 KB pages in RAM (Buffer Pool). If a page is already in RAM, it answers in 100 ns without touching the disk.',
     },
     m3: {
       subtitle:
@@ -565,6 +591,9 @@ export const I18N: Record<Locale, TranslationBundle> = {
       tuplePrefix: 'Tuple',
       deadSpace: 'Dead Space (Awaiting VACUUM)',
       legendSectionLabel: '8 KB Page Anatomy (Legend)',
+      messageTitle: 'Why use a Slotted Page?',
+      messageBody:
+        'Line pointers (Slot #) grow from the left while row data (Tuple #) grows from the right. Free space stays together in the middle, and VACUUM reclaims deleted rows.',
     },
     m4: {
       subtitle:
@@ -585,6 +614,13 @@ export const I18N: Record<Locale, TranslationBundle> = {
       bytePrefix: 'Byte',
       flag1Bit: '1-bit Flag',
       straddlesWarning: '⚠ price [Bit 34..65] STRADDLES 64-BIT WORD BOUNDARY!',
+      clickPrompt: 'Click any column below to switch between a saved value and NULL:',
+      presentBadge: 'Saved Value',
+      nullBadge: 'NULL (0B)',
+      alignExplain:
+        'The CPU reads memory in 8-byte (64-bit) chunks. Aligned fields fit in 1 read; unaligned fields cross chunk borders and need extra reads.',
+      oneReadLabel: '1 CPU Read (8-Byte Chunk)',
+      twoReadsLabel: '2 CPU Reads (Crosses 8-Byte Chunk)',
     },
     m5: {
       subtitle:

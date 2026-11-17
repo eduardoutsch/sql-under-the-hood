@@ -1,12 +1,13 @@
 # 04_tests_part1
 
-> Generated snapshot containing 24 file(s).
+> Generated snapshot containing 22 file(s).
 
 ## Table of Contents
 
 - [`tests/App.test.tsx`](#tests-app-test-tsx)
 - [`tests/components/AccordionPanel.test.tsx`](#tests-components-accordionpanel-test-tsx)
 - [`tests/components/Navbar.test.tsx`](#tests-components-navbar-test-tsx)
+- [`tests/components/StageMessageBubble.test.tsx`](#tests-components-stagemessagebubble-test-tsx)
 - [`tests/core/appNavigation.test.ts`](#tests-core-appnavigation-test-ts)
 - [`tests/core/bitInspector.test.ts`](#tests-core-bitinspector-test-ts)
 - [`tests/core/i18n.test.ts`](#tests-core-i18n-test-ts)
@@ -25,9 +26,6 @@
 - [`tests/features/storageHierarchy/StorageHierarchyModule.test.tsx`](#tests-features-storagehierarchy-storagehierarchymodule-test-tsx)
 - [`tests/features/storageHierarchy/useStorageHierarchyViewModel.test.ts`](#tests-features-storagehierarchy-usestoragehierarchyviewmodel-test-ts)
 - [`tests/features/volcanoSimd/useVolcanoSimdViewModel.test.ts`](#tests-features-volcanosimd-usevolcanosimdviewmodel-test-ts)
-- [`tests/features/volcanoSimd/VolcanoVsSimdModule.test.tsx`](#tests-features-volcanosimd-volcanovssimdmodule-test-tsx)
-- [`tests/README.md`](#tests-readme-md)
-- [`tests/setup.ts`](#tests-setup-ts)
 
 ---
 
@@ -180,6 +178,56 @@ describe('Navbar component', () => {
     expect(screen.getByText('Sair da Apresentação')).toBeInTheDocument();
     expect(screen.getByText('PT-BR')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: I18N.pt.themeLight })).toBeInTheDocument();
+  });
+});
+````
+
+## `tests/components/StageMessageBubble.test.tsx`
+
+````tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import { StageMessageBubble } from '../../src/components/StageMessageBubble';
+
+describe('StageMessageBubble component', () => {
+  it('renders icon-only trigger and toggles speech bubble visibility on click', async () => {
+    const user = userEvent.setup();
+    const onToggle = vi.fn();
+    const { rerender } = render(
+      <StageMessageBubble
+        label="Message"
+        badge="01"
+        title="Buffer Pool"
+        body="Keeps hot pages in RAM."
+        open={false}
+        placement={{ side: 'left', alignClass: 'lg:-top-5' }}
+        onToggle={onToggle}
+      />
+    );
+
+    const btn = screen.getByRole('button', { name: 'Message' });
+    expect(btn).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+    await user.click(btn);
+    expect(onToggle).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <StageMessageBubble
+        label="Message"
+        badge="01"
+        title="Buffer Pool"
+        body="Keeps hot pages in RAM."
+        open={true}
+        placement={{ side: 'right', alignClass: 'lg:-top-4' }}
+        onToggle={onToggle}
+      />
+    );
+
+    expect(screen.getByRole('status')).toHaveTextContent('Keeps hot pages in RAM.');
+    await user.click(screen.getByRole('button', { name: 'Close stage note' }));
+    expect(onToggle).toHaveBeenCalledTimes(2);
   });
 });
 ````
@@ -517,10 +565,11 @@ describe('BitInspectorModule component', () => {
     const user = userEvent.setup();
     render(<BitInspectorModule t={I18N.pt} />);
 
+    expect(screen.getByText(I18N.pt.m4.clickPrompt)).toBeInTheDocument();
     expect(screen.getByText(/Tamanho do Payload: 12 Bytes/)).toBeInTheDocument();
 
     // Toggle coupon (initially NULL) to present
-    await user.click(screen.getByText(/coupon:/));
+    await user.click(screen.getByRole('button', { name: /coupon:/i }));
     expect(screen.getByText(/Tamanho do Payload: 16 Bytes/)).toBeInTheDocument();
   });
 
@@ -739,6 +788,10 @@ describe('SlottedPageModule component', () => {
     await user.click(screen.getByText(I18N.pt.m3.compactBtn));
     expect(screen.queryByText('LP_DEAD (0)')).not.toBeInTheDocument();
     expect(screen.getByText('pd_lower: 36 B')).toBeInTheDocument();
+
+    // Toggle floating message bubble
+    await user.click(screen.getByRole('button', { name: I18N.pt.m1.stageNotesLabel }));
+    expect(screen.getByRole('status')).toHaveTextContent(I18N.pt.m3.messageBody);
   });
 });
 ````
@@ -811,6 +864,10 @@ describe('StorageHierarchyModule component', () => {
     // Evict buffer pool
     await user.click(screen.getByText(I18N.en.m2.evictBtn));
     expect(screen.getByText('0/3 frames')).toBeInTheDocument();
+
+    // Toggle floating message bubble
+    await user.click(screen.getByRole('button', { name: I18N.en.m1.stageNotesLabel }));
+    expect(screen.getByRole('status')).toHaveTextContent(I18N.en.m2.messageBody);
   });
 });
 ````
@@ -876,73 +933,5 @@ describe('useVolcanoSimdViewModel', () => {
     expect(result.current.running).toBe(false);
     vi.useRealTimers();
   });
-});
-````
-
-## `tests/features/volcanoSimd/VolcanoVsSimdModule.test.tsx`
-
-````tsx
-import { act, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { I18N } from '../../../src/core/i18n';
-import { VolcanoVsSimdModule } from '../../../src/features/volcanoSimd/VolcanoVsSimdModule';
-
-describe('VolcanoVsSimdModule component', () => {
-  it('steps simulation and switches between AVX2 and AVX-512', async () => {
-    const user = userEvent.setup();
-    render(<VolcanoVsSimdModule t={I18N.pt} />);
-
-    await user.click(screen.getByText(I18N.pt.step));
-    expect(screen.getByText('18 clk')).toBeInTheDocument();
-    expect(screen.getByText('2 clk')).toBeInTheDocument();
-
-    await user.click(screen.getByText('AVX-512 (16× int32)'));
-    expect(screen.getByText(/vpcmpgtd zmm0, zmm1/)).toBeInTheDocument();
-    expect(screen.getAllByText('0 clk')).toHaveLength(2);
-  });
-
-  it('runs race with Play and stops cleanly when finished', () => {
-    vi.useFakeTimers();
-    render(<VolcanoVsSimdModule t={I18N.en} />);
-
-    act(() => {
-      screen.getByText(I18N.en.play).click();
-    });
-    expect(screen.getByText(I18N.en.pause)).toBeInTheDocument();
-
-    act(() => {
-      vi.advanceTimersByTime(420 * 35);
-    });
-    expect(screen.getByText(I18N.en.play)).toBeInTheDocument();
-    vi.useRealTimers();
-  });
-});
-````
-
-## `tests/README.md`
-
-````markdown
-# `tests/` — Test Suites
-
-Vitest + Testing Library suites mirroring `src/`:
-
-- `tests/core/`: Unit tests for deterministic domain helpers.
-- `tests/components/`: Component tests for `Navbar` and `DeployModal`.
-- `tests/features/`: ViewModel hook tests (`renderHook`) and feature UI tests.
-- `tests/useAppViewModel.test.ts` & `tests/App.test.tsx`: App ViewModel and end-to-end integration tests.
-
-Run with `npm test` or `npm run test:coverage`.
-````
-
-## `tests/setup.ts`
-
-````typescript
-import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
-
-afterEach(() => {
-  cleanup();
 });
 ````

@@ -1,15 +1,140 @@
 # 03_ui_components_and_features_part3
 
-> Generated snapshot containing 4 file(s).
+> Generated snapshot containing 6 file(s).
 
 ## Table of Contents
 
+- [`src/features/storageHierarchy/useStorageHierarchyViewModel.ts`](#src-features-storagehierarchy-usestoragehierarchyviewmodel-ts)
+- [`src/features/volcanoSimd/useVolcanoSimdViewModel.ts`](#src-features-volcanosimd-usevolcanosimdviewmodel-ts)
 - [`src/features/volcanoSimd/VolcanoVsSimdModule.tsx`](#src-features-volcanosimd-volcanovssimdmodule-tsx)
 - [`src/index.css`](#src-index-css)
 - [`src/main.tsx`](#src-main-tsx)
 - [`src/useAppViewModel.ts`](#src-useappviewmodel-ts)
 
 ---
+
+## `src/features/storageHierarchy/useStorageHierarchyViewModel.ts`
+
+````typescript
+import { useState } from 'react';
+import type { Locale } from '../../core/i18n';
+import { pickChatBubblePlacement } from '../../core/queryPipeline';
+import {
+  type BufferFetchStatus,
+  computeByteOffset,
+  fetchBufferPage,
+  getHardwareTiers,
+} from '../../core/storageHierarchy';
+
+/**
+ * ViewModel for Module 2 (Storage Hierarchy & Buffer Pool Simulator).
+ * Encapsulates pulse animation toggle, page size selection, Buffer Pool state,
+ * and floating message bubble state.
+ */
+export function useStorageHierarchyViewModel(lang: Locale) {
+  const [pulsing, setPulsing] = useState(true);
+  const [pageSizeKb, setPageSizeKb] = useState(8);
+  const [bufferPool, setBufferPool] = useState<number[]>([0, 3]);
+  const [activePage, setActivePage] = useState(2);
+  const [lastStatus, setLastStatus] = useState<BufferFetchStatus | null>(null);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const [bubblePlacement] = useState(() => pickChatBubblePlacement());
+
+  const tiers = getHardwareTiers(lang);
+  const byteOffset = computeByteOffset(activePage, pageSizeKb);
+
+  return {
+    pulsing,
+    pageSizeKb,
+    bufferPool,
+    activePage,
+    lastStatus,
+    notesOpen,
+    bubblePlacement,
+    tiers,
+    byteOffset,
+    toggleNotes: () => setNotesOpen((prev) => !prev),
+    togglePulsing: () => setPulsing((prev) => !prev),
+    setPageSizeKb,
+    fetchPage: (pageNum: number) => {
+      setActivePage(pageNum);
+      const result = fetchBufferPage(bufferPool, pageNum);
+      setLastStatus(result.status);
+      setBufferPool(result.nextPool);
+    },
+    clearBufferPool: () => {
+      setBufferPool([]);
+      setLastStatus(null);
+    },
+  };
+}
+````
+
+## `src/features/volcanoSimd/useVolcanoSimdViewModel.ts`
+
+````typescript
+import { useEffect, useState } from 'react';
+import {
+  computeExecutionMetrics,
+  computeSurvivingIndices,
+  DATASET_PRICES,
+  type SimdLaneWidth,
+  stepExecutionRace,
+} from '../../core/volcanoSimd';
+
+/**
+ * ViewModel for Module 5 (Volcano Iterator vs. Vectorized SIMD Race).
+ * Manages race timer, SIMD lane width, and derived cycle/selection-vector metrics.
+ */
+export function useVolcanoSimdViewModel() {
+  const [simdLane, setSimdLane] = useState<SimdLaneWidth>(8);
+  const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState({ volcanoIdx: 0, simdIdx: 0 });
+
+  useEffect(() => {
+    if (!running) return;
+    if (progress.volcanoIdx >= DATASET_PRICES.length && progress.simdIdx >= DATASET_PRICES.length) {
+      setRunning(false);
+      return;
+    }
+    const timer = setInterval(() => {
+      setProgress((prev) => stepExecutionRace(prev, simdLane));
+    }, 420);
+    return () => clearInterval(timer);
+  }, [running, progress.volcanoIdx, progress.simdIdx, simdLane]);
+
+  const reset = () => {
+    setRunning(false);
+    setProgress({ volcanoIdx: 0, simdIdx: 0 });
+  };
+
+  const survivingIndices = computeSurvivingIndices(DATASET_PRICES, progress.simdIdx);
+  const { volcanoCycles, simdCycles } = computeExecutionMetrics(
+    progress.volcanoIdx,
+    progress.simdIdx,
+    simdLane
+  );
+
+  return {
+    simdLane,
+    running,
+    progress,
+    survivingIndices,
+    volcanoCycles,
+    simdCycles,
+    step: () => setProgress((prev) => stepExecutionRace(prev, simdLane)),
+    reset,
+    toggleRunning: () => {
+      if (progress.volcanoIdx >= DATASET_PRICES.length) reset();
+      setRunning((prev) => !prev);
+    },
+    selectLaneWidth: (width: SimdLaneWidth) => {
+      reset();
+      setSimdLane(width);
+    },
+  };
+}
+````
 
 ## `src/features/volcanoSimd/VolcanoVsSimdModule.tsx`
 

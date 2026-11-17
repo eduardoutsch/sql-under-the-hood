@@ -8,10 +8,10 @@
 - [`src/components/AccordionPanel.tsx`](#src-components-accordionpanel-tsx)
 - [`src/components/Navbar.tsx`](#src-components-navbar-tsx)
 - [`src/components/README.md`](#src-components-readme-md)
+- [`src/components/StageMessageBubble.tsx`](#src-components-stagemessagebubble-tsx)
 - [`src/features/bitInspector/BitInspectorModule.tsx`](#src-features-bitinspector-bitinspectormodule-tsx)
 - [`src/features/bitInspector/useBitInspectorViewModel.ts`](#src-features-bitinspector-usebitinspectorviewmodel-ts)
 - [`src/features/home/HomeView.tsx`](#src-features-home-homeview-tsx)
-- [`src/features/queryPipeline/PipelineStageViews.tsx`](#src-features-querypipeline-pipelinestageviews-tsx)
 
 ---
 
@@ -341,6 +341,78 @@ Stateless UI components used by the top-level application shell and feature draw
 - `AccordionPanel.tsx`: Collapsible drawer with smooth height transition for progressive disclosure.
 ````
 
+## `src/components/StageMessageBubble.tsx`
+
+````tsx
+import { MessageCircle, X } from 'lucide-react';
+import type { ChatBubblePlacement } from '../core/queryPipeline';
+
+export interface StageMessageBubbleProps {
+  label: string;
+  badge: string;
+  title: string;
+  body: string;
+  open: boolean;
+  placement: ChatBubblePlacement;
+  onToggle: () => void;
+}
+
+/**
+ * Floating icon-only trigger and animated speech bubble positioned above the
+ * parent panel border so it never shifts or obscures centered module content.
+ */
+export function StageMessageBubble({
+  label,
+  badge,
+  title,
+  body,
+  open,
+  placement,
+  onToggle,
+}: StageMessageBubbleProps) {
+  return (
+    <div
+      className={`mt-3 lg:mt-0 lg:absolute lg:z-30 flex flex-col gap-2 ${placement.alignClass} ${
+        placement.side === 'left' ? 'lg:left-6 lg:items-start' : 'lg:right-16 lg:items-end'
+      }`}
+    >
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-label={label}
+        title={label}
+        className="w-10 h-10 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-amber-300 flex items-center justify-center transition cursor-pointer hover:scale-105"
+      >
+        <MessageCircle className="w-5 h-5" />
+      </button>
+
+      {open && (
+        <div
+          role="status"
+          className={`animate-springIn relative w-full lg:w-72 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl p-4 pr-10 ${
+            placement.side === 'left' ? 'lg:rounded-tl-sm' : 'lg:rounded-tr-sm'
+          }`}
+        >
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label="Close stage note"
+            className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+            {badge} • {title}
+          </div>
+          <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">{body}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+````
+
 ## `src/features/bitInspector/BitInspectorModule.tsx`
 
 ````tsx
@@ -359,41 +431,46 @@ export interface BitInspectorModuleProps {
  */
 export function BitInspectorModule({ t }: BitInspectorModuleProps) {
   const vm = useBitInspectorViewModel();
+  const maxBytes = vm.cols.reduce((acc, col) => acc + col.bytes, 0);
+  const fillPct = maxBytes > 0 ? Math.round((vm.payloadBytes / maxBytes) * 100) : 0;
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {vm.cols.map((col, idx) => (
-          <button
-            key={col.key}
-            onClick={() => vm.toggleNull(idx)}
-            className={`p-4 rounded-xl border-2 border-stone-900 text-left transition-all cursor-pointer shadow-[3px_3px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
-              col.isNull ? 'bg-amber-100' : 'bg-[#FFFDF8] hover:bg-[#EFE9DC]'
-            }`}
-          >
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-stone-800 font-semibold">
-                col[{idx}] • {col.type}
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded font-bold border border-stone-900 ${
-                  col.isNull ? 'bg-amber-300 text-stone-950' : 'bg-emerald-200 text-emerald-950'
-                }`}
-              >
-                bit={col.isNull ? '0' : '1'}
-              </span>
-            </div>
-            <div className="text-base sm:text-lg font-mono font-bold text-stone-900 mt-2">
-              {col.key}:{' '}
-              <span className={col.isNull ? 'text-[#B83B1D] italic' : 'text-blue-900'}>
-                {col.isNull ? 'NULL' : col.val}
-              </span>
-            </div>
-            <div className="text-xs font-mono text-stone-800 mt-1.5">
-              Hex: {col.isNull ? t.m4.zeroBytesStored : col.hex}
-            </div>
-          </button>
-        ))}
+      <div className="space-y-3">
+        <p className="text-sm sm:text-base font-semibold text-stone-800">{t.m4.clickPrompt}</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {vm.cols.map((col, idx) => (
+            <button
+              key={col.key}
+              onClick={() => vm.toggleNull(idx)}
+              className={`p-4 rounded-xl border-2 border-stone-900 text-left transition-all cursor-pointer shadow-[3px_3px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
+                col.isNull ? 'bg-amber-100' : 'bg-[#FFFDF8] hover:bg-[#EFE9DC]'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 text-xs font-mono">
+                <span className="text-stone-700 font-semibold">{col.type}</span>
+                <span
+                  className={`px-2 py-0.5 rounded font-bold border border-stone-900 ${
+                    col.isNull ? 'bg-amber-300 text-stone-950' : 'bg-emerald-200 text-emerald-950'
+                  }`}
+                >
+                  {col.isNull ? t.m4.nullBadge : t.m4.presentBadge}
+                </span>
+              </div>
+              <div className="text-base sm:text-lg font-mono font-bold text-stone-900 mt-2">
+                {col.key}:{' '}
+                <span className={col.isNull ? 'text-[#B83B1D] italic' : 'text-blue-900'}>
+                  {col.isNull ? 'NULL' : col.val}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono text-stone-800 mt-2 pt-2 border-t border-stone-900/15">
+                <span>bit={col.isNull ? '0' : '1'}</span>
+                <span>{col.isNull ? t.m4.zeroBytesStored : col.hex}</span>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       <AccordionPanel title={t.m4.bitmapTitle} badge="t_bits" defaultOpen={true}>
@@ -405,11 +482,25 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
             </div>
           </div>
 
+          <div className="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden border border-stone-900">
+            <div
+              className="h-full bg-[#D94E28] transition-all duration-300"
+              style={{ width: `${fillPct}%` }}
+            />
+          </div>
+
           <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
             <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
               <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
               <div className="text-lg font-bold tracking-widest text-white mt-0.5">
                 0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 mt-1.5 text-[11px] text-stone-300">
+                {vm.cols.map((col) => (
+                  <span key={col.key}>
+                    {col.key}:{col.isNull ? '0' : '1'}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -419,7 +510,7 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
               col.isNull ? null : (
                 <div
                   key={col.key}
-                  className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
+                  className="animate-springIn p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
                 >
                   <div className="text-xs text-emerald-300">
                     {col.key} ({col.bytes}B)
@@ -434,27 +525,34 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
 
       <AccordionPanel title={t.m4.alignTitle} badge="64-BIT" defaultOpen={false}>
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <button
-              onClick={() => vm.setAlignMode('good')}
-              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
-                vm.alignMode === 'good'
-                  ? 'bg-emerald-700 text-white shadow-[2px_2px_0px_#1c1917]'
-                  : 'bg-[#EFE9DC] text-stone-900'
-              }`}
-            >
-              ✓ {t.m4.goodAlign}
-            </button>
-            <button
-              onClick={() => vm.setAlignMode('bad')}
-              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
-                vm.alignMode === 'bad'
-                  ? 'bg-rose-700 text-white shadow-[2px_2px_0px_#1c1917]'
-                  : 'bg-[#EFE9DC] text-stone-900'
-              }`}
-            >
-              ✕ {t.m4.badAlign}
-            </button>
+          <p className="text-xs sm:text-sm text-stone-800 leading-relaxed">{t.m4.alignExplain}</p>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-mono text-xs font-bold">
+              {vm.alignMode === 'good' ? t.m4.oneReadLabel : t.m4.twoReadsLabel}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => vm.setAlignMode('good')}
+                className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
+                  vm.alignMode === 'good'
+                    ? 'bg-emerald-700 text-white shadow-[2px_2px_0px_#1c1917]'
+                    : 'bg-[#EFE9DC] text-stone-900'
+                }`}
+              >
+                ✓ {t.m4.goodAlign}
+              </button>
+              <button
+                onClick={() => vm.setAlignMode('bad')}
+                className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
+                  vm.alignMode === 'bad'
+                    ? 'bg-rose-700 text-white shadow-[2px_2px_0px_#1c1917]'
+                    : 'bg-[#EFE9DC] text-stone-900'
+                }`}
+              >
+                ✕ {t.m4.badAlign}
+              </button>
+            </div>
           </div>
 
           {vm.alignMode === 'good' ? (
@@ -641,256 +739,6 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
           ))}
         </div>
       </AccordionPanel>
-    </div>
-  );
-}
-````
-
-## `src/features/queryPipeline/PipelineStageViews.tsx`
-
-````tsx
-import { Terminal } from 'lucide-react';
-import type { TranslationBundle } from '../../core/i18n';
-import type { SqlToken, VdbeOpcode } from '../../core/queryPipeline';
-
-export function LexerStageView({ tokens, banner }: { tokens: readonly SqlToken[]; banner: string }) {
-  return (
-    <div className="space-y-5 animate-fadeIn">
-      <div className="text-sm font-mono font-semibold uppercase tracking-wider text-stone-700 text-center">
-        {banner}
-      </div>
-      <div className="flex flex-wrap items-center justify-center gap-3">
-        {tokens.map((tok, i) => (
-          <div
-            key={i}
-            style={{ animationDelay: `${i * 55}ms` }}
-            className={`animate-springIn px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
-          >
-            <div className="text-base font-bold">{tok.text}</div>
-            <div className="text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: TranslationBundle }) {
-  const heading = isRewriter ? t.m1.rewriterHeading : t.m1.astHeading;
-
-  return (
-    <div className="flex flex-col items-center justify-center space-y-4">
-      <div className="text-sm font-mono font-semibold text-stone-700 uppercase tracking-wider text-center">
-        {heading}
-      </div>
-      <div className="w-full max-w-2xl flex flex-col items-center">
-        <div className="px-4 py-2 rounded-lg bg-[#1C1917] border-2 border-stone-900 text-[#FFFDF8] font-mono text-sm font-bold shadow-[3px_3px_0px_#D94E28]">
-          SELECT_QUERY {isRewriter && <span className="text-xs text-amber-300 ml-1">[OID:16384]</span>}
-        </div>
-        <div className="w-0.5 h-5 bg-stone-900" />
-        <div className="w-3/4 h-0.5 bg-stone-900" />
-        <div className="grid grid-cols-3 gap-3 w-full mt-0">
-          <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
-            <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
-              <div className="text-xs font-mono text-emerald-950 font-bold">TARGET_LIST</div>
-              <div className="text-xs font-mono text-stone-800 mt-1">
-                col[0]: id (INT4)
-                <br />
-                col[1]: name (TEXT)
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
-            <div
-              className={`p-3 rounded-lg border-2 border-stone-900 text-center w-full transition-all shadow-[2px_2px_0px_#1c1917] ${
-                isRewriter ? 'bg-blue-100' : 'bg-blue-50'
-              }`}
-            >
-              <div className="text-xs font-mono text-blue-950 font-bold">FROM_CLAUSE</div>
-              <div className="text-xs font-mono text-stone-900 mt-1">rel: "users"</div>
-              {isRewriter && (
-                <div className="mt-1.5 text-xs font-mono bg-blue-900 text-white px-1.5 py-0.5 rounded">
-                  + AND deleted_at IS NULL
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
-            <div className="p-3 rounded-lg bg-amber-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
-              <div className="text-xs font-mono text-amber-950 font-bold">QUAL (WHERE)</div>
-              <div className="text-xs font-mono text-stone-900 mt-1">OpExpr [&gt;]</div>
-              <div className="text-xs font-mono text-amber-950 mt-1">Var(price) | Const(100)</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function OptimizerStageView({ t }: { t: TranslationBundle }) {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-      <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900/60 flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-950 border border-rose-900/40">
-              {t.m1.candidatePlanA}
-            </span>
-            <span className="font-mono text-sm text-rose-900 font-bold">{t.m1.costLabel}: 1,840.00</span>
-          </div>
-          <h5 className="font-bold text-base text-stone-900 mt-3">{t.m1.seqScan}</h5>
-          <p className="text-xs sm:text-sm text-stone-800 mt-1 font-mono">{t.m1.seqFormula}</p>
-        </div>
-        <div className="mt-4">
-          <div className="w-full bg-stone-300 h-3 rounded-full overflow-hidden border border-stone-900">
-            <div className="bg-rose-700 h-full w-[92%]" />
-          </div>
-          <div className="text-xs font-mono text-stone-800 mt-1.5">{t.m1.seqIo}</div>
-        </div>
-      </div>
-      <div className="p-4 rounded-xl bg-emerald-50 border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] flex flex-col justify-between">
-        <div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-700 text-white font-bold">
-              ✓ {t.m1.winner}
-            </span>
-            <span className="font-mono text-sm text-emerald-900 font-bold">{t.m1.costLabel}: 42.65</span>
-          </div>
-          <h5 className="font-bold text-base text-stone-900 mt-3">{t.m1.idxScan}</h5>
-          <p className="text-xs sm:text-sm text-stone-800 mt-1 font-mono">{t.m1.idxSelectivity}</p>
-        </div>
-        <div className="mt-4">
-          <div className="w-full bg-stone-200 h-3 rounded-full overflow-hidden border border-stone-900">
-            <div className="bg-emerald-700 h-full w-[12%]" />
-          </div>
-          <div className="text-xs font-mono text-emerald-950 font-semibold mt-1.5">{t.m1.idxSpeedup}</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-interface ExecutionStageViewProps {
-  t: TranslationBundle;
-  execTarget: 'sqlite' | 'jit';
-  vmPc: number;
-  opcodes: readonly VdbeOpcode[];
-  onSetExecTarget: (target: 'sqlite' | 'jit') => void;
-  onStepVm: () => void;
-  onSelectPc: (pc: number) => void;
-}
-
-export function ExecutionStageView({
-  t,
-  execTarget,
-  vmPc,
-  opcodes,
-  onSetExecTarget,
-  onStepVm,
-  onSelectPc,
-}: ExecutionStageViewProps) {
-  return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-stone-900/15 pb-3">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => onSetExecTarget('sqlite')}
-            className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold transition cursor-pointer ${
-              execTarget === 'sqlite'
-                ? 'bg-[#1C1917] text-[#FFFDF8] shadow-[2px_2px_0px_#D94E28]'
-                : 'bg-[#EFE9DC] text-stone-900 hover:bg-stone-200'
-            }`}
-          >
-            {t.m1.sqliteMode}
-          </button>
-          <button
-            onClick={() => onSetExecTarget('jit')}
-            className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold transition cursor-pointer ${
-              execTarget === 'jit'
-                ? 'bg-[#D94E28] text-[#FFFDF8] shadow-[2px_2px_0px_#1c1917]'
-                : 'bg-[#EFE9DC] text-stone-900 hover:bg-stone-200'
-            }`}
-          >
-            {t.m1.jitMode}
-          </button>
-        </div>
-        {execTarget === 'sqlite' && (
-          <button
-            onClick={onStepVm}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-700 hover:bg-emerald-800 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-mono text-xs sm:text-sm font-bold cursor-pointer"
-          >
-            <Terminal className="w-4 h-4" /> {t.m1.stepVm} [PC={vmPc}]
-          </button>
-        )}
-      </div>
-
-      {execTarget === 'sqlite' ? (
-        <div className="overflow-x-auto bg-[#1C1917] rounded-lg border-2 border-stone-900 p-3">
-          <table className="w-full text-left font-mono text-xs sm:text-sm">
-            <thead>
-              <tr className="text-stone-300 border-b border-stone-700">
-                <th className="py-2 px-2">addr</th>
-                <th className="py-2 px-2">opcode</th>
-                <th className="py-2 px-2">p1</th>
-                <th className="py-2 px-2">p2</th>
-                <th className="py-2 px-2">p3</th>
-                <th className="py-2 px-2">comment (sqlite3_prepare_v2)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {opcodes.map((row, idx) => {
-                const active = idx === vmPc;
-                return (
-                  <tr
-                    key={row.addr}
-                    onClick={() => onSelectPc(idx)}
-                    className={`cursor-pointer transition ${
-                      active ? 'bg-[#D94E28]/35 text-amber-100 font-bold' : 'text-stone-100 hover:bg-stone-800'
-                    }`}
-                  >
-                    <td className="py-2 px-2">{active ? '▶ ' : '  '}{row.addr}</td>
-                    <td className="py-2 px-2 text-amber-300">{row.op}</td>
-                    <td className="py-2 px-2">{row.p1}</td>
-                    <td className="py-2 px-2">{row.p2}</td>
-                    <td className="py-2 px-2">{row.p3}</td>
-                    <td className="py-2 px-2 text-stone-300">{row.comment}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-          <div className="bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm space-y-1.5 text-stone-100">
-            <div className="text-amber-400 font-bold mb-2">; LLVM IR -&gt; x86_64 Native JIT Function</div>
-            <div><span className="text-amber-300">eval_qual_jit:</span></div>
-            <div className="pl-4">mov eax, dword ptr [rdi + 16] <span className="text-stone-300">; Direct offset col price</span></div>
-            <div className="pl-4">cmp eax, 100 <span className="text-stone-300">; Hardware ALU compare</span></div>
-            <div className="pl-4">setg al <span className="text-stone-300">; Branchless boolean 0/1</span></div>
-            <div className="pl-4">ret <span className="text-emerald-300">; 0 virtual dispatch!</span></div>
-          </div>
-          <div className="space-y-3">
-            <div className="p-3.5 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-sm sm:text-base text-stone-900 leading-relaxed">
-              {t.m1.jitDesc}
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm font-mono">
-              <div className="p-2.5 rounded-lg bg-[#FFFDF8] border-2 border-stone-900">
-                <span className="text-stone-700 block">{t.m1.tupleDeforming}</span>
-                <span className="text-emerald-900 font-bold">{t.m1.unrolledOffsets}</span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-[#FFFDF8] border-2 border-stone-900">
-                <span className="text-stone-700 block">{t.m1.exprEval}</span>
-                <span className="text-emerald-900 font-bold">{t.m1.threeInstructions}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
