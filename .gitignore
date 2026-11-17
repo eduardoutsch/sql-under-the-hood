@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build & coverage outputs
+dist/
+coverage/
+
+# Environment & local files
+.env
+.env.*
+*.local
+
+# OS / Editor
+.DS_Store
+Thumbs.db
