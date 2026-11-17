@@ -25,7 +25,7 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen text-stone-900 selection:bg-[#D94E28]/20 selection:text-stone-950 flex flex-col">
+    <div className="min-h-screen overflow-x-hidden text-stone-900 selection:bg-[#D94E28]/20 selection:text-stone-950 flex flex-col">
       <Navbar
         t={vm.t}
         lang={vm.lang}
@@ -42,7 +42,7 @@ export default function App() {
 
       <main
         className={`flex-1 ${
-          vm.presMode ? 'max-w-full px-6 sm:px-12 py-8' : 'max-w-7xl px-4 sm:px-6 py-8'
+          vm.presMode ? 'max-w-full px-3 sm:px-12 py-5 sm:py-8' : 'max-w-7xl px-3 sm:px-6 py-5 sm:py-8'
         } mx-auto w-full`}
       >
         {vm.activeModule === null ? (
@@ -71,11 +71,11 @@ export default function App() {
 
             <div className="animate-fadeIn">{modules[vm.activeModule]}</div>
 
-            <div className="mt-10 pt-6 border-t-2 border-stone-900/15 flex items-center justify-between">
+            <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t-2 border-stone-900/15 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={vm.prevModule}
                 disabled={vm.activeModule === 0}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#FFFDF8] hover:bg-[#EFE9DC] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono font-semibold text-stone-900 transition cursor-pointer"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#FFFDF8] hover:bg-[#EFE9DC] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs sm:text-sm font-mono font-semibold text-stone-900 transition cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" /> {vm.t.prevMod}
               </button>
@@ -87,7 +87,7 @@ export default function App() {
               <button
                 onClick={vm.nextModule}
                 disabled={vm.activeModule === MODULE_COUNT - 1}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono text-[#FFFDF8] font-bold transition cursor-pointer"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs sm:text-sm font-mono text-[#FFFDF8] font-bold transition cursor-pointer"
               >
                 {vm.t.nextMod} <ChevronRight className="w-4 h-4" />
               </button>

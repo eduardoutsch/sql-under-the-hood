@@ -15,10 +15,10 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Hero Banner */}
-      <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6">
+      <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-4 sm:p-8 flex flex-col md:flex-row items-center gap-4 sm:gap-6">
         <div
           aria-hidden="true"
-          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center font-mono text-2xl sm:text-3xl font-bold text-[#B83B1D] shrink-0 animate-springIn select-none"
+          className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center font-mono text-xl sm:text-3xl font-bold text-[#B83B1D] shrink-0 animate-springIn select-none"
         >
           {'{^_^}'}
         </div>
