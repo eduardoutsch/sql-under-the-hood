@@ -409,6 +409,14 @@ html.dark .bg-rose-100 {
   background-color: #2e1018 !important;
 }
 
+html.dark .bg-stone-200 {
+  background-color: #111c17 !important;
+}
+
+html.dark .border-stone-500 {
+  border-color: #2c4036 !important;
+}
+
 html.dark .text-stone-900,
 html.dark .text-stone-950,
 html.dark .text-stone-800,
