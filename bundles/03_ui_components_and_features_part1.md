@@ -45,7 +45,7 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen text-stone-900 selection:bg-[#D94E28]/20 selection:text-stone-950 flex flex-col">
+    <div className="min-h-screen overflow-x-hidden text-stone-900 selection:bg-[#D94E28]/20 selection:text-stone-950 flex flex-col">
       <Navbar
         t={vm.t}
         lang={vm.lang}
@@ -62,7 +62,7 @@ export default function App() {
 
       <main
         className={`flex-1 ${
-          vm.presMode ? 'max-w-full px-6 sm:px-12 py-8' : 'max-w-7xl px-4 sm:px-6 py-8'
+          vm.presMode ? 'max-w-full px-3 sm:px-12 py-5 sm:py-8' : 'max-w-7xl px-3 sm:px-6 py-5 sm:py-8'
         } mx-auto w-full`}
       >
         {vm.activeModule === null ? (
@@ -91,11 +91,11 @@ export default function App() {
 
             <div className="animate-fadeIn">{modules[vm.activeModule]}</div>
 
-            <div className="mt-10 pt-6 border-t-2 border-stone-900/15 flex items-center justify-between">
+            <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t-2 border-stone-900/15 flex flex-wrap items-center justify-between gap-3">
               <button
                 onClick={vm.prevModule}
                 disabled={vm.activeModule === 0}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#FFFDF8] hover:bg-[#EFE9DC] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono font-semibold text-stone-900 transition cursor-pointer"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#FFFDF8] hover:bg-[#EFE9DC] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs sm:text-sm font-mono font-semibold text-stone-900 transition cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" /> {vm.t.prevMod}
               </button>
@@ -107,7 +107,7 @@ export default function App() {
               <button
                 onClick={vm.nextModule}
                 disabled={vm.activeModule === MODULE_COUNT - 1}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono text-[#FFFDF8] font-bold transition cursor-pointer"
+                className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs sm:text-sm font-mono text-[#FFFDF8] font-bold transition cursor-pointer"
               >
                 {vm.t.nextMod} <ChevronRight className="w-4 h-4" />
               </button>
@@ -233,38 +233,38 @@ export function Navbar({
   onToggleTheme,
   onTogglePresMode,
 }: NavbarProps) {
-  const containerWidth = presMode ? 'max-w-full px-6' : 'max-w-7xl px-4 sm:px-6';
+  const containerWidth = presMode ? 'max-w-full px-3 sm:px-6' : 'max-w-7xl px-3 sm:px-6';
 
   return (
     <header className="sticky top-0 z-40 bg-[#EFE9DC]/95 backdrop-blur-md border-b-2 border-stone-900">
-      <div className={`${containerWidth} mx-auto h-16 flex items-center justify-between gap-3`}>
+      <div className={`${containerWidth} mx-auto h-14 sm:h-16 flex items-center justify-between gap-2 sm:gap-3`}>
         <button
           type="button"
           onClick={onGoHome}
-          className="flex items-center gap-3 min-w-0 text-left cursor-pointer group"
+          className="flex items-center gap-2 sm:gap-3 min-w-0 text-left cursor-pointer group"
         >
           <img
             src="/assets/logo.png"
             alt={t.brandTitle}
-            className="w-11 h-11 rounded-full border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-contain bg-[#F6F2EA] p-0.5 shrink-0 group-hover:scale-105 transition-transform"
+            className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-contain bg-[#F6F2EA] p-0.5 shrink-0 group-hover:scale-105 transition-transform"
           />
-          <div className="truncate">
-            <div className="text-xs font-mono font-semibold uppercase tracking-[0.12em] text-[#B83B1D]">
+          <div className="min-w-0">
+            <div className="text-[10px] sm:text-xs font-mono font-semibold uppercase tracking-[0.1em] sm:tracking-[0.12em] text-[#B83B1D] truncate">
               {t.brandSub}
             </div>
-            <h1 className="font-bold text-base sm:text-lg text-stone-900 tracking-tight truncate group-hover:text-[#B83B1D] transition-colors">
+            <h1 className="font-bold text-sm sm:text-lg text-stone-900 tracking-tight truncate group-hover:text-[#B83B1D] transition-colors">
               {t.brandTitle}
             </h1>
           </div>
         </button>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <button
             type="button"
             onClick={onToggleTheme}
             aria-label={theme === 'dark' ? t.themeLight : t.themeDark}
             title={theme === 'dark' ? t.themeLight : t.themeDark}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none bg-[#FFFDF8] hover:bg-stone-100 text-stone-900 text-xs font-mono font-semibold transition cursor-pointer"
+            className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none bg-[#FFFDF8] hover:bg-stone-100 text-stone-900 text-xs font-mono font-semibold transition cursor-pointer"
           >
             {theme === 'dark' ? (
               <Sun className="w-4 h-4 text-amber-500" />
@@ -276,7 +276,7 @@ export function Navbar({
           <button
             type="button"
             onClick={onTogglePresMode}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-semibold transition cursor-pointer ${
+            className={`flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-semibold transition cursor-pointer ${
               presMode
                 ? 'bg-stone-900 text-[#F6F2EA]'
                 : 'bg-[#FFFDF8] hover:bg-stone-100 text-stone-900'
@@ -289,7 +289,7 @@ export function Navbar({
           <button
             type="button"
             onClick={onToggleLang}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#F6F2EA] font-mono text-xs font-bold transition cursor-pointer"
+            className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-md bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#F6F2EA] font-mono text-xs font-bold transition cursor-pointer"
             title="Toggle Language PT-BR / EN"
           >
             <Globe className="w-3.5 h-3.5 text-[#F59E0B]" />
@@ -298,7 +298,7 @@ export function Navbar({
         </div>
       </div>
 
-      <div className={`${containerWidth} mx-auto flex items-center gap-2 overflow-x-auto pt-1 pb-2.5 no-scrollbar`}>
+      <div className={`${containerWidth} mx-auto flex items-center gap-1.5 sm:gap-2 overflow-x-auto pt-1 pb-2.5 no-scrollbar`}>
         {t.modules.map((mod, idx) => {
           const active = idx === activeModule;
           const Icon = MODULE_ICONS[idx];
@@ -306,7 +306,7 @@ export function Navbar({
             <button
               key={mod.id}
               onClick={() => onSelectModule(idx)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-mono whitespace-nowrap border-2 transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-md text-xs font-mono whitespace-nowrap border-2 transition-all cursor-pointer ${
                 active
                   ? 'bg-[#D94E28] text-[#FFFDF8] border-stone-900 font-bold shadow-[2px_2px_0px_#1c1917]'
                   : 'bg-[#FFFDF8] text-stone-700 border-stone-900/30 hover:border-stone-900 hover:text-stone-900'
@@ -557,22 +557,22 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
 
           {vm.alignMode === 'good' ? (
             <div className="space-y-3">
-              <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 font-mono text-xs text-center">
                 {[0, 1, 2, 3].map((b) => (
                   <div
                     key={b}
-                    className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
+                    className="p-2 sm:p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
                   >
-                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="text-[11px] sm:text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
                     <div className="font-bold mt-0.5">id[{b}]</div>
                   </div>
                 ))}
                 {[4, 5, 6, 7].map((b) => (
                   <div
                     key={b}
-                    className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
+                    className="p-2 sm:p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
                   >
-                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="text-[11px] sm:text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
                     <div className="font-bold mt-0.5">price[{b - 4}]</div>
                   </div>
                 ))}
@@ -585,13 +585,13 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
                 <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
                   {t.m4.flag1Bit}
                 </div>
-                <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
+                <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1 min-w-[140px]">
                   id (32 bits) [Bit 1..32]
                 </div>
                 <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
                   {t.m4.flag1Bit}
                 </div>
-                <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
+                <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1 min-w-[160px]">
                   {t.m4.straddlesWarning}
                 </div>
               </div>
@@ -656,10 +656,10 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Hero Banner */}
-      <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6">
+      <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-4 sm:p-8 flex flex-col md:flex-row items-center gap-4 sm:gap-6">
         <div
           aria-hidden="true"
-          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center font-mono text-2xl sm:text-3xl font-bold text-[#B83B1D] shrink-0 animate-springIn select-none"
+          className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center font-mono text-xl sm:text-3xl font-bold text-[#B83B1D] shrink-0 animate-springIn select-none"
         >
           {'{^_^}'}
         </div>

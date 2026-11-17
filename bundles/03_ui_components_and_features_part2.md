@@ -27,15 +27,15 @@ export function LexerStageView({ tokens, banner }: { tokens: readonly SqlToken[]
       <div className="text-sm font-mono font-semibold uppercase tracking-wider text-stone-700 text-center">
         {banner}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         {tokens.map((tok, i) => (
           <div
             key={i}
             style={{ animationDelay: `${i * 55}ms` }}
-            className={`animate-springIn px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
+            className={`animate-springIn px-3 py-2 sm:px-4 sm:py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
           >
-            <div className="text-base font-bold">{tok.text}</div>
-            <div className="text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
+            <div className="text-sm sm:text-base font-bold">{tok.text}</div>
+            <div className="text-[11px] sm:text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
           </div>
         ))}
       </div>
@@ -55,11 +55,11 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
         <div className="px-4 py-2 rounded-lg bg-[#1C1917] border-2 border-stone-900 text-[#FFFDF8] font-mono text-sm font-bold shadow-[3px_3px_0px_#D94E28]">
           SELECT_QUERY {isRewriter && <span className="text-xs text-amber-300 ml-1">[OID:16384]</span>}
         </div>
-        <div className="w-0.5 h-5 bg-stone-900" />
-        <div className="w-3/4 h-0.5 bg-stone-900" />
-        <div className="grid grid-cols-3 gap-3 w-full mt-0">
+        <div className="w-0.5 h-4 sm:h-5 bg-stone-900" />
+        <div className="hidden sm:block w-3/4 h-0.5 bg-stone-900" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-0">
           <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="hidden sm:block w-0.5 h-4 bg-stone-900" />
             <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
               <div className="text-xs font-mono text-emerald-950 font-bold">TARGET_LIST</div>
               <div className="text-xs font-mono text-stone-800 mt-1">
@@ -70,7 +70,7 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="hidden sm:block w-0.5 h-4 bg-stone-900" />
             <div
               className={`p-3 rounded-lg border-2 border-stone-900 text-center w-full transition-all shadow-[2px_2px_0px_#1c1917] ${
                 isRewriter ? 'bg-blue-100' : 'bg-blue-50'
@@ -86,7 +86,7 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="hidden sm:block w-0.5 h-4 bg-stone-900" />
             <div className="p-3 rounded-lg bg-amber-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
               <div className="text-xs font-mono text-amber-950 font-bold">QUAL (WHERE)</div>
               <div className="text-xs font-mono text-stone-900 mt-1">OpExpr [&gt;]</div>
@@ -104,7 +104,7 @@ export function OptimizerStageView({ t }: { t: TranslationBundle }) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900/60 flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-950 border border-rose-900/40">
               {t.m1.candidatePlanA}
             </span>
@@ -122,7 +122,7 @@ export function OptimizerStageView({ t }: { t: TranslationBundle }) {
       </div>
       <div className="p-4 rounded-xl bg-emerald-50 border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-700 text-white font-bold">
               ✓ {t.m1.winner}
             </span>
@@ -234,19 +234,19 @@ export function ExecutionStageView({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-          <div className="bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm space-y-1.5 text-stone-100">
-            <div className="text-amber-400 font-bold mb-2">; LLVM IR -&gt; x86_64 Native JIT Function</div>
-            <div><span className="text-amber-300">eval_qual_jit:</span></div>
-            <div className="pl-4">mov eax, dword ptr [rdi + 16] <span className="text-stone-300">; Direct offset col price</span></div>
-            <div className="pl-4">cmp eax, 100 <span className="text-stone-300">; Hardware ALU compare</span></div>
-            <div className="pl-4">setg al <span className="text-stone-300">; Branchless boolean 0/1</span></div>
-            <div className="pl-4">ret <span className="text-emerald-300">; 0 virtual dispatch!</span></div>
+          <div className="bg-[#1C1917] p-3 sm:p-4 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm space-y-1.5 text-stone-100 overflow-x-auto">
+            <div className="text-amber-400 font-bold mb-2 whitespace-nowrap">; LLVM IR -&gt; x86_64 Native JIT Function</div>
+            <div className="whitespace-nowrap"><span className="text-amber-300">eval_qual_jit:</span></div>
+            <div className="pl-4 whitespace-nowrap">mov eax, dword ptr [rdi + 16] <span className="text-stone-300">; Direct offset col price</span></div>
+            <div className="pl-4 whitespace-nowrap">cmp eax, 100 <span className="text-stone-300">; Hardware ALU compare</span></div>
+            <div className="pl-4 whitespace-nowrap">setg al <span className="text-stone-300">; Branchless boolean 0/1</span></div>
+            <div className="pl-4 whitespace-nowrap">ret <span className="text-emerald-300">; 0 virtual dispatch!</span></div>
           </div>
           <div className="space-y-3">
             <div className="p-3.5 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-sm sm:text-base text-stone-900 leading-relaxed">
               {t.m1.jitDesc}
             </div>
-            <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm font-mono">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm font-mono">
               <div className="p-2.5 rounded-lg bg-[#FFFDF8] border-2 border-stone-900">
                 <span className="text-stone-700 block">{t.m1.tupleDeforming}</span>
                 <span className="text-emerald-900 font-bold">{t.m1.unrolledOffsets}</span>
@@ -293,12 +293,12 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#1C1917] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] p-4 rounded-xl">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#D94E28] text-[#FFFDF8] rounded">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 bg-[#1C1917] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] p-3 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto">
+          <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#D94E28] text-[#FFFDF8] rounded shrink-0">
             {t.m1.sqlInput}
           </span>
-          <code className="font-mono text-sm sm:text-base text-stone-100 whitespace-nowrap">
+          <code className="font-mono text-xs sm:text-base text-stone-100 whitespace-nowrap">
             <span className="text-amber-400 font-semibold">SELECT</span> id, name{' '}
             <span className="text-amber-400 font-semibold">FROM</span> users{' '}
             <span className="text-amber-400 font-semibold">WHERE</span> price &gt;{' '}
@@ -306,7 +306,7 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
           </code>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={vm.togglePlay}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-[#D94E28] hover:bg-[#C2411F] border-2 border-stone-950 text-[#FFFDF8] font-semibold text-sm transition cursor-pointer"
@@ -330,15 +330,18 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
         {t.m1.stages.map((st, idx) => {
           const active = idx === vm.stage;
           const done = idx < vm.stage;
+          const isLast = idx === t.m1.stages.length - 1;
           return (
             <button
               key={st.name}
               onClick={() => vm.selectStage(idx)}
-              className={`text-left p-3 rounded-lg border-2 transition-all cursor-pointer relative ${
+              className={`text-left p-2.5 sm:p-3 rounded-lg border-2 transition-all cursor-pointer relative ${
+                isLast ? 'col-span-2 sm:col-span-1' : ''
+              } ${
                 active
                   ? 'bg-[#FFFDF8] border-stone-900 shadow-[3px_3px_0px_#D94E28]'
                   : done
@@ -514,8 +517,8 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-4 rounded-xl">
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs sm:text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-3.5 sm:p-4 rounded-xl">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 font-mono text-xs sm:text-sm">
           <span className="px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-bold">
             {t.m3.pageSizeBadge}
           </span>
@@ -530,7 +533,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={vm.insert}
             disabled={vm.isPageFull}
@@ -550,7 +553,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
       <div className="relative">
         <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
         <div className="space-y-5 relative overflow-hidden">
-          <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
+          <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px] sm:text-xs font-mono font-semibold text-stone-700">
             <span>Byte 0x0000 (0)</span>
             <span>{t.m3.clickDelete}</span>
             <span>Byte 0x2000 (8192)</span>
@@ -727,7 +730,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
   return (
     <div className="space-y-6">
-      <div className="relative bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
+      <div className="relative bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-3.5 sm:p-5 space-y-4 sm:space-y-5">
         <StageMessageBubble
           label={t.m1.stageNotesLabel}
           badge="02"
@@ -746,7 +749,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs sm:text-sm text-stone-800 font-mono font-semibold">{t.m2.pageSizeLabel}:</span>
             {[4, 8].map((sz) => (
               <button
@@ -772,7 +775,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         {vm.lastStatus && (
           <div
-            className={`animate-springIn px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
+            className={`animate-springIn px-3 sm:px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex flex-wrap items-center justify-between gap-2 ${
               vm.lastStatus === 'hit'
                 ? 'bg-emerald-100 text-emerald-950'
                 : 'bg-amber-100 text-amber-950'
@@ -789,15 +792,15 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           <div className="h-1.5 w-full rounded-full animate-busFlow" aria-hidden="true" />
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900 space-y-3">
-            <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-stone-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs sm:text-sm font-mono text-stone-800">
               <span className="flex items-center gap-1.5 text-[#B83B1D] font-bold">
                 <HardDrive className="w-4 h-4" /> {t.m2.diskHeapTitle}
               </span>
               <span className="font-semibold">{t.m2.clickToFetch}</span>
             </div>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {[0, 1, 2, 3, 4].map((pg) => {
                 const inRam = vm.bufferPool.includes(pg);
                 const selected = vm.activePage === pg;
@@ -805,7 +808,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                   <button
                     key={pg}
                     onClick={() => vm.fetchPage(pg)}
-                    className={`p-3 rounded-lg border-2 border-stone-900 font-mono text-center transition-all cursor-pointer ${
+                    className={`p-2 sm:p-3 rounded-lg border-2 border-stone-900 font-mono text-center transition-all cursor-pointer ${
                       selected
                         ? 'bg-[#D94E28] text-white shadow-[2px_2px_0px_#1c1917] -translate-y-0.5'
                         : inRam
@@ -823,14 +826,14 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1C1917] border-2 border-stone-900 space-y-3">
-            <div className="flex items-center justify-between text-xs sm:text-sm font-mono">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-[#1C1917] border-2 border-stone-900 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs sm:text-sm font-mono">
               <span className="flex items-center gap-1.5 text-amber-300 font-bold">
                 <Layers className="w-4 h-4" /> {t.m2.bufferPoolTitle}
               </span>
               <span className="text-stone-200">{vm.bufferPool.length}/3 frames</span>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
               {[0, 1, 2].map((frameIdx) => {
                 const pageId = vm.bufferPool[frameIdx];
                 const occupied = pageId !== undefined;
@@ -862,7 +865,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
         defaultOpen={false}
       >
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
             <span className="text-sm text-stone-700 flex items-center gap-2 font-semibold">
               <Activity className="w-4 h-4 text-[#D94E28]" />
               {t.m2.humanScale}

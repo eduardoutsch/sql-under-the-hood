@@ -158,8 +158,8 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-4 rounded-xl">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-3.5 sm:p-4 rounded-xl">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={vm.toggleRunning}
             className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#D94E28] hover:bg-[#C2411F] border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-semibold text-sm cursor-pointer"
@@ -181,7 +181,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs sm:text-sm">
+        <div className="flex flex-wrap items-center gap-2 font-mono text-xs sm:text-sm">
           <span className="text-stone-800 font-semibold">{t.m5.simdWidth}:</span>
           <button
             onClick={() => vm.selectLaneWidth(8)}
@@ -206,9 +206,9 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#b45309] rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#b45309] rounded-xl p-3.5 sm:p-5 space-y-3 sm:space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-stone-900">
                 PostgreSQL / SQLite / MySQL
@@ -221,14 +221,14 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
             </div>
           </div>
 
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex items-center justify-between">
+          <div className="bg-[#1C1917] p-2.5 sm:p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex flex-wrap items-center justify-between gap-1.5">
             <span className="text-stone-100">
               Filter.next() → Scan.next() <span className="text-amber-300">{t.m5.rowPerCall}</span>
             </span>
             <span className="text-rose-300 font-semibold">{t.m5.dispatchTax}</span>
           </div>
 
-          <div className="grid grid-cols-8 gap-1.5">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
             {DATASET_PRICES.map((price, idx) => {
               const processed = idx < vm.progress.volcanoIdx;
               const current = idx === vm.progress.volcanoIdx && vm.progress.volcanoIdx < DATASET_PRICES.length;
@@ -236,9 +236,9 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
               return (
                 <div
                   key={idx}
-                  className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
+                  className={`p-1.5 sm:p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     current
-                      ? 'animate-laneSweep bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
+                      ? 'animate-laneSweep bg-[#D94E28] text-white font-bold border-stone-900 scale-105 sm:scale-110'
                       : processed
                       ? match
                         ? 'bg-emerald-100 border-stone-900 text-emerald-950 font-bold'
@@ -252,7 +252,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
             })}
           </div>
 
-          <div className="flex justify-between text-xs sm:text-sm font-mono text-stone-800 pt-1">
+          <div className="flex flex-wrap justify-between gap-2 text-xs sm:text-sm font-mono text-stone-800 pt-1">
             <span>
               {t.m5.rowsLabel}: {vm.progress.volcanoIdx}/{DATASET_PRICES.length}
             </span>
@@ -262,8 +262,8 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
           </div>
         </div>
 
-        <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] rounded-xl p-3.5 sm:p-5 space-y-3 sm:space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-950 border border-stone-900">
                 ClickHouse / DuckDB / Photon
@@ -276,14 +276,14 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
             </div>
           </div>
 
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex items-center justify-between">
+          <div className="bg-[#1C1917] p-2.5 sm:p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex flex-wrap items-center justify-between gap-1.5">
             <span className="text-emerald-300">
               {vm.simdLane === 8 ? 'vpcmpgtd ymm0, ymm1' : 'vpcmpgtd zmm0, zmm1'} ({vm.simdLane} {t.m5.lanesPerClk})
             </span>
             <span className="text-amber-300 font-semibold">{t.m5.branchlessSimd}</span>
           </div>
 
-          <div className="grid grid-cols-8 gap-1.5">
+          <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5">
             {DATASET_PRICES.map((price, idx) => {
               const processed = idx < vm.progress.simdIdx;
               const inNextVector = idx >= vm.progress.simdIdx && idx < vm.progress.simdIdx + vm.simdLane;
@@ -291,7 +291,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
               return (
                 <div
                   key={idx}
-                  className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
+                  className={`p-1.5 sm:p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     inNextVector
                       ? 'animate-laneSweep bg-blue-100 border-stone-900 text-blue-950 font-semibold'
                       : processed
