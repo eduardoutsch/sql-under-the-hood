@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { TranslationBundle } from '../../core/i18n';
 import { useBitInspectorViewModel } from './useBitInspectorViewModel';
 
@@ -86,10 +87,9 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
         </div>
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h4 className="font-bold text-base sm:text-lg text-stone-900">{t.m4.alignTitle}</h4>
-          <div className="flex items-center gap-2">
+      <AccordionPanel title={t.m4.alignTitle} badge="64-BIT" defaultOpen={false}>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             <button
               onClick={() => vm.setAlignMode('good')}
               className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
@@ -111,52 +111,52 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
               ✕ {t.m4.badAlign}
             </button>
           </div>
-        </div>
 
-        {vm.alignMode === 'good' ? (
-          <div className="space-y-3">
-            <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
-              {[0, 1, 2, 3].map((b) => (
-                <div
-                  key={b}
-                  className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
-                >
-                  <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
-                  <div className="font-bold mt-0.5">id[{b}]</div>
-                </div>
-              ))}
-              {[4, 5, 6, 7].map((b) => (
-                <div
-                  key={b}
-                  className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
-                >
-                  <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
-                  <div className="font-bold mt-0.5">price[{b - 4}]</div>
-                </div>
-              ))}
+          {vm.alignMode === 'good' ? (
+            <div className="space-y-3">
+              <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
+                {[0, 1, 2, 3].map((b) => (
+                  <div
+                    key={b}
+                    className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
+                  >
+                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="font-bold mt-0.5">id[{b}]</div>
+                  </div>
+                ))}
+                {[4, 5, 6, 7].map((b) => (
+                  <div
+                    key={b}
+                    className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
+                  >
+                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="font-bold mt-0.5">price[{b - 4}]</div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs sm:text-sm text-emerald-950 font-mono font-semibold">{t.m4.goodDesc}</p>
             </div>
-            <p className="text-xs sm:text-sm text-emerald-950 font-mono font-semibold">{t.m4.goodDesc}</p>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-1 overflow-x-auto font-mono text-xs sm:text-sm text-center pb-1">
-              <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
-                {t.m4.flag1Bit}
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center gap-1 overflow-x-auto font-mono text-xs sm:text-sm text-center pb-1">
+                <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
+                  {t.m4.flag1Bit}
+                </div>
+                <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
+                  id (32 bits) [Bit 1..32]
+                </div>
+                <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
+                  {t.m4.flag1Bit}
+                </div>
+                <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
+                  {t.m4.straddlesWarning}
+                </div>
               </div>
-              <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
-                id (32 bits) [Bit 1..32]
-              </div>
-              <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
-                {t.m4.flag1Bit}
-              </div>
-              <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
-                {t.m4.straddlesWarning}
-              </div>
+              <p className="text-xs sm:text-sm text-rose-950 font-mono font-semibold">{t.m4.badDesc}</p>
             </div>
-            <p className="text-xs sm:text-sm text-rose-950 font-mono font-semibold">{t.m4.badDesc}</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </AccordionPanel>
     </div>
   );
 }

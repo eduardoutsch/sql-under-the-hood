@@ -96,7 +96,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
                   key={idx}
                   className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     current
-                      ? 'bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
+                      ? 'animate-laneSweep bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
                       : processed
                       ? match
                         ? 'bg-emerald-100 border-stone-900 text-emerald-950 font-bold'
@@ -151,7 +151,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
                   key={idx}
                   className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     inNextVector
-                      ? 'bg-blue-100 border-stone-900 text-blue-950 font-semibold'
+                      ? 'animate-laneSweep bg-blue-100 border-stone-900 text-blue-950 font-semibold'
                       : processed
                       ? match
                         ? 'bg-emerald-700 border-stone-900 text-white font-bold'
