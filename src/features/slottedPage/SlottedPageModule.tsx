@@ -1,5 +1,6 @@
 import { Plus, Zap } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
+import { StageMessageBubble } from '../../components/StageMessageBubble';
 import type { TranslationBundle } from '../../core/i18n';
 import { PAGE_SIZE_BYTES } from '../../core/slottedPage';
 import { useSlottedPageViewModel } from './useSlottedPageViewModel';
@@ -51,7 +52,8 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         </div>
       </div>
 
-      <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
+      <div className="relative">
+        <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
         <div className="space-y-5 relative overflow-hidden">
           <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
             <span>Byte 0x0000 (0)</span>
@@ -133,6 +135,17 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
           </div>
         </div>
       </AccordionPanel>
+
+        <StageMessageBubble
+          label={t.m1.stageNotesLabel}
+          badge="03"
+          title={t.m3.messageTitle}
+          body={t.m3.messageBody}
+          open={vm.notesOpen}
+          placement={vm.bubblePlacement}
+          onToggle={vm.toggleNotes}
+        />
+      </div>
 
       <AccordionPanel title={t.m3.legendSectionLabel} badge="8 KB" defaultOpen={false}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">

@@ -1,5 +1,6 @@
 import { Activity, HardDrive, Layers, Pause, Play } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
+import { StageMessageBubble } from '../../components/StageMessageBubble';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import { useStorageHierarchyViewModel } from './useStorageHierarchyViewModel';
 
@@ -17,7 +18,16 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
+      <div className="relative bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
+        <StageMessageBubble
+          label={t.m1.stageNotesLabel}
+          badge="02"
+          title={t.m2.messageTitle}
+          body={t.m2.messageBody}
+          open={vm.notesOpen}
+          placement={vm.bubblePlacement}
+          onToggle={vm.toggleNotes}
+        />
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-bold text-base sm:text-lg text-stone-900">{t.m2.bufferSimTitle}</h3>

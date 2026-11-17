@@ -1,5 +1,6 @@
-import { CheckCircle2, ChevronRight, MessageCircle, Pause, Play, RotateCcw, X } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
+import { StageMessageBubble } from '../../components/StageMessageBubble';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import {
   AstStageView,
@@ -114,46 +115,15 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
           </div>
         </AccordionPanel>
 
-        <div
-          className={`mt-3 lg:mt-0 lg:absolute lg:z-30 flex flex-col gap-2 ${vm.bubblePlacement.alignClass} ${
-            vm.bubblePlacement.side === 'left' ? 'lg:left-6 lg:items-start' : 'lg:right-16 lg:items-end'
-          }`}
-        >
-          <button
-            type="button"
-            onClick={vm.toggleNotes}
-            aria-expanded={vm.notesOpen}
-            aria-label={t.m1.stageNotesLabel}
-            title={t.m1.stageNotesLabel}
-            className="w-10 h-10 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-amber-300 flex items-center justify-center transition cursor-pointer hover:scale-105"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </button>
-
-          {vm.notesOpen && (
-            <div
-              role="status"
-              className={`animate-springIn relative w-full lg:w-72 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl p-4 pr-10 ${
-                vm.bubblePlacement.side === 'left' ? 'lg:rounded-tl-sm' : 'lg:rounded-tr-sm'
-              }`}
-            >
-              <button
-                type="button"
-                onClick={vm.toggleNotes}
-                aria-label="Close stage note"
-                className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-              <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
-                0{vm.stage + 1} • {t.m1.stages[vm.stage].name}
-              </div>
-              <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">
-                {t.m1.stages[vm.stage].desc}
-              </p>
-            </div>
-          )}
-        </div>
+        <StageMessageBubble
+          label={t.m1.stageNotesLabel}
+          badge={`0${vm.stage + 1}`}
+          title={t.m1.stages[vm.stage].name}
+          body={t.m1.stages[vm.stage].desc}
+          open={vm.notesOpen}
+          placement={vm.bubblePlacement}
+          onToggle={vm.toggleNotes}
+        />
       </div>
     </div>
   );
