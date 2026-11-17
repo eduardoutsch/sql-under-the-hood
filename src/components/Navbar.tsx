@@ -51,10 +51,10 @@ export function Navbar({
             <Database className="w-5 h-5 stroke-[2.25]" />
           </div>
           <div className="truncate">
-            <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.18em] text-[#B83B1D]">
+            <div className="text-xs font-mono font-semibold uppercase tracking-[0.12em] text-[#B83B1D]">
               {t.brandSub}
             </div>
-            <h1 className="font-bold text-sm sm:text-base text-stone-900 tracking-tight truncate">
+            <h1 className="font-bold text-base sm:text-lg text-stone-900 tracking-tight truncate">
               {t.brandTitle}
             </h1>
           </div>

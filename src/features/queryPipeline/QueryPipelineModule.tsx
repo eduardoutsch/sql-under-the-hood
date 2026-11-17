@@ -25,7 +25,7 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#1C1917] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] p-4 rounded-xl">
         <div className="flex items-center gap-3 overflow-x-auto">
           <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#D94E28] text-[#FFFDF8] rounded">
-            SQL INPUT
+            {t.m1.sqlInput}
           </span>
           <code className="font-mono text-sm sm:text-base text-stone-100 whitespace-nowrap">
             <span className="text-amber-400 font-semibold">SELECT</span> id, name{' '}
@@ -91,14 +91,14 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
       <div className="bg-[#EFE9DC] border-2 border-stone-900 rounded-xl p-4 flex items-start gap-3">
         <Sparkles className="w-5 h-5 text-[#D94E28] shrink-0 mt-0.5" />
         <div>
-          <h4 className="text-sm font-bold text-stone-900">{t.m1.stages[vm.stage].name}</h4>
-          <p className="text-sm text-stone-700 mt-0.5">{t.m1.stages[vm.stage].desc}</p>
+          <h4 className="text-base font-bold text-stone-900">{t.m1.stages[vm.stage].name}</h4>
+          <p className="text-sm sm:text-base text-stone-800 mt-0.5 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
         </div>
       </div>
 
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[340px] flex flex-col justify-center">
-        {vm.stage === 0 && <LexerStageView tokens={vm.tokens} />}
-        {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} lang={lang} />}
+        {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
+        {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
         {vm.stage === 3 && <OptimizerStageView t={t} />}
         {vm.stage === 4 && (
           <ExecutionStageView

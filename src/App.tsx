@@ -44,21 +44,21 @@ export default function App() {
         } mx-auto w-full`}
       >
         <div className="mb-7 border-l-4 border-[#D94E28] pl-4">
-          <div className="flex items-center gap-2 text-xs font-mono font-semibold text-[#B83B1D] uppercase tracking-[0.15em]">
+          <div className="flex items-center gap-2 text-sm font-mono font-semibold text-[#B83B1D] uppercase tracking-[0.12em]">
             <span>
               {vm.t.moduleLabel} 0{vm.activeModule + 1} / 0{MODULE_COUNT}
             </span>
             <span>•</span>
-            <span>SQL INTERNALS LAB</span>
+            <span>{vm.t.labSubtitle}</span>
           </div>
           <h2
             className={`${
-              vm.presMode ? 'text-2xl sm:text-4xl' : 'text-2xl sm:text-3xl'
+              vm.presMode ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
             } font-bold text-stone-900 tracking-tight mt-1`}
           >
             {vm.activeTitle}
           </h2>
-          <p className="text-stone-600 text-sm sm:text-base mt-2 max-w-4xl leading-relaxed">
+          <p className="text-stone-800 text-base sm:text-lg mt-2 max-w-4xl leading-relaxed">
             {vm.activeSubtitle}
           </p>
         </div>
@@ -74,8 +74,8 @@ export default function App() {
             <ChevronLeft className="w-4 h-4" /> {vm.t.prevMod}
           </button>
 
-          <span className="text-xs font-mono text-stone-500 hidden sm:inline">
-            ← / → Keyboard Navigation
+          <span className="text-sm font-mono text-stone-700 hidden sm:inline">
+            {vm.t.keyboardNav}
           </span>
 
           <button
