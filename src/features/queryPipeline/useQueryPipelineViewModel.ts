@@ -16,6 +16,7 @@ export function useQueryPipelineViewModel(lang: Locale) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
   const [vmPc, setVmPc] = useState(0);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const tokens = getSqlTokens();
   const opcodes = getVdbeOpcodes(lang);
@@ -37,10 +38,12 @@ export function useQueryPipelineViewModel(lang: Locale) {
     isPlaying,
     execTarget,
     vmPc,
+    notesOpen,
     tokens,
     opcodes,
     setExecTarget,
     setVmPc,
+    toggleNotes: () => setNotesOpen((prev) => !prev),
     selectStage: (idx: number) => {
       setIsPlaying(false);
       setStage(idx);

@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { CheckCircle2, ChevronRight, MessageCircle, Pause, Play, RotateCcw, X } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import {
@@ -89,6 +89,44 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
+      {/* Stage Notes Chat Bubble Trigger & Animated Bubble */}
+      <div className="relative flex flex-col items-start gap-3">
+        <button
+          type="button"
+          onClick={vm.toggleNotes}
+          aria-expanded={vm.notesOpen}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-[#FFFDF8] font-mono text-xs sm:text-sm font-bold transition cursor-pointer"
+        >
+          <MessageCircle className="w-4 h-4 text-amber-300" />
+          <span>{t.m1.stageNotesLabel}</span>
+          <span className="px-1.5 py-0.5 rounded bg-[#D94E28] text-white text-xs">
+            0{vm.stage + 1}
+          </span>
+        </button>
+
+        {vm.notesOpen && (
+          <div
+            role="status"
+            className="animate-springIn relative max-w-2xl bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl rounded-tl-sm p-4 pr-10"
+          >
+            <button
+              type="button"
+              onClick={vm.toggleNotes}
+              aria-label="Close stage note"
+              className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+              0{vm.stage + 1} • {t.m1.stages[vm.stage].name}
+            </div>
+            <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">
+              {t.m1.stages[vm.stage].desc}
+            </p>
+          </div>
+        )}
+      </div>
+
       <AccordionPanel
         title={t.m1.stages[vm.stage].name}
         badge={`0${vm.stage + 1}`}
@@ -110,14 +148,6 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
             />
           )}
         </div>
-      </AccordionPanel>
-
-      <AccordionPanel
-        title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
-        badge="INFO"
-        defaultOpen={false}
-      >
-        <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
       </AccordionPanel>
     </div>
   );
