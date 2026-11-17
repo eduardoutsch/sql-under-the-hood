@@ -14,12 +14,13 @@ Interactive educational web application visualizing how relational and analytica
 4. **Bits & Alignment (`04`)**: Centralized Null Bitmap (`t_bits`) and 64-bit CPU word alignment comparison.
 5. **Volcano vs. SIMD (`05`)**: Row-at-a-time Volcano iterator vs. AVX2 (8× int32) and AVX-512 (16× int32) vectorized execution with Selection Vectors.
 
-## Architecture (Functional Core, Humble View)
+## Architecture (MVVM & Functional Core)
 
-- `src/core/`: Pure, deterministic domain modules with zero UI/DOM dependencies.
-- `src/components/`: Reusable shell components (`Navbar`, `DeployModal`).
-- `src/features/`: Thin, idempotent React views projecting domain state.
-- `tests/`: Vitest + Testing Library suites strictly mirroring `src/`.
+- [`src/core/`](src/core/README.md): Deterministic domain modules with zero UI/DOM dependencies.
+- [`src/components/`](src/components/README.md): Shared shell components (`Navbar`, `DeployModal`).
+- [`src/features/`](src/features/README.md): Feature modules split into ViewModel hooks (`use*ViewModel.ts`) and dumb views (`*Module.tsx`).
+- [`tests/`](tests/README.md): Vitest + Testing Library suites mirroring `src/`.
+- [`bundles/`](bundles/README.md): Modular Markdown snapshots for NotebookLM.
 
 ## Development & Testing
 
