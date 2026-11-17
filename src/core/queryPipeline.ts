@@ -93,7 +93,7 @@ export interface ChatBubblePlacement {
   alignClass: string;
 }
 
-const ALIGN_CLASSES = ['lg:top-16', 'lg:top-1/2 lg:-translate-y-1/2', 'lg:bottom-4'] as const;
+const ALIGN_CLASSES = ['lg:-top-5', 'lg:-top-4', 'lg:-top-6'] as const;
 
 /**
  * Pick a side (left/right) and vertical alignment for the stage Message chat bubble.
