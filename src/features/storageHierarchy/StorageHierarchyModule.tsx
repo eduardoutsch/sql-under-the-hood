@@ -1,12 +1,6 @@
-import { useState } from 'react';
 import { Activity, HardDrive, Layers, Pause, Play } from 'lucide-react';
 import type { Locale, TranslationBundle } from '../../core/i18n';
-import {
-  type BufferFetchStatus,
-  computeByteOffset,
-  fetchBufferPage,
-  getHardwareTiers,
-} from '../../core/storageHierarchy';
+import { useStorageHierarchyViewModel } from './useStorageHierarchyViewModel';
 
 export interface StorageHierarchyModuleProps {
   t: TranslationBundle;
@@ -14,25 +8,11 @@ export interface StorageHierarchyModuleProps {
 }
 
 /**
- * Interactive visualizer for Module 2: Hardware latency scale and 3-frame
- * DRAM Buffer Pool + Disk Heap File byte-offset simulator.
+ * Dumb View for Module 2 (Storage Hierarchy & Buffer Pool Simulator).
+ * Projects state and dispatches user actions via `useStorageHierarchyViewModel`.
  */
 export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps) {
-  const [pulsing, setPulsing] = useState(true);
-  const [pageSizeKb, setPageSizeKb] = useState(8);
-  const [bufferPool, setBufferPool] = useState<number[]>([0, 3]);
-  const [activePage, setActivePage] = useState(2);
-  const [lastStatus, setLastStatus] = useState<BufferFetchStatus | null>(null);
-
-  const tiers = getHardwareTiers(lang);
-  const byteOffset = computeByteOffset(activePage, pageSizeKb);
-
-  const handleFetchPage = (pageNum: number) => {
-    setActivePage(pageNum);
-    const result = fetchBufferPage(bufferPool, pageNum);
-    setLastStatus(result.status);
-    setBufferPool(result.nextPool);
-  };
+  const vm = useStorageHierarchyViewModel(lang);
 
   return (
     <div className="space-y-6">
@@ -43,16 +23,16 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             {t.m2.realLatency} vs. {t.m2.humanScale}
           </h3>
           <button
-            onClick={() => setPulsing((p) => !p)}
+            onClick={vm.togglePulsing}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono text-cyan-300 border border-slate-700 cursor-pointer"
           >
-            {pulsing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
-            {pulsing ? t.pause : t.m2.startPulse}
+            {vm.pulsing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            {vm.pulsing ? t.pause : t.m2.startPulse}
           </button>
         </div>
 
         <div className="space-y-3">
-          {tiers.map((tier) => (
+          {vm.tiers.map((tier) => (
             <div key={tier.name} className="bg-slate-950/70 border border-slate-800/80 rounded-xl p-3">
               <div className="flex flex-wrap items-center justify-between text-xs font-mono mb-2 gap-2">
                 <span className={`font-bold ${tier.text}`}>{tier.name}</span>
@@ -65,7 +45,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
               </div>
               <div className="relative h-3 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
                 <div className={`h-full opacity-25 ${tier.color} ${tier.barWidth}`} />
-                {pulsing && (
+                {vm.pulsing && (
                   <div
                     style={{ animation: `pulseRace ${tier.animDurationSec}s linear infinite` }}
                     className={`absolute top-0 bottom-0 w-8 rounded-full ${tier.color} shadow-[0_0_12px_currentColor]`}
@@ -82,8 +62,8 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           <div>
             <h3 className="font-semibold text-slate-100">{t.m2.bufferSimTitle}</h3>
             <p className="text-xs font-mono text-cyan-400 mt-0.5">
-              {t.m2.formula}: Offset = Page#{activePage} × {pageSizeKb * 1024} bytes ={' '}
-              <span className="text-amber-300 font-bold">{byteOffset.toLocaleString()} bytes</span>
+              {t.m2.formula}: Offset = Page#{vm.activePage} × {vm.pageSizeKb * 1024} bytes ={' '}
+              <span className="text-amber-300 font-bold">{vm.byteOffset.toLocaleString()} bytes</span>
             </p>
           </div>
 
@@ -92,19 +72,16 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             {[4, 8].map((sz) => (
               <button
                 key={sz}
-                onClick={() => setPageSizeKb(sz)}
+                onClick={() => vm.setPageSizeKb(sz)}
                 className={`px-2.5 py-1 rounded text-xs font-mono cursor-pointer ${
-                  pageSizeKb === sz ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'
+                  vm.pageSizeKb === sz ? 'bg-cyan-500 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'
                 }`}
               >
                 {sz} KB
               </button>
             ))}
             <button
-              onClick={() => {
-                setBufferPool([]);
-                setLastStatus(null);
-              }}
+              onClick={vm.clearBufferPool}
               className="px-2.5 py-1 rounded text-xs font-mono bg-slate-800 hover:bg-slate-700 text-rose-300 border border-slate-700 cursor-pointer"
             >
               {t.m2.evictBtn}
@@ -112,18 +89,18 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           </div>
         </div>
 
-        {lastStatus && (
+        {vm.lastStatus && (
           <div
             className={`px-4 py-2.5 rounded-xl font-mono text-xs font-bold border flex items-center justify-between ${
-              lastStatus === 'hit'
+              vm.lastStatus === 'hit'
                 ? 'bg-emerald-950/50 border-emerald-400 text-emerald-300'
                 : 'bg-amber-950/50 border-amber-400 text-amber-300'
             }`}
           >
             <span>
-              Page #{activePage}: {lastStatus === 'hit' ? t.m2.hit : t.m2.miss}
+              Page #{vm.activePage}: {vm.lastStatus === 'hit' ? t.m2.hit : t.m2.miss}
             </span>
-            <span>{lastStatus === 'hit' ? '~100 ns' : '~16,000 ns'}</span>
+            <span>{vm.lastStatus === 'hit' ? '~100 ns' : '~16,000 ns'}</span>
           </div>
         )}
 
@@ -137,12 +114,12 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </div>
             <div className="grid grid-cols-5 gap-2">
               {[0, 1, 2, 3, 4].map((pg) => {
-                const inRam = bufferPool.includes(pg);
-                const selected = activePage === pg;
+                const inRam = vm.bufferPool.includes(pg);
+                const selected = vm.activePage === pg;
                 return (
                   <button
                     key={pg}
-                    onClick={() => handleFetchPage(pg)}
+                    onClick={() => vm.fetchPage(pg)}
                     className={`p-3 rounded-xl border font-mono text-center transition-all cursor-pointer ${
                       selected
                         ? 'border-cyan-400 bg-cyan-950/50 scale-105'
@@ -152,7 +129,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                     }`}
                   >
                     <div className="text-xs font-bold text-slate-200">Pág #{pg}</div>
-                    <div className="text-[10px] text-slate-500 mt-1">@{pg * pageSizeKb}KB</div>
+                    <div className="text-[10px] text-slate-500 mt-1">@{pg * vm.pageSizeKb}KB</div>
                   </button>
                 );
               })}
@@ -164,11 +141,11 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
               <span className="flex items-center gap-1.5 text-violet-400 font-bold">
                 <Layers className="w-4 h-4" /> MEMORY BUFFER POOL (3 Frames LRU)
               </span>
-              <span className="text-slate-400">{bufferPool.length}/3 frames</span>
+              <span className="text-slate-400">{vm.bufferPool.length}/3 frames</span>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[0, 1, 2].map((frameIdx) => {
-                const pageId = bufferPool[frameIdx];
+                const pageId = vm.bufferPool[frameIdx];
                 const occupied = pageId !== undefined;
                 return (
                   <div
