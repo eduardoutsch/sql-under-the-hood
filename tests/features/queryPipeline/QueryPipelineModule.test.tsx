@@ -13,15 +13,15 @@ describe('QueryPipelineModule component', () => {
 
     // Step to Parser (AST)
     await user.click(screen.getByText(I18N.pt.step));
-    expect(screen.getByText(/Abstract Syntax Tree/i)).toBeInTheDocument();
+    expect(screen.getByText(I18N.pt.m1.astHeading)).toBeInTheDocument();
 
     // Step to Rewriter
     await user.click(screen.getByText(I18N.pt.step));
-    expect(screen.getByText(/Query Tree Reescrita/i)).toBeInTheDocument();
+    expect(screen.getByText(/Árvore de Consulta Reescrita/i)).toBeInTheDocument();
 
     // Step to Optimizer (CBO)
     await user.click(screen.getByText(I18N.pt.step));
-    expect(screen.getByText('CANDIDATE PLAN A')).toBeInTheDocument();
+    expect(screen.getByText(I18N.pt.m1.candidatePlanA)).toBeInTheDocument();
 
     // Step to Execution (VM / JIT)
     await user.click(screen.getByText(I18N.pt.step));

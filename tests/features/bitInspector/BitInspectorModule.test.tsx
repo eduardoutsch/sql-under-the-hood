@@ -9,11 +9,11 @@ describe('BitInspectorModule component', () => {
     const user = userEvent.setup();
     render(<BitInspectorModule t={I18N.pt} />);
 
-    expect(screen.getByText(/Payload Size: 12 Bytes/)).toBeInTheDocument();
+    expect(screen.getByText(/Tamanho do Payload: 12 Bytes/)).toBeInTheDocument();
 
     // Toggle coupon (initially NULL) to present
     await user.click(screen.getByText(/coupon:/));
-    expect(screen.getByText(/Payload Size: 16 Bytes/)).toBeInTheDocument();
+    expect(screen.getByText(/Tamanho do Payload: 16 Bytes/)).toBeInTheDocument();
   });
 
   it('switches between good and bad 64-bit word alignment modes', async () => {
