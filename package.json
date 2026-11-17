@@ -5,12 +5,12 @@
   "type": "module",
   "description": "Interactive SQL internals visualizer (Do SELECT ao Silício) built with React, Vite, and Tailwind CSS for Cloudflare Pages.",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "dev": "vite --config config/vite.config.ts",
+    "build": "tsc -p config/tsconfig.json --noEmit && vite build --config config/vite.config.ts",
+    "preview": "vite preview --config config/vite.config.ts",
+    "test": "vitest run --config config/vite.config.ts",
+    "test:watch": "vitest --config config/vite.config.ts",
+    "test:coverage": "vitest run --config config/vite.config.ts --coverage",
     "bundles": "node bundles/generate_bundles.mjs"
   },
   "dependencies": {
