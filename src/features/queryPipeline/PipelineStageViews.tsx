@@ -8,15 +8,15 @@ export function LexerStageView({ tokens, banner }: { tokens: readonly SqlToken[]
       <div className="text-sm font-mono font-semibold uppercase tracking-wider text-stone-700 text-center">
         {banner}
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         {tokens.map((tok, i) => (
           <div
             key={i}
             style={{ animationDelay: `${i * 55}ms` }}
-            className={`animate-springIn px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
+            className={`animate-springIn px-3 py-2 sm:px-4 sm:py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
           >
-            <div className="text-base font-bold">{tok.text}</div>
-            <div className="text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
+            <div className="text-sm sm:text-base font-bold">{tok.text}</div>
+            <div className="text-[11px] sm:text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
           </div>
         ))}
       </div>
@@ -36,11 +36,11 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
         <div className="px-4 py-2 rounded-lg bg-[#1C1917] border-2 border-stone-900 text-[#FFFDF8] font-mono text-sm font-bold shadow-[3px_3px_0px_#D94E28]">
           SELECT_QUERY {isRewriter && <span className="text-xs text-amber-300 ml-1">[OID:16384]</span>}
         </div>
-        <div className="w-0.5 h-5 bg-stone-900" />
-        <div className="w-3/4 h-0.5 bg-stone-900" />
-        <div className="grid grid-cols-3 gap-3 w-full mt-0">
+        <div className="w-0.5 h-4 sm:h-5 bg-stone-900" />
+        <div className="hidden sm:block w-3/4 h-0.5 bg-stone-900" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full mt-0">
           <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="hidden sm:block w-0.5 h-4 bg-stone-900" />
             <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
               <div className="text-xs font-mono text-emerald-950 font-bold">TARGET_LIST</div>
               <div className="text-xs font-mono text-stone-800 mt-1">
@@ -51,7 +51,7 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="hidden sm:block w-0.5 h-4 bg-stone-900" />
             <div
               className={`p-3 rounded-lg border-2 border-stone-900 text-center w-full transition-all shadow-[2px_2px_0px_#1c1917] ${
                 isRewriter ? 'bg-blue-100' : 'bg-blue-50'
@@ -67,7 +67,7 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
             </div>
           </div>
           <div className="flex flex-col items-center">
-            <div className="w-0.5 h-4 bg-stone-900" />
+            <div className="hidden sm:block w-0.5 h-4 bg-stone-900" />
             <div className="p-3 rounded-lg bg-amber-50 border-2 border-stone-900 text-center w-full shadow-[2px_2px_0px_#1c1917]">
               <div className="text-xs font-mono text-amber-950 font-bold">QUAL (WHERE)</div>
               <div className="text-xs font-mono text-stone-900 mt-1">OpExpr [&gt;]</div>
@@ -85,7 +85,7 @@ export function OptimizerStageView({ t }: { t: TranslationBundle }) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900/60 flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-950 border border-rose-900/40">
               {t.m1.candidatePlanA}
             </span>
@@ -103,7 +103,7 @@ export function OptimizerStageView({ t }: { t: TranslationBundle }) {
       </div>
       <div className="p-4 rounded-xl bg-emerald-50 border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] flex flex-col justify-between">
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-700 text-white font-bold">
               ✓ {t.m1.winner}
             </span>
@@ -215,19 +215,19 @@ export function ExecutionStageView({
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-          <div className="bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm space-y-1.5 text-stone-100">
-            <div className="text-amber-400 font-bold mb-2">; LLVM IR -&gt; x86_64 Native JIT Function</div>
-            <div><span className="text-amber-300">eval_qual_jit:</span></div>
-            <div className="pl-4">mov eax, dword ptr [rdi + 16] <span className="text-stone-300">; Direct offset col price</span></div>
-            <div className="pl-4">cmp eax, 100 <span className="text-stone-300">; Hardware ALU compare</span></div>
-            <div className="pl-4">setg al <span className="text-stone-300">; Branchless boolean 0/1</span></div>
-            <div className="pl-4">ret <span className="text-emerald-300">; 0 virtual dispatch!</span></div>
+          <div className="bg-[#1C1917] p-3 sm:p-4 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm space-y-1.5 text-stone-100 overflow-x-auto">
+            <div className="text-amber-400 font-bold mb-2 whitespace-nowrap">; LLVM IR -&gt; x86_64 Native JIT Function</div>
+            <div className="whitespace-nowrap"><span className="text-amber-300">eval_qual_jit:</span></div>
+            <div className="pl-4 whitespace-nowrap">mov eax, dword ptr [rdi + 16] <span className="text-stone-300">; Direct offset col price</span></div>
+            <div className="pl-4 whitespace-nowrap">cmp eax, 100 <span className="text-stone-300">; Hardware ALU compare</span></div>
+            <div className="pl-4 whitespace-nowrap">setg al <span className="text-stone-300">; Branchless boolean 0/1</span></div>
+            <div className="pl-4 whitespace-nowrap">ret <span className="text-emerald-300">; 0 virtual dispatch!</span></div>
           </div>
           <div className="space-y-3">
             <div className="p-3.5 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-sm sm:text-base text-stone-900 leading-relaxed">
               {t.m1.jitDesc}
             </div>
-            <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm font-mono">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm font-mono">
               <div className="p-2.5 rounded-lg bg-[#FFFDF8] border-2 border-stone-900">
                 <span className="text-stone-700 block">{t.m1.tupleDeforming}</span>
                 <span className="text-emerald-900 font-bold">{t.m1.unrolledOffsets}</span>

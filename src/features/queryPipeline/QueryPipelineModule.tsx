@@ -24,12 +24,12 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#1C1917] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] p-4 rounded-xl">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#D94E28] text-[#FFFDF8] rounded">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 bg-[#1C1917] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] p-3 sm:p-4 rounded-xl">
+        <div className="flex items-center gap-2.5 sm:gap-3 overflow-x-auto">
+          <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#D94E28] text-[#FFFDF8] rounded shrink-0">
             {t.m1.sqlInput}
           </span>
-          <code className="font-mono text-sm sm:text-base text-stone-100 whitespace-nowrap">
+          <code className="font-mono text-xs sm:text-base text-stone-100 whitespace-nowrap">
             <span className="text-amber-400 font-semibold">SELECT</span> id, name{' '}
             <span className="text-amber-400 font-semibold">FROM</span> users{' '}
             <span className="text-amber-400 font-semibold">WHERE</span> price &gt;{' '}
@@ -37,7 +37,7 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
           </code>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <button
             onClick={vm.togglePlay}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-[#D94E28] hover:bg-[#C2411F] border-2 border-stone-950 text-[#FFFDF8] font-semibold text-sm transition cursor-pointer"
@@ -61,15 +61,18 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
         {t.m1.stages.map((st, idx) => {
           const active = idx === vm.stage;
           const done = idx < vm.stage;
+          const isLast = idx === t.m1.stages.length - 1;
           return (
             <button
               key={st.name}
               onClick={() => vm.selectStage(idx)}
-              className={`text-left p-3 rounded-lg border-2 transition-all cursor-pointer relative ${
+              className={`text-left p-2.5 sm:p-3 rounded-lg border-2 transition-all cursor-pointer relative ${
+                isLast ? 'col-span-2 sm:col-span-1' : ''
+              } ${
                 active
                   ? 'bg-[#FFFDF8] border-stone-900 shadow-[3px_3px_0px_#D94E28]'
                   : done
