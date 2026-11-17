@@ -6,15 +6,15 @@
 
 - [`.gitignore`](#gitignore)
 - [`AGENTS.md`](#agents-md)
+- [`config/tsconfig.json`](#config-tsconfig-json)
+- [`config/vite.config.ts`](#config-vite-config-ts)
+- [`config/wrangler.toml`](#config-wrangler-toml)
 - [`index.html`](#index-html)
 - [`LICENSE`](#license)
 - [`package.json`](#package-json)
 - [`public/_headers`](#public-headers)
 - [`public/_redirects`](#public-redirects)
 - [`README.md`](#readme-md)
-- [`tsconfig.json`](#tsconfig-json)
-- [`vite.config.ts`](#vite-config-ts)
-- [`wrangler.toml`](#wrangler-toml)
 
 ---
 
@@ -95,6 +95,69 @@ Clean code does NOT substitute for thorough technical documentation.
 
 ---
 > **Note for Autonomous Agents**: You are strictly required to treat this document as the highest-priority directive when planning architecture, suggesting refactoring, or implementing new routines and features (including operations performed via Google Antigravity, OPSX, or autonomous workflows).
+````
+
+## `config/tsconfig.json`
+
+````json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
+  },
+  "include": ["../src", "../tests"]
+}
+````
+
+## `config/vite.config.ts`
+
+````typescript
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+
+const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+export default defineConfig({
+  root: rootDir,
+  plugins: [react(), tailwindcss()],
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: [path.join(rootDir, 'tests/setup.ts')],
+    include: ['tests/**/*.test.{ts,tsx}'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'html', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/main.tsx'],
+    },
+  },
+});
+````
+
+## `config/wrangler.toml`
+
+````toml
+name = "sql-under-the-hood"
+pages_build_output_dir = "../dist"
+compatibility_date = "2025-01-01"
 ````
 
 ## `index.html`
@@ -343,12 +406,12 @@ Clean code does NOT substitute for thorough technical documentation.
   "type": "module",
   "description": "Interactive SQL internals visualizer (Do SELECT ao Silício) built with React, Vite, and Tailwind CSS for Cloudflare Pages.",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "preview": "vite preview",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
+    "dev": "vite --config config/vite.config.ts",
+    "build": "tsc -p config/tsconfig.json --noEmit && vite build --config config/vite.config.ts",
+    "preview": "vite preview --config config/vite.config.ts",
+    "test": "vitest run --config config/vite.config.ts",
+    "test:watch": "vitest --config config/vite.config.ts",
+    "test:coverage": "vitest run --config config/vite.config.ts --coverage",
     "bundles": "node bundles/generate_bundles.mjs"
   },
   "dependencies": {
@@ -436,62 +499,4 @@ npm run build
    npm run build
    npx wrangler pages deploy dist
    ```
-````
-
-## `tsconfig.json`
-
-````json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"]
-  },
-  "include": ["src", "tests"]
-}
-````
-
-## `vite.config.ts`
-
-````typescript
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./tests/setup.ts'],
-    include: ['tests/**/*.test.{ts,tsx}'],
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'html', 'lcov'],
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/main.tsx'],
-    },
-  },
-});
-````
-
-## `wrangler.toml`
-
-````toml
-name = "sql-under-the-hood"
-pages_build_output_dir = "dist"
-compatibility_date = "2025-01-01"
 ````
