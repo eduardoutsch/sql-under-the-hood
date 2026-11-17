@@ -96,8 +96,9 @@ function writeGroupBundles(groupName, files) {
   });
 }
 
+const PRESERVED_MD = new Set(['README.md', 'AGENTS.md', 'GEMINI.md']);
 for (const file of fs.readdirSync(BUNDLES_DIR)) {
-  if (file.endsWith('.md') && file !== 'README.md') fs.unlinkSync(path.join(BUNDLES_DIR, file));
+  if (file.endsWith('.md') && !PRESERVED_MD.has(file)) fs.unlinkSync(path.join(BUNDLES_DIR, file));
 }
 for (const [groupName, files] of Object.entries(collectFiles())) {
   writeGroupBundles(groupName, files);
