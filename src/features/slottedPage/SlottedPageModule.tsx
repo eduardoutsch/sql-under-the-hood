@@ -1,30 +1,19 @@
-import { useState } from 'react';
 import { Plus, Zap } from 'lucide-react';
 import type { TranslationBundle } from '../../core/i18n';
-import {
-  compactSlottedPage,
-  computePageMetrics,
-  INITIAL_TUPLES,
-  insertTuple,
-  markTupleDead,
-  MAX_TUPLES,
-  PAGE_SIZE_BYTES,
-  type SlottedTuple,
-} from '../../core/slottedPage';
+import { PAGE_SIZE_BYTES } from '../../core/slottedPage';
+import { useSlottedPageViewModel } from './useSlottedPageViewModel';
 
 export interface SlottedPageModuleProps {
   t: TranslationBundle;
 }
 
 /**
- * Interactive visualizer for Module 3: 8 KB PostgreSQL Slotted Page layout,
- * forward-growing ItemIdData pointers, and backward-growing HeapTuples.
+ * Dumb View for Module 3 (8 KB PostgreSQL Slotted Page Layout).
+ * Delegates tuple state, metrics, and compaction to `useSlottedPageViewModel`.
  */
 export function SlottedPageModule({ t }: SlottedPageModuleProps) {
-  const [tuples, setTuples] = useState<SlottedTuple[]>([...INITIAL_TUPLES]);
-  const [hoveredSlot, setHoveredSlot] = useState<number | null>(null);
-
-  const { pdLower, pdUpper, freeBytes } = computePageMetrics(tuples);
+  const vm = useSlottedPageViewModel();
+  const { pdLower, pdUpper, freeBytes } = vm.metrics;
 
   return (
     <div className="space-y-6">
@@ -40,14 +29,14 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setTuples((prev) => insertTuple(prev))}
-            disabled={tuples.length >= MAX_TUPLES}
+            onClick={vm.insert}
+            disabled={vm.isPageFull}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-semibold text-xs sm:text-sm transition cursor-pointer"
           >
             <Plus className="w-4 h-4" /> {t.m3.insertBtn}
           </button>
           <button
-            onClick={() => setTuples((prev) => compactSlottedPage(prev))}
+            onClick={vm.compact}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 font-semibold text-xs sm:text-sm transition cursor-pointer"
           >
             <Zap className="w-4 h-4" /> {t.m3.compactBtn}
@@ -68,16 +57,16 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
             <div className="text-[10px] text-violet-200/80">24 Bytes [0..23]</div>
           </div>
 
-          {tuples.map((item) => (
+          {vm.tuples.map((item) => (
             <button
               key={item.slot}
-              onMouseEnter={() => setHoveredSlot(item.slot)}
-              onMouseLeave={() => setHoveredSlot(null)}
-              onClick={() => setTuples((prev) => markTupleDead(prev, item.slot))}
+              onMouseEnter={() => vm.setHoveredSlot(item.slot)}
+              onMouseLeave={() => vm.setHoveredSlot(null)}
+              onClick={() => vm.markDead(item.slot)}
               className={`p-2.5 rounded-xl border font-mono text-left transition-all cursor-pointer ${
                 !item.alive
                   ? 'bg-rose-950/40 border-rose-500/40 text-rose-400 line-through opacity-70'
-                  : hoveredSlot === item.slot
+                  : vm.hoveredSlot === item.slot
                   ? 'bg-cyan-500/30 border-cyan-300 scale-105 shadow-lg'
                   : 'bg-cyan-950/50 border-cyan-500/40 text-cyan-300'
               }`}
@@ -99,9 +88,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
           <div className="text-lg font-bold text-slate-200 mt-1">
             {freeBytes} Bytes ({((freeBytes / PAGE_SIZE_BYTES) * 100).toFixed(1)}%)
           </div>
-          {tuples.length >= MAX_TUPLES && (
-            <div className="text-xs text-amber-400 mt-1">{t.m3.pageFull}</div>
-          )}
+          {vm.isPageFull && <div className="text-xs text-amber-400 mt-1">{t.m3.pageFull}</div>}
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
@@ -109,16 +96,16 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
             ← pd_upper
           </div>
 
-          {[...tuples].reverse().map((item) => (
+          {[...vm.tuples].reverse().map((item) => (
             <button
               key={item.slot}
-              onMouseEnter={() => setHoveredSlot(item.slot)}
-              onMouseLeave={() => setHoveredSlot(null)}
-              onClick={() => setTuples((prev) => markTupleDead(prev, item.slot))}
+              onMouseEnter={() => vm.setHoveredSlot(item.slot)}
+              onMouseLeave={() => vm.setHoveredSlot(null)}
+              onClick={() => vm.markDead(item.slot)}
               className={`p-3 rounded-xl border font-mono text-left transition-all cursor-pointer ${
                 !item.alive
                   ? 'bg-rose-950/30 border-rose-500/30 text-rose-400/70 opacity-60'
-                  : hoveredSlot === item.slot
+                  : vm.hoveredSlot === item.slot
                   ? 'bg-emerald-500/30 border-emerald-300 scale-105 shadow-lg'
                   : 'bg-emerald-950/50 border-emerald-500/40 text-emerald-200'
               }`}
