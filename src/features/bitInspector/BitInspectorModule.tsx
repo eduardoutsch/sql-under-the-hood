@@ -139,22 +139,22 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
 
           {vm.alignMode === 'good' ? (
             <div className="space-y-3">
-              <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
+              <div className="grid grid-cols-4 sm:grid-cols-8 gap-1.5 font-mono text-xs text-center">
                 {[0, 1, 2, 3].map((b) => (
                   <div
                     key={b}
-                    className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
+                    className="p-2 sm:p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
                   >
-                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="text-[11px] sm:text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
                     <div className="font-bold mt-0.5">id[{b}]</div>
                   </div>
                 ))}
                 {[4, 5, 6, 7].map((b) => (
                   <div
                     key={b}
-                    className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
+                    className="p-2 sm:p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
                   >
-                    <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
+                    <div className="text-[11px] sm:text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
                     <div className="font-bold mt-0.5">price[{b - 4}]</div>
                   </div>
                 ))}
@@ -167,13 +167,13 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
                 <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
                   {t.m4.flag1Bit}
                 </div>
-                <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
+                <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1 min-w-[140px]">
                   id (32 bits) [Bit 1..32]
                 </div>
                 <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
                   {t.m4.flag1Bit}
                 </div>
-                <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
+                <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1 min-w-[160px]">
                   {t.m4.straddlesWarning}
                 </div>
               </div>
