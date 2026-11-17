@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DeployModal } from './components/DeployModal';
 import { Navbar } from './components/Navbar';
 import { MODULE_COUNT } from './core/appNavigation';
 import { BitInspectorModule } from './features/bitInspector/BitInspectorModule';
@@ -35,7 +34,6 @@ export default function App() {
         onSelectModule={vm.selectModule}
         onToggleLang={vm.toggleLang}
         onTogglePresMode={vm.togglePresMode}
-        onOpenDeployModal={vm.openDeployModal}
       />
 
       <main
@@ -87,12 +85,6 @@ export default function App() {
           </button>
         </div>
       </main>
-
-      <DeployModal
-        isOpen={vm.showDeployModal}
-        t={vm.t}
-        onClose={vm.closeDeployModal}
-      />
     </div>
   );
 }

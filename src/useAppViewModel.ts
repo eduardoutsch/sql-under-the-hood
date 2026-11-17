@@ -4,13 +4,12 @@ import { DEFAULT_LOCALE, getTranslations, type Locale, toggleLocale } from './co
 
 /**
  * ViewModel for the top-level App shell.
- * Manages locale, active module index, presentation mode, modal state, and keyboard shortcuts.
+ * Manages locale, active module index, presentation mode, and keyboard shortcuts.
  */
 export function useAppViewModel() {
   const [lang, setLang] = useState<Locale>(DEFAULT_LOCALE);
   const [activeModule, setActiveModule] = useState(0);
   const [presMode, setPresMode] = useState(false);
-  const [showDeployModal, setShowDeployModal] = useState(false);
 
   const t = getTranslations(lang);
   const progressPct = computeProgressPct(activeModule, t.modules.length);
@@ -30,7 +29,6 @@ export function useAppViewModel() {
     t,
     activeModule,
     presMode,
-    showDeployModal,
     progressPct,
     activeTitle: t.modules[activeModule].title,
     activeSubtitle: subtitles[activeModule],
@@ -39,7 +37,5 @@ export function useAppViewModel() {
     nextModule: () => setActiveModule((m) => stepModuleIndex(m, 1)),
     toggleLang: () => setLang((prev) => toggleLocale(prev)),
     togglePresMode: () => setPresMode((prev) => !prev),
-    openDeployModal: () => setShowDeployModal(true),
-    closeDeployModal: () => setShowDeployModal(false),
   };
 }

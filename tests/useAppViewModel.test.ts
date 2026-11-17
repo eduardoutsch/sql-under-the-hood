@@ -3,16 +3,15 @@ import { describe, expect, it } from 'vitest';
 import { useAppViewModel } from '../src/useAppViewModel';
 
 describe('useAppViewModel', () => {
-  it('initializes with pt locale, module 0, and closed modal', () => {
+  it('initializes with pt locale, module 0, and 20% progress', () => {
     const { result } = renderHook(() => useAppViewModel());
     expect(result.current.lang).toBe('pt');
     expect(result.current.activeModule).toBe(0);
     expect(result.current.presMode).toBe(false);
-    expect(result.current.showDeployModal).toBe(false);
     expect(result.current.progressPct).toBe(20);
   });
 
-  it('handles language toggle, presentation mode, modal, and keyboard navigation', () => {
+  it('handles language toggle, presentation mode, and keyboard navigation', () => {
     const { result } = renderHook(() => useAppViewModel());
 
     act(() => result.current.toggleLang());
@@ -20,11 +19,6 @@ describe('useAppViewModel', () => {
 
     act(() => result.current.togglePresMode());
     expect(result.current.presMode).toBe(true);
-
-    act(() => result.current.openDeployModal());
-    expect(result.current.showDeployModal).toBe(true);
-    act(() => result.current.closeDeployModal());
-    expect(result.current.showDeployModal).toBe(false);
 
     act(() => {
       fireEvent.keyDown(window, { key: 'ArrowRight' });

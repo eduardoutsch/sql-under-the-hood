@@ -25,11 +25,5 @@ describe('App integration', () => {
 
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
     expect(screen.getByText(/Module 02 \/ 05/)).toBeInTheDocument();
-
-    // Open and close Cloudflare Deploy modal
-    await user.click(screen.getByText('Cloudflare Deploy'));
-    expect(screen.getByText('Deploy to Cloudflare Pages + Vite')).toBeInTheDocument();
-    await user.click(screen.getByText('Close'));
-    expect(screen.queryByText('Deploy to Cloudflare Pages + Vite')).not.toBeInTheDocument();
   });
 });
