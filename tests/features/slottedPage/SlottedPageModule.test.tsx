@@ -23,5 +23,9 @@ describe('SlottedPageModule component', () => {
     await user.click(screen.getByText(I18N.pt.m3.compactBtn));
     expect(screen.queryByText('LP_DEAD (0)')).not.toBeInTheDocument();
     expect(screen.getByText('pd_lower: 36 B')).toBeInTheDocument();
+
+    // Toggle floating message bubble
+    await user.click(screen.getByRole('button', { name: I18N.pt.m1.stageNotesLabel }));
+    expect(screen.getByRole('status')).toHaveTextContent(I18N.pt.m3.messageBody);
   });
 });

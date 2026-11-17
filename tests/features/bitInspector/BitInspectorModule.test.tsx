@@ -9,10 +9,11 @@ describe('BitInspectorModule component', () => {
     const user = userEvent.setup();
     render(<BitInspectorModule t={I18N.pt} />);
 
+    expect(screen.getByText(I18N.pt.m4.clickPrompt)).toBeInTheDocument();
     expect(screen.getByText(/Tamanho do Payload: 12 Bytes/)).toBeInTheDocument();
 
     // Toggle coupon (initially NULL) to present
-    await user.click(screen.getByText(/coupon:/));
+    await user.click(screen.getByRole('button', { name: /coupon:/i }));
     expect(screen.getByText(/Tamanho do Payload: 16 Bytes/)).toBeInTheDocument();
   });
 

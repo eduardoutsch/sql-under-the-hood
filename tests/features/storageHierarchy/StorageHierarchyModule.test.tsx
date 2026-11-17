@@ -35,5 +35,9 @@ describe('StorageHierarchyModule component', () => {
     // Evict buffer pool
     await user.click(screen.getByText(I18N.en.m2.evictBtn));
     expect(screen.getByText('0/3 frames')).toBeInTheDocument();
+
+    // Toggle floating message bubble
+    await user.click(screen.getByRole('button', { name: I18N.en.m1.stageNotesLabel }));
+    expect(screen.getByRole('status')).toHaveTextContent(I18N.en.m2.messageBody);
   });
 });

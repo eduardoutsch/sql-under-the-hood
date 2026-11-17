@@ -13,41 +13,46 @@ export interface BitInspectorModuleProps {
  */
 export function BitInspectorModule({ t }: BitInspectorModuleProps) {
   const vm = useBitInspectorViewModel();
+  const maxBytes = vm.cols.reduce((acc, col) => acc + col.bytes, 0);
+  const fillPct = maxBytes > 0 ? Math.round((vm.payloadBytes / maxBytes) * 100) : 0;
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {vm.cols.map((col, idx) => (
-          <button
-            key={col.key}
-            onClick={() => vm.toggleNull(idx)}
-            className={`p-4 rounded-xl border-2 border-stone-900 text-left transition-all cursor-pointer shadow-[3px_3px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
-              col.isNull ? 'bg-amber-100' : 'bg-[#FFFDF8] hover:bg-[#EFE9DC]'
-            }`}
-          >
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-stone-800 font-semibold">
-                col[{idx}] • {col.type}
-              </span>
-              <span
-                className={`px-2 py-0.5 rounded font-bold border border-stone-900 ${
-                  col.isNull ? 'bg-amber-300 text-stone-950' : 'bg-emerald-200 text-emerald-950'
-                }`}
-              >
-                bit={col.isNull ? '0' : '1'}
-              </span>
-            </div>
-            <div className="text-base sm:text-lg font-mono font-bold text-stone-900 mt-2">
-              {col.key}:{' '}
-              <span className={col.isNull ? 'text-[#B83B1D] italic' : 'text-blue-900'}>
-                {col.isNull ? 'NULL' : col.val}
-              </span>
-            </div>
-            <div className="text-xs font-mono text-stone-800 mt-1.5">
-              Hex: {col.isNull ? t.m4.zeroBytesStored : col.hex}
-            </div>
-          </button>
-        ))}
+      <div className="space-y-3">
+        <p className="text-sm sm:text-base font-semibold text-stone-800">{t.m4.clickPrompt}</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {vm.cols.map((col, idx) => (
+            <button
+              key={col.key}
+              onClick={() => vm.toggleNull(idx)}
+              className={`p-4 rounded-xl border-2 border-stone-900 text-left transition-all cursor-pointer shadow-[3px_3px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none ${
+                col.isNull ? 'bg-amber-100' : 'bg-[#FFFDF8] hover:bg-[#EFE9DC]'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 text-xs font-mono">
+                <span className="text-stone-700 font-semibold">{col.type}</span>
+                <span
+                  className={`px-2 py-0.5 rounded font-bold border border-stone-900 ${
+                    col.isNull ? 'bg-amber-300 text-stone-950' : 'bg-emerald-200 text-emerald-950'
+                  }`}
+                >
+                  {col.isNull ? t.m4.nullBadge : t.m4.presentBadge}
+                </span>
+              </div>
+              <div className="text-base sm:text-lg font-mono font-bold text-stone-900 mt-2">
+                {col.key}:{' '}
+                <span className={col.isNull ? 'text-[#B83B1D] italic' : 'text-blue-900'}>
+                  {col.isNull ? 'NULL' : col.val}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs font-mono text-stone-800 mt-2 pt-2 border-t border-stone-900/15">
+                <span>bit={col.isNull ? '0' : '1'}</span>
+                <span>{col.isNull ? t.m4.zeroBytesStored : col.hex}</span>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       <AccordionPanel title={t.m4.bitmapTitle} badge="t_bits" defaultOpen={true}>
@@ -59,11 +64,25 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
             </div>
           </div>
 
+          <div className="w-full h-2.5 bg-stone-200 rounded-full overflow-hidden border border-stone-900">
+            <div
+              className="h-full bg-[#D94E28] transition-all duration-300"
+              style={{ width: `${fillPct}%` }}
+            />
+          </div>
+
           <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
             <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
               <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
               <div className="text-lg font-bold tracking-widest text-white mt-0.5">
                 0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
+              </div>
+              <div className="flex items-center justify-center gap-2 mt-1.5 text-[11px] text-stone-300">
+                {vm.cols.map((col) => (
+                  <span key={col.key}>
+                    {col.key}:{col.isNull ? '0' : '1'}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -73,7 +92,7 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
               col.isNull ? null : (
                 <div
                   key={col.key}
-                  className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
+                  className="animate-springIn p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
                 >
                   <div className="text-xs text-emerald-300">
                     {col.key} ({col.bytes}B)
@@ -88,27 +107,34 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
 
       <AccordionPanel title={t.m4.alignTitle} badge="64-BIT" defaultOpen={false}>
         <div className="space-y-4">
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <button
-              onClick={() => vm.setAlignMode('good')}
-              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
-                vm.alignMode === 'good'
-                  ? 'bg-emerald-700 text-white shadow-[2px_2px_0px_#1c1917]'
-                  : 'bg-[#EFE9DC] text-stone-900'
-              }`}
-            >
-              ✓ {t.m4.goodAlign}
-            </button>
-            <button
-              onClick={() => vm.setAlignMode('bad')}
-              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
-                vm.alignMode === 'bad'
-                  ? 'bg-rose-700 text-white shadow-[2px_2px_0px_#1c1917]'
-                  : 'bg-[#EFE9DC] text-stone-900'
-              }`}
-            >
-              ✕ {t.m4.badAlign}
-            </button>
+          <p className="text-xs sm:text-sm text-stone-800 leading-relaxed">{t.m4.alignExplain}</p>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-mono text-xs font-bold">
+              {vm.alignMode === 'good' ? t.m4.oneReadLabel : t.m4.twoReadsLabel}
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => vm.setAlignMode('good')}
+                className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
+                  vm.alignMode === 'good'
+                    ? 'bg-emerald-700 text-white shadow-[2px_2px_0px_#1c1917]'
+                    : 'bg-[#EFE9DC] text-stone-900'
+                }`}
+              >
+                ✓ {t.m4.goodAlign}
+              </button>
+              <button
+                onClick={() => vm.setAlignMode('bad')}
+                className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
+                  vm.alignMode === 'bad'
+                    ? 'bg-rose-700 text-white shadow-[2px_2px_0px_#1c1917]'
+                    : 'bg-[#EFE9DC] text-stone-900'
+                }`}
+              >
+                ✕ {t.m4.badAlign}
+              </button>
+            </div>
           </div>
 
           {vm.alignMode === 'good' ? (
