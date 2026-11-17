@@ -113,7 +113,15 @@ export function computePayloadBytes(columns: readonly TupleColumn[]): number {
 
 export type Locale = 'pt' | 'en';
 
-export const DEFAULT_LOCALE: Locale = 'pt';
+export const DEFAULT_LOCALE: Locale = 'en';
+export const LOCALE_STORAGE_KEY = 'sql_hood_locale';
+
+/**
+ * Resolve initial locale from persisted storage: defaults to EN unless PT was saved.
+ */
+export function resolveInitialLocale(stored: string | null): Locale {
+  return stored === 'pt' ? 'pt' : DEFAULT_LOCALE;
+}
 
 export interface ModuleMeta {
   id: number;
@@ -133,6 +141,8 @@ export interface TranslationBundle {
   keyboardNav: string;
   presMode: string;
   exitPres: string;
+  themeDark: string;
+  themeLight: string;
   cfDeploy: string;
   moduleLabel: string;
   prevMod: string;
@@ -260,6 +270,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
     keyboardNav: '← / → Navegação por Teclado',
     presMode: 'Modo Apresentação',
     exitPres: 'Sair da Apresentação',
+    themeDark: 'Modo Escuro',
+    themeLight: 'Modo Claro',
     cfDeploy: 'Deploy Cloudflare',
     moduleLabel: 'Módulo',
     prevMod: 'Módulo Anterior',
@@ -450,6 +462,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
     keyboardNav: '← / → Keyboard Navigation',
     presMode: 'Presentation Mode',
     exitPres: 'Exit Presentation',
+    themeDark: 'Dark Mode',
+    themeLight: 'Light Mode',
     cfDeploy: 'Cloudflare Deploy',
     moduleLabel: 'Module',
     prevMod: 'Previous Module',

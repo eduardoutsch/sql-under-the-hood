@@ -1,6 +1,6 @@
 # 03_ui_components_and_features_part2
 
-> Generated snapshot containing 9 file(s).
+> Generated snapshot containing 8 file(s).
 
 ## Table of Contents
 
@@ -12,14 +12,13 @@
 - [`src/features/storageHierarchy/StorageHierarchyModule.tsx`](#src-features-storagehierarchy-storagehierarchymodule-tsx)
 - [`src/features/storageHierarchy/useStorageHierarchyViewModel.ts`](#src-features-storagehierarchy-usestoragehierarchyviewmodel-ts)
 - [`src/features/volcanoSimd/useVolcanoSimdViewModel.ts`](#src-features-volcanosimd-usevolcanosimdviewmodel-ts)
-- [`src/features/volcanoSimd/VolcanoVsSimdModule.tsx`](#src-features-volcanosimd-volcanovssimdmodule-tsx)
 
 ---
 
 ## `src/features/queryPipeline/QueryPipelineModule.tsx`
 
 ````tsx
-import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { CheckCircle2, ChevronRight, MessageCircle, Pause, Play, RotateCcw, X } from 'lucide-react';
 import { AccordionPanel } from '../../components/AccordionPanel';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import {
@@ -110,6 +109,44 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
+      {/* Stage Notes Chat Bubble Trigger & Animated Bubble */}
+      <div className="relative flex flex-col items-start gap-3">
+        <button
+          type="button"
+          onClick={vm.toggleNotes}
+          aria-expanded={vm.notesOpen}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] text-[#FFFDF8] font-mono text-xs sm:text-sm font-bold transition cursor-pointer"
+        >
+          <MessageCircle className="w-4 h-4 text-amber-300" />
+          <span>{t.m1.stageNotesLabel}</span>
+          <span className="px-1.5 py-0.5 rounded bg-[#D94E28] text-white text-xs">
+            0{vm.stage + 1}
+          </span>
+        </button>
+
+        {vm.notesOpen && (
+          <div
+            role="status"
+            className="animate-springIn relative max-w-2xl bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] rounded-2xl rounded-tl-sm p-4 pr-10"
+          >
+            <button
+              type="button"
+              onClick={vm.toggleNotes}
+              aria-label="Close stage note"
+              className="absolute top-2.5 right-2.5 p-1 rounded-md hover:bg-[#EFE9DC] text-stone-700 cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+              0{vm.stage + 1} • {t.m1.stages[vm.stage].name}
+            </div>
+            <p className="text-sm sm:text-base text-stone-900 mt-1 leading-relaxed">
+              {t.m1.stages[vm.stage].desc}
+            </p>
+          </div>
+        )}
+      </div>
+
       <AccordionPanel
         title={t.m1.stages[vm.stage].name}
         badge={`0${vm.stage + 1}`}
@@ -131,14 +168,6 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
             />
           )}
         </div>
-      </AccordionPanel>
-
-      <AccordionPanel
-        title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
-        badge="INFO"
-        defaultOpen={false}
-      >
-        <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
       </AccordionPanel>
     </div>
   );
@@ -166,6 +195,7 @@ export function useQueryPipelineViewModel(lang: Locale) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
   const [vmPc, setVmPc] = useState(0);
+  const [notesOpen, setNotesOpen] = useState(false);
 
   const tokens = getSqlTokens();
   const opcodes = getVdbeOpcodes(lang);
@@ -187,10 +217,12 @@ export function useQueryPipelineViewModel(lang: Locale) {
     isPlaying,
     execTarget,
     vmPc,
+    notesOpen,
     tokens,
     opcodes,
     setExecTarget,
     setVmPc,
+    toggleNotes: () => setNotesOpen((prev) => !prev),
     selectStage: (idx: number) => {
       setIsPlaying(false);
       setStage(idx);
@@ -731,190 +763,5 @@ export function useVolcanoSimdViewModel() {
       setSimdLane(width);
     },
   };
-}
-````
-
-## `src/features/volcanoSimd/VolcanoVsSimdModule.tsx`
-
-````tsx
-import { ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
-import { AccordionPanel } from '../../components/AccordionPanel';
-import type { TranslationBundle } from '../../core/i18n';
-import { DATASET_PRICES } from '../../core/volcanoSimd';
-import { useVolcanoSimdViewModel } from './useVolcanoSimdViewModel';
-
-export interface VolcanoVsSimdModuleProps {
-  t: TranslationBundle;
-}
-
-/**
- * Dumb View for Module 5 (Volcano Iterator vs. Vectorized SIMD Execution).
- * Delegates simulation timers and cycle/index metrics to `useVolcanoSimdViewModel`.
- */
-export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
-  const vm = useVolcanoSimdViewModel();
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-4 rounded-xl">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={vm.toggleRunning}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-md bg-[#D94E28] hover:bg-[#C2411F] border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-semibold text-sm cursor-pointer"
-          >
-            {vm.running ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {vm.running ? t.pause : t.play}
-          </button>
-          <button
-            onClick={vm.step}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-stone-900 font-semibold text-sm border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
-          >
-            {t.step} <ChevronRight className="w-4 h-4" />
-          </button>
-          <button
-            onClick={vm.reset}
-            className="p-2 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 font-mono text-xs sm:text-sm">
-          <span className="text-stone-800 font-semibold">{t.m5.simdWidth}:</span>
-          <button
-            onClick={() => vm.selectLaneWidth(8)}
-            className={`px-3 py-1.5 rounded-md border-2 border-stone-900 cursor-pointer ${
-              vm.simdLane === 8
-                ? 'bg-emerald-700 text-white font-bold shadow-[2px_2px_0px_#1c1917]'
-                : 'bg-[#EFE9DC] text-stone-900'
-            }`}
-          >
-            AVX2 (8× int32)
-          </button>
-          <button
-            onClick={() => vm.selectLaneWidth(16)}
-            className={`px-3 py-1.5 rounded-md border-2 border-stone-900 cursor-pointer ${
-              vm.simdLane === 16
-                ? 'bg-[#1C1917] text-amber-300 font-bold shadow-[2px_2px_0px_#D94E28]'
-                : 'bg-[#EFE9DC] text-stone-900'
-            }`}
-          >
-            AVX-512 (16× int32)
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#b45309] rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-stone-900">
-                PostgreSQL / SQLite / MySQL
-              </span>
-              <h4 className="font-bold text-base sm:text-lg text-stone-900 mt-1.5">{t.m5.volcanoTitle}</h4>
-            </div>
-            <div className="text-right font-mono">
-              <div className="text-xs text-stone-700">{t.m5.cycles}</div>
-              <div className="text-xl font-bold text-amber-900">{vm.volcanoCycles} clk</div>
-            </div>
-          </div>
-
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex items-center justify-between">
-            <span className="text-stone-100">
-              Filter.next() → Scan.next() <span className="text-amber-300">{t.m5.rowPerCall}</span>
-            </span>
-            <span className="text-rose-300 font-semibold">{t.m5.dispatchTax}</span>
-          </div>
-
-          <div className="grid grid-cols-8 gap-1.5">
-            {DATASET_PRICES.map((price, idx) => {
-              const processed = idx < vm.progress.volcanoIdx;
-              const current = idx === vm.progress.volcanoIdx && vm.progress.volcanoIdx < DATASET_PRICES.length;
-              const match = price > 100;
-              return (
-                <div
-                  key={idx}
-                  className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
-                    current
-                      ? 'animate-laneSweep bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
-                      : processed
-                      ? match
-                        ? 'bg-emerald-100 border-stone-900 text-emerald-950 font-bold'
-                        : 'bg-stone-200 border-stone-500 text-stone-700'
-                      : 'bg-[#EFE9DC] border-stone-900/40 text-stone-800'
-                  }`}
-                >
-                  {price}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex justify-between text-xs sm:text-sm font-mono text-stone-800 pt-1">
-            <span>
-              {t.m5.rowsLabel}: {vm.progress.volcanoIdx}/{DATASET_PRICES.length}
-            </span>
-            <span>
-              {t.m5.cacheLocality}: {t.m5.poor}
-            </span>
-          </div>
-        </div>
-
-        <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-950 border border-stone-900">
-                ClickHouse / DuckDB / Photon
-              </span>
-              <h4 className="font-bold text-base sm:text-lg text-stone-900 mt-1.5">{t.m5.vectorTitle}</h4>
-            </div>
-            <div className="text-right font-mono">
-              <div className="text-xs text-stone-700">{t.m5.cycles}</div>
-              <div className="text-xl font-bold text-emerald-900">{vm.simdCycles} clk</div>
-            </div>
-          </div>
-
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex items-center justify-between">
-            <span className="text-emerald-300">
-              {vm.simdLane === 8 ? 'vpcmpgtd ymm0, ymm1' : 'vpcmpgtd zmm0, zmm1'} ({vm.simdLane} {t.m5.lanesPerClk})
-            </span>
-            <span className="text-amber-300 font-semibold">{t.m5.branchlessSimd}</span>
-          </div>
-
-          <div className="grid grid-cols-8 gap-1.5">
-            {DATASET_PRICES.map((price, idx) => {
-              const processed = idx < vm.progress.simdIdx;
-              const inNextVector = idx >= vm.progress.simdIdx && idx < vm.progress.simdIdx + vm.simdLane;
-              const match = price > 100;
-              return (
-                <div
-                  key={idx}
-                  className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
-                    inNextVector
-                      ? 'animate-laneSweep bg-blue-100 border-stone-900 text-blue-950 font-semibold'
-                      : processed
-                      ? match
-                        ? 'bg-emerald-700 border-stone-900 text-white font-bold'
-                        : 'bg-stone-200 border-stone-500 text-stone-700'
-                      : 'bg-[#EFE9DC] border-stone-900/40 text-stone-800'
-                  }`}
-                >
-                  {price}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <AccordionPanel title={t.m5.selVector} badge={`[${vm.survivingIndices.length}]`} defaultOpen={false}>
-        <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm">
-          <div className="text-emerald-300 break-all">
-            sel_vec[{vm.survivingIndices.length}] = [{vm.survivingIndices.join(', ')}]
-          </div>
-        </div>
-      </AccordionPanel>
-    </div>
-  );
 }
 ````

@@ -1,4 +1,4 @@
-# 04_tests
+# 04_tests_part1
 
 > Generated snapshot containing 24 file(s).
 
@@ -13,6 +13,7 @@
 - [`tests/core/queryPipeline.test.ts`](#tests-core-querypipeline-test-ts)
 - [`tests/core/slottedPage.test.ts`](#tests-core-slottedpage-test-ts)
 - [`tests/core/storageHierarchy.test.ts`](#tests-core-storagehierarchy-test-ts)
+- [`tests/core/theme.test.ts`](#tests-core-theme-test-ts)
 - [`tests/core/volcanoSimd.test.ts`](#tests-core-volcanosimd-test-ts)
 - [`tests/features/bitInspector/BitInspectorModule.test.tsx`](#tests-features-bitinspector-bitinspectormodule-test-tsx)
 - [`tests/features/bitInspector/useBitInspectorViewModel.test.ts`](#tests-features-bitinspector-usebitinspectorviewmodel-test-ts)
@@ -27,7 +28,6 @@
 - [`tests/features/volcanoSimd/VolcanoVsSimdModule.test.tsx`](#tests-features-volcanosimd-volcanovssimdmodule-test-tsx)
 - [`tests/README.md`](#tests-readme-md)
 - [`tests/setup.ts`](#tests-setup-ts)
-- [`tests/useAppViewModel.test.ts`](#tests-useappviewmodel-test-ts)
 
 ---
 
@@ -36,38 +36,47 @@
 ````tsx
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import App from '../src/App';
 import { I18N } from '../src/core/i18n';
 
 describe('App integration', () => {
-  it('opens on HomeView, enters modules, returns home via logo, and switches language', async () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+    document.documentElement.classList.remove('dark');
+  });
+
+  it('starts in EN on HomeView, toggles theme & PT-BR, and navigates modules', async () => {
     const user = userEvent.setup();
     render(<App />);
 
+    expect(screen.getByText(I18N.en.home.headline)).toBeInTheDocument();
+
+    // Toggle dark mode
+    await user.click(screen.getByRole('button', { name: I18N.en.themeDark }));
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+
+    // Switch to PT-BR
+    await user.click(screen.getByText('EN'));
     expect(screen.getByText(I18N.pt.home.headline)).toBeInTheDocument();
 
-    // Switch to EN
-    await user.click(screen.getByText('PT-BR'));
-    expect(screen.getByText(I18N.en.home.headline)).toBeInTheDocument();
-
     // Enter Module 1 from Home CTA
-    await user.click(screen.getByText(I18N.en.home.startBtn));
-    expect(screen.getByText(/Module 01 \/ 05/)).toBeInTheDocument();
+    await user.click(screen.getByText(I18N.pt.home.startBtn));
+    expect(screen.getByText(/Módulo 01 \/ 05/)).toBeInTheDocument();
 
     // Navigate via Next Module and keyboard
-    await user.click(screen.getByText('Next Module'));
-    expect(screen.getByText(/Module 02 \/ 05/)).toBeInTheDocument();
+    await user.click(screen.getByText(I18N.pt.nextMod));
+    expect(screen.getByText(/Módulo 02 \/ 05/)).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'ArrowRight' });
-    expect(screen.getByText(/Module 03 \/ 05/)).toBeInTheDocument();
+    expect(screen.getByText(/Módulo 03 \/ 05/)).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
-    expect(screen.getByText(/Module 02 \/ 05/)).toBeInTheDocument();
+    expect(screen.getByText(/Módulo 02 \/ 05/)).toBeInTheDocument();
 
     // Click logo to return to Home page
-    await user.click(screen.getByAltText(I18N.en.brandTitle));
-    expect(screen.getByText(I18N.en.home.headline)).toBeInTheDocument();
+    await user.click(screen.getByAltText(I18N.pt.brandTitle));
+    expect(screen.getByText(I18N.pt.home.headline)).toBeInTheDocument();
   });
 });
 ````
@@ -125,46 +134,52 @@ import { I18N } from '../../src/core/i18n';
 
 describe('Navbar component', () => {
   const baseProps = {
-    t: I18N.pt,
-    lang: 'pt' as const,
+    t: I18N.en,
+    lang: 'en' as const,
+    theme: 'light' as const,
     activeModule: 0 as number | null,
     presMode: false,
     progressPct: 20,
     onGoHome: vi.fn(),
     onSelectModule: vi.fn(),
     onToggleLang: vi.fn(),
+    onToggleTheme: vi.fn(),
     onTogglePresMode: vi.fn(),
   };
 
-  it('renders brand title, logo image, 5 module tabs, and PT-BR toggle by default', () => {
+  it('renders brand title, logo image, 5 module tabs, theme toggle, and EN toggle', () => {
     render(<Navbar {...baseProps} />);
-    expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
-    expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.png');
-    expect(screen.getByText('PT-BR')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(8);
+    expect(screen.getByText('SQL Under the Hood')).toBeInTheDocument();
+    expect(screen.getByAltText('SQL Under the Hood')).toHaveAttribute('src', '/assets/logo.png');
+    expect(screen.getByText('EN')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: I18N.en.themeDark })).toBeInTheDocument();
   });
 
-  it('invokes callbacks when clicking logo, tabs, language toggle, and presentation mode', async () => {
+  it('invokes callbacks when clicking logo, theme, tabs, language toggle, and presentation mode', async () => {
     const user = userEvent.setup();
     render(<Navbar {...baseProps} />);
 
-    await user.click(screen.getByAltText('SQL por Baixo dos Panos'));
+    await user.click(screen.getByAltText('SQL Under the Hood'));
     expect(baseProps.onGoHome).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByText('2. Hierarquia & Buffer'));
+    await user.click(screen.getByRole('button', { name: I18N.en.themeDark }));
+    expect(baseProps.onToggleTheme).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByText('2. Storage & Buffer'));
     expect(baseProps.onSelectModule).toHaveBeenCalledWith(1);
 
-    await user.click(screen.getByText('PT-BR'));
+    await user.click(screen.getByText('EN'));
     expect(baseProps.onToggleLang).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByText('Modo Apresentação'));
+    await user.click(screen.getByText('Presentation Mode'));
     expect(baseProps.onTogglePresMode).toHaveBeenCalledTimes(1);
   });
 
-  it('shows exit presentation label and EN toggle when presMode is true', () => {
-    render(<Navbar {...baseProps} presMode={true} lang="en" t={I18N.en} />);
-    expect(screen.getByText('Exit Presentation')).toBeInTheDocument();
-    expect(screen.getByText('EN')).toBeInTheDocument();
+  it('shows exit presentation label and PT-BR toggle when presMode and pt are active', () => {
+    render(<Navbar {...baseProps} presMode={true} theme="dark" lang="pt" t={I18N.pt} />);
+    expect(screen.getByText('Sair da Apresentação')).toBeInTheDocument();
+    expect(screen.getByText('PT-BR')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: I18N.pt.themeLight })).toBeInTheDocument();
   });
 });
 ````
@@ -239,12 +254,21 @@ describe('bitInspector pure domain logic', () => {
 
 ````typescript
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_LOCALE, getTranslations, I18N, toggleLocale } from '../../src/core/i18n';
+import {
+  DEFAULT_LOCALE,
+  getTranslations,
+  I18N,
+  resolveInitialLocale,
+  toggleLocale,
+} from '../../src/core/i18n';
 
 describe('i18n core dictionary and helpers', () => {
-  it('defaults to pt-BR locale', () => {
-    expect(DEFAULT_LOCALE).toBe('pt');
-    expect(getTranslations('pt').brandTitle).toBe('SQL por Baixo dos Panos');
+  it('defaults to en locale unless pt was previously stored', () => {
+    expect(DEFAULT_LOCALE).toBe('en');
+    expect(resolveInitialLocale(null)).toBe('en');
+    expect(resolveInitialLocale('en')).toBe('en');
+    expect(resolveInitialLocale('pt')).toBe('pt');
+    expect(getTranslations('en').brandTitle).toBe('SQL Under the Hood');
   });
 
   it('provides complete English and Portuguese translations for all 5 modules', () => {
@@ -252,12 +276,12 @@ describe('i18n core dictionary and helpers', () => {
     expect(I18N.en.modules).toHaveLength(5);
     expect(I18N.pt.m1.stages).toHaveLength(5);
     expect(I18N.en.m1.stages).toHaveLength(5);
-    expect(getTranslations('en').brandTitle).toBe('SQL Under the Hood');
+    expect(getTranslations('pt').brandTitle).toBe('SQL por Baixo dos Panos');
   });
 
   it('toggles cleanly between pt and en', () => {
-    expect(toggleLocale('pt')).toBe('en');
     expect(toggleLocale('en')).toBe('pt');
+    expect(toggleLocale('pt')).toBe('en');
   });
 });
 ````
@@ -411,6 +435,30 @@ describe('storageHierarchy pure domain logic', () => {
 });
 ````
 
+## `tests/core/theme.test.ts`
+
+````typescript
+import { describe, expect, it } from 'vitest';
+import { DEFAULT_THEME, resolveInitialTheme, toggleTheme } from '../../src/core/theme';
+
+describe('theme core helpers', () => {
+  it('defaults to light theme when no preference is stored', () => {
+    expect(DEFAULT_THEME).toBe('light');
+    expect(resolveInitialTheme(null)).toBe('light');
+    expect(resolveInitialTheme('invalid')).toBe('light');
+  });
+
+  it('restores dark theme when stored', () => {
+    expect(resolveInitialTheme('dark')).toBe('dark');
+  });
+
+  it('toggles between light and dark', () => {
+    expect(toggleTheme('light')).toBe('dark');
+    expect(toggleTheme('dark')).toBe('light');
+  });
+});
+````
+
 ## `tests/core/volcanoSimd.test.ts`
 
 ````typescript
@@ -552,11 +600,19 @@ import { I18N } from '../../../src/core/i18n';
 import { QueryPipelineModule } from '../../../src/features/queryPipeline/QueryPipelineModule';
 
 describe('QueryPipelineModule component', () => {
-  it('renders initial Lexer stage and steps through all 5 stages', async () => {
+  it('renders initial Lexer stage, toggles stage chat bubble, and steps through all 5 stages', async () => {
     const user = userEvent.setup();
     render(<QueryPipelineModule t={I18N.pt} lang="pt" />);
 
     expect(screen.getAllByText('KEYWORD')).toHaveLength(3);
+
+    // Chat bubble appears and disappears on click
+    const notesBtn = screen.getByRole('button', { name: new RegExp(I18N.pt.m1.stageNotesLabel) });
+    expect(notesBtn).toHaveAttribute('aria-expanded', 'false');
+    await user.click(notesBtn);
+    expect(screen.getByRole('status')).toHaveTextContent(I18N.pt.m1.stages[0].desc);
+    await user.click(screen.getByRole('button', { name: 'Close stage note' }));
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
     // Step to Parser (AST)
     await user.click(screen.getByText(I18N.pt.step));
@@ -582,7 +638,7 @@ describe('QueryPipelineModule component', () => {
     expect(screen.getByText(/eval_qual_jit:/i)).toBeInTheDocument();
   });
 
-  it('auto-advances stages when Play is clicked and resets on Reset', async () => {
+  it('auto-advances stages when Play is clicked and resets on Reset', () => {
     vi.useFakeTimers();
     render(<QueryPipelineModule t={I18N.en} lang="en" />);
 
@@ -636,6 +692,9 @@ describe('useQueryPipelineViewModel', () => {
 
     act(() => result.current.stepVm());
     expect(result.current.vmPc).toBe(1);
+
+    act(() => result.current.toggleNotes());
+    expect(result.current.notesOpen).toBe(true);
 
     act(() => result.current.reset());
     expect(result.current.stage).toBe(0);
@@ -878,51 +937,5 @@ import { afterEach } from 'vitest';
 
 afterEach(() => {
   cleanup();
-});
-````
-
-## `tests/useAppViewModel.test.ts`
-
-````typescript
-import { act, fireEvent, renderHook } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
-import { useAppViewModel } from '../src/useAppViewModel';
-
-describe('useAppViewModel', () => {
-  it('initializes on the home page with pt locale and 0% progress', () => {
-    const { result } = renderHook(() => useAppViewModel());
-    expect(result.current.lang).toBe('pt');
-    expect(result.current.activeModule).toBeNull();
-    expect(result.current.presMode).toBe(false);
-    expect(result.current.progressPct).toBe(0);
-  });
-
-  it('navigates between home and modules via actions and keyboard', () => {
-    const { result } = renderHook(() => useAppViewModel());
-
-    act(() => result.current.toggleLang());
-    expect(result.current.lang).toBe('en');
-
-    act(() => result.current.togglePresMode());
-    expect(result.current.presMode).toBe(true);
-
-    act(() => {
-      fireEvent.keyDown(window, { key: 'ArrowRight' });
-    });
-    expect(result.current.activeModule).toBe(0);
-
-    act(() => {
-      fireEvent.keyDown(window, { key: 'ArrowRight' });
-    });
-    expect(result.current.activeModule).toBe(1);
-
-    act(() => {
-      fireEvent.keyDown(window, { key: 'ArrowLeft' });
-    });
-    expect(result.current.activeModule).toBe(0);
-
-    act(() => result.current.goHome());
-    expect(result.current.activeModule).toBeNull();
-  });
 });
 ````

@@ -49,12 +49,14 @@ export default function App() {
       <Navbar
         t={vm.t}
         lang={vm.lang}
+        theme={vm.theme}
         activeModule={vm.activeModule}
         presMode={vm.presMode}
         progressPct={vm.progressPct}
         onGoHome={vm.goHome}
         onSelectModule={vm.selectModule}
         onToggleLang={vm.toggleLang}
+        onToggleTheme={vm.toggleTheme}
         onTogglePresMode={vm.togglePresMode}
       />
 
@@ -192,36 +194,43 @@ import {
   Layers,
   Maximize2,
   Minimize2,
+  Moon,
+  Sun,
 } from 'lucide-react';
 import type { Locale, TranslationBundle } from '../core/i18n';
+import type { ThemeMode } from '../core/theme';
 
 const MODULE_ICONS = [Code2, HardDrive, Layers, Binary, Cpu] as const;
 
 export interface NavbarProps {
   t: TranslationBundle;
   lang: Locale;
+  theme: ThemeMode;
   activeModule: number | null;
   presMode: boolean;
   progressPct: number;
   onGoHome: () => void;
   onSelectModule: (index: number) => void;
   onToggleLang: () => void;
+  onToggleTheme: () => void;
   onTogglePresMode: () => void;
 }
 
 /**
  * Sticky top navigation bar styled as a hardware lab instrument panel
- * with clickable home logo, binder-tab module selectors, and tactile switches.
+ * with clickable home logo, theme switcher, binder-tab selectors, and language toggle.
  */
 export function Navbar({
   t,
   lang,
+  theme,
   activeModule,
   presMode,
   progressPct,
   onGoHome,
   onSelectModule,
   onToggleLang,
+  onToggleTheme,
   onTogglePresMode,
 }: NavbarProps) {
   const containerWidth = presMode ? 'max-w-full px-6' : 'max-w-7xl px-4 sm:px-6';
@@ -251,6 +260,21 @@ export function Navbar({
 
         <div className="flex items-center gap-2 shrink-0">
           <button
+            type="button"
+            onClick={onToggleTheme}
+            aria-label={theme === 'dark' ? t.themeLight : t.themeDark}
+            title={theme === 'dark' ? t.themeLight : t.themeDark}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none bg-[#FFFDF8] hover:bg-stone-100 text-stone-900 text-xs font-mono font-semibold transition cursor-pointer"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-amber-500" />
+            ) : (
+              <Moon className="w-4 h-4 text-stone-800" />
+            )}
+          </button>
+
+          <button
+            type="button"
             onClick={onTogglePresMode}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-semibold transition cursor-pointer ${
               presMode
@@ -263,6 +287,7 @@ export function Navbar({
           </button>
 
           <button
+            type="button"
             onClick={onToggleLang}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#F6F2EA] font-mono text-xs font-bold transition cursor-pointer"
             title="Toggle Language PT-BR / EN"

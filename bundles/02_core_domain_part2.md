@@ -1,10 +1,11 @@
 # 02_core_domain_part2
 
-> Generated snapshot containing 2 file(s).
+> Generated snapshot containing 3 file(s).
 
 ## Table of Contents
 
 - [`src/core/storageHierarchy.ts`](#src-core-storagehierarchy-ts)
+- [`src/core/theme.ts`](#src-core-theme-ts)
 - [`src/core/volcanoSimd.ts`](#src-core-volcanosimd-ts)
 
 ---
@@ -116,6 +117,33 @@ export function fetchBufferPage(
   const next = [...currentPool, pageNumber];
   const nextPool = next.length > capacity ? next.slice(next.length - capacity) : next;
   return { status: 'miss', nextPool };
+}
+````
+
+## `src/core/theme.ts`
+
+````typescript
+/**
+ * Pure theme helpers for Light (Drafting Paper) and Dark (Carbon Blueprint) modes.
+ */
+
+export type ThemeMode = 'light' | 'dark';
+
+export const DEFAULT_THEME: ThemeMode = 'light';
+export const THEME_STORAGE_KEY = 'sql_hood_theme';
+
+/**
+ * Resolve initial theme from a stored preference string.
+ */
+export function resolveInitialTheme(stored: string | null): ThemeMode {
+  return stored === 'dark' ? 'dark' : DEFAULT_THEME;
+}
+
+/**
+ * Toggle between light and dark theme modes.
+ */
+export function toggleTheme(current: ThemeMode): ThemeMode {
+  return current === 'light' ? 'dark' : 'light';
 }
 ````
 
