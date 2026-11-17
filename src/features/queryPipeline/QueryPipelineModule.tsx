@@ -1,4 +1,5 @@
-import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import {
   AstStageView,
@@ -88,15 +89,7 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
-      <div className="bg-[#EFE9DC] border-2 border-stone-900 rounded-xl p-4 flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-[#D94E28] shrink-0 mt-0.5" />
-        <div>
-          <h4 className="text-base font-bold text-stone-900">{t.m1.stages[vm.stage].name}</h4>
-          <p className="text-sm sm:text-base text-stone-800 mt-0.5 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
-        </div>
-      </div>
-
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[340px] flex flex-col justify-center">
+      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[320px] flex flex-col justify-center">
         {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
         {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
         {vm.stage === 3 && <OptimizerStageView t={t} />}
@@ -112,6 +105,14 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
           />
         )}
       </div>
+
+      <AccordionPanel
+        title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
+        badge={`0${vm.stage + 1}`}
+        defaultOpen={false}
+      >
+        <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
+      </AccordionPanel>
     </div>
   );
 }

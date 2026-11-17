@@ -12,8 +12,8 @@ export function LexerStageView({ tokens, banner }: { tokens: readonly SqlToken[]
         {tokens.map((tok, i) => (
           <div
             key={i}
-            style={{ animationDelay: `${i * 70}ms` }}
-            className={`px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
+            style={{ animationDelay: `${i * 55}ms` }}
+            className={`animate-springIn px-4 py-3 rounded-lg border-2 shadow-[2px_2px_0px_#1c1917] font-mono transition-transform hover:-translate-y-0.5 ${tok.color}`}
           >
             <div className="text-base font-bold">{tok.text}</div>
             <div className="text-xs tracking-wider mt-1 font-semibold">{tok.type}</div>
