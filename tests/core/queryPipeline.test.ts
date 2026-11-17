@@ -37,8 +37,11 @@ describe('queryPipeline pure domain logic', () => {
   });
 
   it('picks left or right chat bubble placement with vertical alignment', () => {
-    expect(pickChatBubblePlacement(0.1, 0.2)).toEqual({ side: 'left', alignClass: 'lg:self-start' });
-    expect(pickChatBubblePlacement(0.8, 0.5)).toEqual({ side: 'right', alignClass: 'lg:self-center' });
-    expect(pickChatBubblePlacement(0.9, 0.9)).toEqual({ side: 'right', alignClass: 'lg:self-end' });
+    expect(pickChatBubblePlacement(0.1, 0.2)).toEqual({ side: 'left', alignClass: 'lg:top-16' });
+    expect(pickChatBubblePlacement(0.8, 0.5)).toEqual({
+      side: 'right',
+      alignClass: 'lg:top-1/2 lg:-translate-y-1/2',
+    });
+    expect(pickChatBubblePlacement(0.9, 0.9)).toEqual({ side: 'right', alignClass: 'lg:bottom-4' });
   });
 });
