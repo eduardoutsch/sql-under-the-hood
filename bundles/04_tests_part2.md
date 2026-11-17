@@ -1,12 +1,25 @@
 # 04_tests_part2
 
-> Generated snapshot containing 1 file(s).
+> Generated snapshot containing 2 file(s).
 
 ## Table of Contents
 
+- [`tests/setup.ts`](#tests-setup-ts)
 - [`tests/useAppViewModel.test.ts`](#tests-useappviewmodel-test-ts)
 
 ---
+
+## `tests/setup.ts`
+
+````typescript
+import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+afterEach(() => {
+  cleanup();
+});
+````
 
 ## `tests/useAppViewModel.test.ts`
 
