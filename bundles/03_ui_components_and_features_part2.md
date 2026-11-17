@@ -136,7 +136,7 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
 
         <div
           className={`mt-3 lg:mt-0 lg:absolute lg:z-30 flex flex-col gap-2 ${vm.bubblePlacement.alignClass} ${
-            vm.bubblePlacement.side === 'left' ? 'lg:left-3 lg:items-start' : 'lg:right-3 lg:items-end'
+            vm.bubblePlacement.side === 'left' ? 'lg:left-6 lg:items-start' : 'lg:right-16 lg:items-end'
           }`}
         >
           <button

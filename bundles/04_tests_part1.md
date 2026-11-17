@@ -1,6 +1,6 @@
 # 04_tests_part1
 
-> Generated snapshot containing 23 file(s).
+> Generated snapshot containing 24 file(s).
 
 ## Table of Contents
 
@@ -27,6 +27,7 @@
 - [`tests/features/volcanoSimd/useVolcanoSimdViewModel.test.ts`](#tests-features-volcanosimd-usevolcanosimdviewmodel-test-ts)
 - [`tests/features/volcanoSimd/VolcanoVsSimdModule.test.tsx`](#tests-features-volcanosimd-volcanovssimdmodule-test-tsx)
 - [`tests/README.md`](#tests-readme-md)
+- [`tests/setup.ts`](#tests-setup-ts)
 
 ---
 
@@ -327,12 +328,9 @@ describe('queryPipeline pure domain logic', () => {
   });
 
   it('picks left or right chat bubble placement with vertical alignment', () => {
-    expect(pickChatBubblePlacement(0.1, 0.2)).toEqual({ side: 'left', alignClass: 'lg:top-16' });
-    expect(pickChatBubblePlacement(0.8, 0.5)).toEqual({
-      side: 'right',
-      alignClass: 'lg:top-1/2 lg:-translate-y-1/2',
-    });
-    expect(pickChatBubblePlacement(0.9, 0.9)).toEqual({ side: 'right', alignClass: 'lg:bottom-4' });
+    expect(pickChatBubblePlacement(0.1, 0.2)).toEqual({ side: 'left', alignClass: 'lg:-top-5' });
+    expect(pickChatBubblePlacement(0.8, 0.5)).toEqual({ side: 'right', alignClass: 'lg:-top-4' });
+    expect(pickChatBubblePlacement(0.9, 0.9)).toEqual({ side: 'right', alignClass: 'lg:-top-6' });
   });
 });
 ````
@@ -935,4 +933,16 @@ Vitest + Testing Library suites mirroring `src/`:
 - `tests/useAppViewModel.test.ts` & `tests/App.test.tsx`: App ViewModel and end-to-end integration tests.
 
 Run with `npm test` or `npm run test:coverage`.
+````
+
+## `tests/setup.ts`
+
+````typescript
+import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+afterEach(() => {
+  cleanup();
+});
 ````
