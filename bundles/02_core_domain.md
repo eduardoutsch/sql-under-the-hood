@@ -1,6 +1,6 @@
 # 02_core_domain
 
-> Generated snapshot containing 7 file(s).
+> Generated snapshot containing 8 file(s).
 
 ## Table of Contents
 
@@ -8,6 +8,7 @@
 - [`src/core/bitInspector.ts`](#src-core-bitinspector-ts)
 - [`src/core/i18n.ts`](#src-core-i18n-ts)
 - [`src/core/queryPipeline.ts`](#src-core-querypipeline-ts)
+- [`src/core/README.md`](#src-core-readme-md)
 - [`src/core/slottedPage.ts`](#src-core-slottedpage-ts)
 - [`src/core/storageHierarchy.ts`](#src-core-storagehierarchy-ts)
 - [`src/core/volcanoSimd.ts`](#src-core-volcanosimd-ts)
@@ -550,6 +551,22 @@ export function stepVmProgramCounter(currentPc: number, opcodeCount: number): nu
   if (opcodeCount <= 0) return 0;
   return (currentPc + 1) % opcodeCount;
 }
+````
+
+## `src/core/README.md`
+
+````markdown
+# `src/core/` — Domain Logic
+
+Deterministic domain modules with zero React, DOM, or timer dependencies.
+
+- `i18n.ts`: PT-BR (default) and EN translation dictionary and locale helpers.
+- `appNavigation.ts`: Module index bounds and seminar progress calculations.
+- `queryPipeline.ts`: SQL token list, localized VDBE opcodes, and stage/PC transitions.
+- `storageHierarchy.ts`: Hardware latency tiers, heap-file byte offset formula, and Buffer Pool page lookup.
+- `slottedPage.ts`: 8 KB slotted page metrics (`pd_lower`, `pd_upper`), tuple insertion, dead-tuple marking, and `VACUUM` compaction.
+- `bitInspector.ts`: Null bitmap formatting and payload byte summation.
+- `volcanoSimd.ts`: Volcano vs. SIMD race progression, cycle estimates, and Selection Vector extraction.
 ````
 
 ## `src/core/slottedPage.ts`
