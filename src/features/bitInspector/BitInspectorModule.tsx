@@ -1,35 +1,25 @@
-import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import type { TranslationBundle } from '../../core/i18n';
-import {
-  computeNullBitmap,
-  computePayloadBytes,
-  INITIAL_COLUMNS,
-  toggleColumnNull,
-  type TupleColumn,
-} from '../../core/bitInspector';
+import { useBitInspectorViewModel } from './useBitInspectorViewModel';
 
 export interface BitInspectorModuleProps {
   t: TranslationBundle;
 }
 
 /**
- * Interactive visualizer for Module 4: Null Bitmaps and 64-bit CPU word alignment.
+ * Dumb View for Module 4 (Null Bitmaps & 64-Bit CPU Word Alignment).
+ * Delegates column nullability and alignment mode to `useBitInspectorViewModel`.
  */
 export function BitInspectorModule({ t }: BitInspectorModuleProps) {
-  const [cols, setCols] = useState<TupleColumn[]>([...INITIAL_COLUMNS]);
-  const [alignMode, setAlignMode] = useState<'good' | 'bad'>('good');
-
-  const bitmapBits = computeNullBitmap(cols);
-  const payloadBytes = computePayloadBytes(cols);
+  const vm = useBitInspectorViewModel();
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {cols.map((col, idx) => (
+        {vm.cols.map((col, idx) => (
           <button
             key={col.key}
-            onClick={() => setCols((prev) => toggleColumnNull(prev, idx))}
+            onClick={() => vm.toggleNull(idx)}
             className={`p-4 rounded-xl border text-left transition-all cursor-pointer ${
               col.isNull
                 ? 'bg-amber-950/30 border-amber-500/50'
@@ -68,7 +58,7 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
             <p className="text-xs text-slate-400">{t.m4.bitmapExplain}</p>
           </div>
           <div className="font-mono text-xs px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-emerald-400">
-            Payload Size: {payloadBytes} Bytes (+ 1B Null Bitmap)
+            Payload Size: {vm.payloadBytes} Bytes (+ 1B Null Bitmap)
           </div>
         </div>
 
@@ -76,13 +66,13 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
           <div className="p-3 rounded-lg bg-violet-950/60 border border-violet-400 text-center">
             <div className="text-[10px] text-violet-300 uppercase">t_bits[0] (Null Bitmap)</div>
             <div className="text-lg font-bold tracking-widest text-white mt-0.5">
-              0000<span className="text-amber-300">{bitmapBits}</span>
+              0000<span className="text-amber-300">{vm.bitmapBits}</span>
             </div>
           </div>
 
           <ArrowRight className="w-4 h-4 text-slate-600 hidden sm:block" />
 
-          {cols.map((col) =>
+          {vm.cols.map((col) =>
             col.isNull ? null : (
               <div
                 key={col.key}
@@ -103,17 +93,17 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
           <h4 className="font-semibold text-slate-100">{t.m4.alignTitle}</h4>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setAlignMode('good')}
+              onClick={() => vm.setAlignMode('good')}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold cursor-pointer ${
-                alignMode === 'good' ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-300'
+                vm.alignMode === 'good' ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-300'
               }`}
             >
               ✓ {t.m4.goodAlign}
             </button>
             <button
-              onClick={() => setAlignMode('bad')}
+              onClick={() => vm.setAlignMode('bad')}
               className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold cursor-pointer ${
-                alignMode === 'bad' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-slate-300'
+                vm.alignMode === 'bad' ? 'bg-rose-500 text-white' : 'bg-slate-800 text-slate-300'
               }`}
             >
               ✕ {t.m4.badAlign}
@@ -121,7 +111,7 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
           </div>
         </div>
 
-        {alignMode === 'good' ? (
+        {vm.alignMode === 'good' ? (
           <div className="space-y-3">
             <div className="grid grid-cols-8 gap-1.5 font-mono text-xs text-center">
               {[0, 1, 2, 3].map((b) => (
