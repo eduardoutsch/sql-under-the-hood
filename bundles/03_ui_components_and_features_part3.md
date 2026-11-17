@@ -223,18 +223,22 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
   }
 }
 
-/* Dark mode: Carbon Blueprint theme with high-contrast text */
+/* Dark mode: Phosphor Oscilloscope & Copper PCB Hardware Lab */
 html.dark body {
-  background-color: #141311;
+  background-color: #080f0c;
   background-image:
-    linear-gradient(to right, rgba(245, 242, 235, 0.06) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(245, 242, 235, 0.06) 1px, transparent 1px);
-  color: #f5f2eb;
+    radial-gradient(ellipse at 50% 0%, rgba(16, 185, 129, 0.12), transparent 60%),
+    linear-gradient(to right, rgba(52, 211, 153, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(52, 211, 153, 0.055) 1px, transparent 1px),
+    linear-gradient(to right, rgba(245, 158, 11, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 158, 11, 0.07) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px, 96px 96px, 96px 96px;
+  color: #ecfdf5;
 }
 
 html.dark .bg-\[\#FFFDF8\],
 html.dark .bg-\[\#F6F2EA\] {
-  background-color: #1e1c19 !important;
+  background-color: #0f1c16 !important;
 }
 
 html.dark .bg-\[\#EFE9DC\],
@@ -242,26 +246,82 @@ html.dark .bg-\[\#EFE9DC\]\/95,
 html.dark .bg-\[\#EFE9DC\]\/80,
 html.dark .bg-\[\#EFE9DC\]\/70,
 html.dark .bg-\[\#EFE9DC\]\/60 {
-  background-color: #282521 !important;
+  background-color: #152820 !important;
+}
+
+html.dark .bg-\[\#1C1917\] {
+  background-color: #050a08 !important;
+}
+
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-100 {
+  background-color: #0c2e22 !important;
+}
+
+html.dark .bg-blue-50,
+html.dark .bg-blue-100,
+html.dark .bg-blue-200 {
+  background-color: #0d2137 !important;
+}
+
+html.dark .bg-amber-50,
+html.dark .bg-amber-100,
+html.dark .bg-amber-200 {
+  background-color: #2b1d07 !important;
+}
+
+html.dark .bg-rose-100 {
+  background-color: #2e1018 !important;
 }
 
 html.dark .text-stone-900,
 html.dark .text-stone-950,
 html.dark .text-stone-800,
 html.dark .text-stone-700 {
-  color: #f5f2eb !important;
+  color: #ecfdf5 !important;
 }
 
 html.dark .text-stone-600 {
-  color: #d6d3cd !important;
+  color: #a7f3d0 !important;
+}
+
+html.dark .text-emerald-950,
+html.dark .text-emerald-900,
+html.dark .text-emerald-800 {
+  color: #6ee7b7 !important;
+}
+
+html.dark .text-blue-950,
+html.dark .text-blue-900,
+html.dark .text-blue-800 {
+  color: #93c5fd !important;
+}
+
+html.dark .text-amber-950,
+html.dark .text-amber-900,
+html.dark .text-amber-800 {
+  color: #fcd34d !important;
+}
+
+html.dark .text-rose-950,
+html.dark .text-rose-900,
+html.dark .text-rose-800 {
+  color: #fda4af !important;
 }
 
 html.dark .border-stone-900 {
-  border-color: #a8a29e !important;
+  border-color: #d97706 !important;
+}
+
+html.dark .shadow-\[4px_4px_0px_\#1c1917\],
+html.dark .shadow-\[5px_5px_0px_\#1c1917\],
+html.dark .shadow-\[3px_3px_0px_\#1c1917\],
+html.dark .shadow-\[2px_2px_0px_\#1c1917\] {
+  box-shadow: 3px 3px 0px #92400e !important;
 }
 
 html.dark .text-\[\#B83B1D\] {
-  color: #fb923c !important;
+  color: #fbbf24 !important;
 }
 
 @keyframes pulseRace {
