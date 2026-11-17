@@ -111,9 +111,9 @@ Clean code does NOT substitute for thorough technical documentation.
       name="description"
       content="Visualizador interativo da arquitetura interna de bancos de dados SQL: Pipeline, Buffer Pool, Slotted Page 8KB, Null Bitmaps e SIMD."
     />
-    <link rel="icon" type="image/jpeg" href="/assets/logo.jpg?v=2" />
-    <link rel="shortcut icon" type="image/jpeg" href="/assets/logo.jpg?v=2" />
-    <link rel="apple-touch-icon" href="/assets/logo.jpg?v=2" />
+    <link rel="icon" type="image/png" href="/assets/logo.png?v=3" />
+    <link rel="shortcut icon" type="image/png" href="/assets/logo.png?v=3" />
+    <link rel="apple-touch-icon" href="/assets/logo.png?v=3" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
