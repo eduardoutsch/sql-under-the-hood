@@ -1,6 +1,6 @@
 # 04_tests
 
-> Generated snapshot containing 23 file(s).
+> Generated snapshot containing 24 file(s).
 
 ## Table of Contents
 
@@ -16,6 +16,7 @@
 - [`tests/core/volcanoSimd.test.ts`](#tests-core-volcanosimd-test-ts)
 - [`tests/features/bitInspector/BitInspectorModule.test.tsx`](#tests-features-bitinspector-bitinspectormodule-test-tsx)
 - [`tests/features/bitInspector/useBitInspectorViewModel.test.ts`](#tests-features-bitinspector-usebitinspectorviewmodel-test-ts)
+- [`tests/features/home/HomeView.test.tsx`](#tests-features-home-homeview-test-tsx)
 - [`tests/features/queryPipeline/QueryPipelineModule.test.tsx`](#tests-features-querypipeline-querypipelinemodule-test-tsx)
 - [`tests/features/queryPipeline/useQueryPipelineViewModel.test.ts`](#tests-features-querypipeline-usequerypipelineviewmodel-test-ts)
 - [`tests/features/slottedPage/SlottedPageModule.test.tsx`](#tests-features-slottedpage-slottedpagemodule-test-tsx)
@@ -37,29 +38,36 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import App from '../src/App';
+import { I18N } from '../src/core/i18n';
 
 describe('App integration', () => {
-  it('defaults to PT-BR, switches to EN, and navigates modules via buttons and keyboard', async () => {
+  it('opens on HomeView, enters modules, returns home via logo, and switches language', async () => {
     const user = userEvent.setup();
     render(<App />);
 
-    expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
-    expect(screen.getByText(/Módulo 01 \/ 05/)).toBeInTheDocument();
+    expect(screen.getByText(I18N.pt.home.headline)).toBeInTheDocument();
 
     // Switch to EN
     await user.click(screen.getByText('PT-BR'));
-    expect(screen.getByText('SQL Under the Hood')).toBeInTheDocument();
+    expect(screen.getByText(I18N.en.home.headline)).toBeInTheDocument();
 
-    // Navigate forward via Next Module button
+    // Enter Module 1 from Home CTA
+    await user.click(screen.getByText(I18N.en.home.startBtn));
+    expect(screen.getByText(/Module 01 \/ 05/)).toBeInTheDocument();
+
+    // Navigate via Next Module and keyboard
     await user.click(screen.getByText('Next Module'));
     expect(screen.getByText(/Module 02 \/ 05/)).toBeInTheDocument();
 
-    // Navigate via keyboard ArrowRight & ArrowLeft
     fireEvent.keyDown(window, { key: 'ArrowRight' });
     expect(screen.getByText(/Module 03 \/ 05/)).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
     expect(screen.getByText(/Module 02 \/ 05/)).toBeInTheDocument();
+
+    // Click logo to return to Home page
+    await user.click(screen.getByAltText(I18N.en.brandTitle));
+    expect(screen.getByText(I18N.en.home.headline)).toBeInTheDocument();
   });
 });
 ````
@@ -119,9 +127,10 @@ describe('Navbar component', () => {
   const baseProps = {
     t: I18N.pt,
     lang: 'pt' as const,
-    activeModule: 0,
+    activeModule: 0 as number | null,
     presMode: false,
     progressPct: 20,
+    onGoHome: vi.fn(),
     onSelectModule: vi.fn(),
     onToggleLang: vi.fn(),
     onTogglePresMode: vi.fn(),
@@ -132,12 +141,15 @@ describe('Navbar component', () => {
     expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
     expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.png');
     expect(screen.getByText('PT-BR')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(7);
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(8);
   });
 
-  it('invokes callbacks when clicking tabs, language toggle, and presentation mode', async () => {
+  it('invokes callbacks when clicking logo, tabs, language toggle, and presentation mode', async () => {
     const user = userEvent.setup();
     render(<Navbar {...baseProps} />);
+
+    await user.click(screen.getByAltText('SQL por Baixo dos Panos'));
+    expect(baseProps.onGoHome).toHaveBeenCalledTimes(1);
 
     await user.click(screen.getByText('2. Hierarquia & Buffer'));
     expect(baseProps.onSelectModule).toHaveBeenCalledWith(1);
@@ -494,6 +506,42 @@ describe('useBitInspectorViewModel', () => {
 });
 ````
 
+## `tests/features/home/HomeView.test.tsx`
+
+````tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
+import { I18N } from '../../../src/core/i18n';
+import { HomeView } from '../../../src/features/home/HomeView';
+
+describe('HomeView component', () => {
+  it('renders plain-language SQL intro, collapsible tutorials, and module cards', async () => {
+    const user = userEvent.setup();
+    const onSelectModule = vi.fn();
+    render(<HomeView t={I18N.pt} onSelectModule={onSelectModule} />);
+
+    expect(screen.getByText(I18N.pt.home.headline)).toBeInTheDocument();
+    expect(screen.getByText(I18N.pt.home.whatIsSqlTitle)).toBeInTheDocument();
+
+    // Start CTA navigates to module 0
+    await user.click(screen.getByText(I18N.pt.home.startBtn));
+    expect(onSelectModule).toHaveBeenCalledWith(0);
+
+    // Tutorial accordion expands on click
+    const tutorialBtn = screen.getByRole('button', { name: /Como usar este site/i });
+    expect(tutorialBtn).toHaveAttribute('aria-expanded', 'false');
+    await user.click(tutorialBtn);
+    expect(tutorialBtn).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText(I18N.pt.home.howToUseSteps[0].title)).toBeVisible();
+
+    // Module directory cards open selected module
+    await user.click(screen.getByText('3. Slotted Page 8KB'));
+    expect(onSelectModule).toHaveBeenCalledWith(2);
+  });
+});
+````
+
 ## `tests/features/queryPipeline/QueryPipelineModule.test.tsx`
 
 ````tsx
@@ -841,15 +889,15 @@ import { describe, expect, it } from 'vitest';
 import { useAppViewModel } from '../src/useAppViewModel';
 
 describe('useAppViewModel', () => {
-  it('initializes with pt locale, module 0, and 20% progress', () => {
+  it('initializes on the home page with pt locale and 0% progress', () => {
     const { result } = renderHook(() => useAppViewModel());
     expect(result.current.lang).toBe('pt');
-    expect(result.current.activeModule).toBe(0);
+    expect(result.current.activeModule).toBeNull();
     expect(result.current.presMode).toBe(false);
-    expect(result.current.progressPct).toBe(20);
+    expect(result.current.progressPct).toBe(0);
   });
 
-  it('handles language toggle, presentation mode, and keyboard navigation', () => {
+  it('navigates between home and modules via actions and keyboard', () => {
     const { result } = renderHook(() => useAppViewModel());
 
     act(() => result.current.toggleLang());
@@ -861,12 +909,20 @@ describe('useAppViewModel', () => {
     act(() => {
       fireEvent.keyDown(window, { key: 'ArrowRight' });
     });
+    expect(result.current.activeModule).toBe(0);
+
+    act(() => {
+      fireEvent.keyDown(window, { key: 'ArrowRight' });
+    });
     expect(result.current.activeModule).toBe(1);
 
     act(() => {
       fireEvent.keyDown(window, { key: 'ArrowLeft' });
     });
     expect(result.current.activeModule).toBe(0);
+
+    act(() => result.current.goHome());
+    expect(result.current.activeModule).toBeNull();
   });
 });
 ````

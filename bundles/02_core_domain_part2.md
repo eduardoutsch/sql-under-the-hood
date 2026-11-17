@@ -1,12 +1,123 @@
 # 02_core_domain_part2
 
-> Generated snapshot containing 1 file(s).
+> Generated snapshot containing 2 file(s).
 
 ## Table of Contents
 
+- [`src/core/storageHierarchy.ts`](#src-core-storagehierarchy-ts)
 - [`src/core/volcanoSimd.ts`](#src-core-volcanosimd-ts)
 
 ---
+
+## `src/core/storageHierarchy.ts`
+
+````typescript
+/**
+ * Pure domain logic for Module 2 (Storage Hierarchy & Buffer Pool Simulator).
+ * Models hardware latency tiers, physical heap-file byte offsets, and a fixed-capacity
+ * FIFO/LRU-style page frame pool without touching React state.
+ */
+
+import type { Locale } from './i18n';
+
+export const BUFFER_POOL_CAPACITY = 3;
+
+export type BufferFetchStatus = 'hit' | 'miss';
+
+export interface HardwareTier {
+  name: string;
+  real: string;
+  human: string;
+  barWidth: string;
+  color: string;
+  text: string;
+  animDurationSec: number;
+}
+
+export interface BufferFetchResult {
+  status: BufferFetchStatus;
+  nextPool: number[];
+}
+
+/**
+ * Build the 5 hardware memory/storage tiers with localized human-scale equivalents.
+ */
+export function getHardwareTiers(locale: Locale): HardwareTier[] {
+  const isPt = locale === 'pt';
+  return [
+    {
+      name: 'L1 Cache',
+      real: '1 ns',
+      human: isPt ? '1 seg' : '1 sec',
+      barWidth: 'w-[6%]',
+      color: 'bg-[#D94E28]',
+      text: 'text-[#B83B1D]',
+      animDurationSec: 0.45,
+    },
+    {
+      name: 'L2 Cache',
+      real: '4 ns',
+      human: isPt ? '4 seg' : '4 sec',
+      barWidth: 'w-[14%]',
+      color: 'bg-emerald-700',
+      text: 'text-emerald-800',
+      animDurationSec: 0.9,
+    },
+    {
+      name: 'DRAM (Buffer Pool)',
+      real: '100 ns',
+      human: isPt ? '100 seg' : '100 sec',
+      barWidth: 'w-[32%]',
+      color: 'bg-blue-700',
+      text: 'text-blue-800',
+      animDurationSec: 2.0,
+    },
+    {
+      name: 'NVMe SSD',
+      real: '16,000 ns',
+      human: isPt ? '4,4 horas' : '4.4 hours',
+      barWidth: 'w-[68%]',
+      color: 'bg-amber-600',
+      text: 'text-amber-800',
+      animDurationSec: 4.5,
+    },
+    {
+      name: 'HDD Magnético',
+      real: '2,000,000 ns',
+      human: isPt ? '3,3 semanas' : '3.3 weeks',
+      barWidth: 'w-full',
+      color: 'bg-rose-700',
+      text: 'text-rose-800',
+      animDurationSec: 9.0,
+    },
+  ];
+}
+
+/**
+ * Compute the physical byte offset of a page in a heap file.
+ */
+export function computeByteOffset(pageNumber: number, pageSizeKb: number): number {
+  if (pageNumber < 0 || pageSizeKb <= 0) return 0;
+  return pageNumber * pageSizeKb * 1024;
+}
+
+/**
+ * Simulate fetching a page into the 3-frame DRAM Buffer Pool.
+ * Returns a cache hit if present, or evicts the oldest frame on miss when full.
+ */
+export function fetchBufferPage(
+  currentPool: readonly number[],
+  pageNumber: number,
+  capacity: number = BUFFER_POOL_CAPACITY
+): BufferFetchResult {
+  if (currentPool.includes(pageNumber)) {
+    return { status: 'hit', nextPool: [...currentPool] };
+  }
+  const next = [...currentPool, pageNumber];
+  const nextPool = next.length > capacity ? next.slice(next.length - capacity) : next;
+  return { status: 'miss', nextPool };
+}
+````
 
 ## `src/core/volcanoSimd.ts`
 

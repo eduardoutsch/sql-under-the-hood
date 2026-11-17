@@ -1,6 +1,6 @@
 # 03_ui_components_and_features_part1
 
-> Generated snapshot containing 9 file(s).
+> Generated snapshot containing 8 file(s).
 
 ## Table of Contents
 
@@ -10,9 +10,8 @@
 - [`src/components/README.md`](#src-components-readme-md)
 - [`src/features/bitInspector/BitInspectorModule.tsx`](#src-features-bitinspector-bitinspectormodule-tsx)
 - [`src/features/bitInspector/useBitInspectorViewModel.ts`](#src-features-bitinspector-usebitinspectorviewmodel-ts)
+- [`src/features/home/HomeView.tsx`](#src-features-home-homeview-tsx)
 - [`src/features/queryPipeline/PipelineStageViews.tsx`](#src-features-querypipeline-pipelinestageviews-tsx)
-- [`src/features/queryPipeline/QueryPipelineModule.tsx`](#src-features-querypipeline-querypipelinemodule-tsx)
-- [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 
 ---
 
@@ -23,6 +22,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { MODULE_COUNT } from './core/appNavigation';
 import { BitInspectorModule } from './features/bitInspector/BitInspectorModule';
+import { HomeView } from './features/home/HomeView';
 import { QueryPipelineModule } from './features/queryPipeline/QueryPipelineModule';
 import { SlottedPageModule } from './features/slottedPage/SlottedPageModule';
 import { StorageHierarchyModule } from './features/storageHierarchy/StorageHierarchyModule';
@@ -31,7 +31,7 @@ import { useAppViewModel } from './useAppViewModel';
 
 /**
  * Dumb View for the top-level seminar shell.
- * Projects state and dispatches user events via `useAppViewModel`.
+ * Renders HomeView by default (`activeModule === null`) or the selected module.
  */
 export default function App() {
   const vm = useAppViewModel();
@@ -52,6 +52,7 @@ export default function App() {
         activeModule={vm.activeModule}
         presMode={vm.presMode}
         progressPct={vm.progressPct}
+        onGoHome={vm.goHome}
         onSelectModule={vm.selectModule}
         onToggleLang={vm.toggleLang}
         onTogglePresMode={vm.togglePresMode}
@@ -62,49 +63,55 @@ export default function App() {
           vm.presMode ? 'max-w-full px-6 sm:px-12 py-8' : 'max-w-7xl px-4 sm:px-6 py-8'
         } mx-auto w-full`}
       >
-        <div className="mb-7 border-l-4 border-[#D94E28] pl-4">
-          <div className="flex items-center gap-2 text-sm font-mono font-semibold text-[#B83B1D] uppercase tracking-[0.12em]">
-            <span>
-              {vm.t.moduleLabel} 0{vm.activeModule + 1} / 0{MODULE_COUNT}
-            </span>
-            <span>•</span>
-            <span>{vm.t.labSubtitle}</span>
-          </div>
-          <h2
-            className={`${
-              vm.presMode ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
-            } font-bold text-stone-900 tracking-tight mt-1`}
-          >
-            {vm.activeTitle}
-          </h2>
-          <p className="text-stone-800 text-base sm:text-lg mt-2 max-w-4xl leading-relaxed">
-            {vm.activeSubtitle}
-          </p>
-        </div>
+        {vm.activeModule === null ? (
+          <HomeView t={vm.t} onSelectModule={vm.selectModule} />
+        ) : (
+          <>
+            <div className="mb-7 border-l-4 border-[#D94E28] pl-4">
+              <div className="flex items-center gap-2 text-sm font-mono font-semibold text-[#B83B1D] uppercase tracking-[0.12em]">
+                <span>
+                  {vm.t.moduleLabel} 0{vm.activeModule + 1} / 0{MODULE_COUNT}
+                </span>
+                <span>•</span>
+                <span>{vm.t.labSubtitle}</span>
+              </div>
+              <h2
+                className={`${
+                  vm.presMode ? 'text-3xl sm:text-4xl' : 'text-2xl sm:text-3xl'
+                } font-bold text-stone-900 tracking-tight mt-1`}
+              >
+                {vm.activeTitle}
+              </h2>
+              <p className="text-stone-800 text-base sm:text-lg mt-2 max-w-4xl leading-relaxed">
+                {vm.activeSubtitle}
+              </p>
+            </div>
 
-        <div className="animate-fadeIn">{modules[vm.activeModule]}</div>
+            <div className="animate-fadeIn">{modules[vm.activeModule]}</div>
 
-        <div className="mt-10 pt-6 border-t-2 border-stone-900/15 flex items-center justify-between">
-          <button
-            onClick={vm.prevModule}
-            disabled={vm.activeModule === 0}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#FFFDF8] hover:bg-[#EFE9DC] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono font-semibold text-stone-900 transition cursor-pointer"
-          >
-            <ChevronLeft className="w-4 h-4" /> {vm.t.prevMod}
-          </button>
+            <div className="mt-10 pt-6 border-t-2 border-stone-900/15 flex items-center justify-between">
+              <button
+                onClick={vm.prevModule}
+                disabled={vm.activeModule === 0}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#FFFDF8] hover:bg-[#EFE9DC] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono font-semibold text-stone-900 transition cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" /> {vm.t.prevMod}
+              </button>
 
-          <span className="text-sm font-mono text-stone-700 hidden sm:inline">
-            {vm.t.keyboardNav}
-          </span>
+              <span className="text-sm font-mono text-stone-700 hidden sm:inline">
+                {vm.t.keyboardNav}
+              </span>
 
-          <button
-            onClick={vm.nextModule}
-            disabled={vm.activeModule === MODULE_COUNT - 1}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono text-[#FFFDF8] font-bold transition cursor-pointer"
-          >
-            {vm.t.nextMod} <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+              <button
+                onClick={vm.nextModule}
+                disabled={vm.activeModule === MODULE_COUNT - 1}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-sm font-mono text-[#FFFDF8] font-bold transition cursor-pointer"
+              >
+                {vm.t.nextMod} <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
@@ -193,9 +200,10 @@ const MODULE_ICONS = [Code2, HardDrive, Layers, Binary, Cpu] as const;
 export interface NavbarProps {
   t: TranslationBundle;
   lang: Locale;
-  activeModule: number;
+  activeModule: number | null;
   presMode: boolean;
   progressPct: number;
+  onGoHome: () => void;
   onSelectModule: (index: number) => void;
   onToggleLang: () => void;
   onTogglePresMode: () => void;
@@ -203,7 +211,7 @@ export interface NavbarProps {
 
 /**
  * Sticky top navigation bar styled as a hardware lab instrument panel
- * with the custom vault-gear logo, binder-tab module selectors, and tactile switches.
+ * with clickable home logo, binder-tab module selectors, and tactile switches.
  */
 export function Navbar({
   t,
@@ -211,6 +219,7 @@ export function Navbar({
   activeModule,
   presMode,
   progressPct,
+  onGoHome,
   onSelectModule,
   onToggleLang,
   onTogglePresMode,
@@ -220,21 +229,25 @@ export function Navbar({
   return (
     <header className="sticky top-0 z-40 bg-[#EFE9DC]/95 backdrop-blur-md border-b-2 border-stone-900">
       <div className={`${containerWidth} mx-auto h-16 flex items-center justify-between gap-3`}>
-        <div className="flex items-center gap-3 min-w-0">
+        <button
+          type="button"
+          onClick={onGoHome}
+          className="flex items-center gap-3 min-w-0 text-left cursor-pointer group"
+        >
           <img
             src="/assets/logo.png"
             alt={t.brandTitle}
-            className="w-11 h-11 rounded-full border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-contain bg-[#F6F2EA] p-0.5 shrink-0"
+            className="w-11 h-11 rounded-full border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-contain bg-[#F6F2EA] p-0.5 shrink-0 group-hover:scale-105 transition-transform"
           />
           <div className="truncate">
             <div className="text-xs font-mono font-semibold uppercase tracking-[0.12em] text-[#B83B1D]">
               {t.brandSub}
             </div>
-            <h1 className="font-bold text-base sm:text-lg text-stone-900 tracking-tight truncate">
+            <h1 className="font-bold text-base sm:text-lg text-stone-900 tracking-tight truncate group-hover:text-[#B83B1D] transition-colors">
               {t.brandTitle}
             </h1>
           </div>
-        </div>
+        </button>
 
         <div className="flex items-center gap-2 shrink-0">
           <button
@@ -500,6 +513,113 @@ export function useBitInspectorViewModel() {
 }
 ````
 
+## `src/features/home/HomeView.tsx`
+
+````tsx
+import { ArrowRight, BookOpen, Compass, HelpCircle } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
+import type { TranslationBundle } from '../../core/i18n';
+
+export interface HomeViewProps {
+  t: TranslationBundle;
+  onSelectModule: (index: number) => void;
+}
+
+/**
+ * Opening home page introducing SQL in plain language for non-technical readers,
+ * with collapsible site tutorials and direct module entry cards.
+ */
+export function HomeView({ t, onSelectModule }: HomeViewProps) {
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      {/* Hero Banner */}
+      <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6">
+        <img
+          src="/assets/logo.png"
+          alt={t.brandTitle}
+          className="w-28 h-28 sm:w-32 sm:h-32 object-contain shrink-0 animate-springIn"
+        />
+        <div className="space-y-3 text-center md:text-left">
+          <span className="inline-block px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-mono text-xs font-bold tracking-wider">
+            {t.home.badge}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
+            {t.home.headline}
+          </h2>
+          <p className="text-base sm:text-lg text-stone-800 max-w-2xl leading-relaxed">
+            {t.home.intro}
+          </p>
+          <div className="pt-1">
+            <button
+              onClick={() => onSelectModule(0)}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#D94E28] hover:bg-[#C2411F] border-2 border-stone-900 shadow-[3px_3px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#FFFDF8] font-bold text-sm sm:text-base transition cursor-pointer"
+            >
+              {t.home.startBtn} <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* What is SQL? (Open by default) */}
+      <AccordionPanel title={t.home.whatIsSqlTitle} badge="SQL" defaultOpen={true}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {t.home.whatIsSqlPoints.map((point, idx) => (
+            <div
+              key={point.title}
+              className="p-4 rounded-lg bg-[#EFE9DC]/70 border-2 border-stone-900 space-y-1.5"
+            >
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#B83B1D]">
+                <BookOpen className="w-4 h-4" />
+                <span>0{idx + 1}</span>
+              </div>
+              <h3 className="font-bold text-base text-stone-900">{point.title}</h3>
+              <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{point.body}</p>
+            </div>
+          ))}
+        </div>
+      </AccordionPanel>
+
+      {/* How to use this site (Collapsed by default) */}
+      <AccordionPanel title={t.home.howToUseTitle} badge="TUTORIAL" defaultOpen={false}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {t.home.howToUseSteps.map((step) => (
+            <div
+              key={step.title}
+              className="p-4 rounded-lg bg-[#FFFDF8] border-2 border-stone-900 space-y-1"
+            >
+              <div className="flex items-center gap-2 font-bold text-base text-stone-900">
+                <HelpCircle className="w-4 h-4 text-[#D94E28] shrink-0" />
+                <span>{step.title}</span>
+              </div>
+              <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{step.body}</p>
+            </div>
+          ))}
+        </div>
+      </AccordionPanel>
+
+      {/* Module Directory (Collapsed by default) */}
+      <AccordionPanel title={t.home.exploreModulesTitle} badge="01–05" defaultOpen={false}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {t.modules.map((mod, idx) => (
+            <button
+              key={mod.id}
+              onClick={() => onSelectModule(idx)}
+              className="p-4 rounded-lg bg-[#EFE9DC]/60 hover:bg-[#FFFDF8] border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-left transition cursor-pointer flex flex-col justify-between gap-2"
+            >
+              <div className="flex items-center justify-between text-xs font-mono font-bold text-[#B83B1D]">
+                <span>{mod.short}</span>
+                <Compass className="w-4 h-4" />
+              </div>
+              <div className="font-bold text-sm sm:text-base text-stone-900">{mod.title}</div>
+            </button>
+          ))}
+        </div>
+      </AccordionPanel>
+    </div>
+  );
+}
+````
+
 ## `src/features/queryPipeline/PipelineStageViews.tsx`
 
 ````tsx
@@ -747,202 +867,5 @@ export function ExecutionStageView({
       )}
     </div>
   );
-}
-````
-
-## `src/features/queryPipeline/QueryPipelineModule.tsx`
-
-````tsx
-import { CheckCircle2, ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
-import { AccordionPanel } from '../../components/AccordionPanel';
-import type { Locale, TranslationBundle } from '../../core/i18n';
-import {
-  AstStageView,
-  ExecutionStageView,
-  LexerStageView,
-  OptimizerStageView,
-} from './PipelineStageViews';
-import { useQueryPipelineViewModel } from './useQueryPipelineViewModel';
-
-export interface QueryPipelineModuleProps {
-  t: TranslationBundle;
-  lang: Locale;
-}
-
-/**
- * Dumb View for Module 1 (SQL Query Pipeline).
- * Delegates all state and timer logic to `useQueryPipelineViewModel`.
- */
-export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
-  const vm = useQueryPipelineViewModel(lang);
-
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#1C1917] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] p-4 rounded-xl">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <span className="px-2.5 py-1 text-xs font-mono font-bold uppercase tracking-wider bg-[#D94E28] text-[#FFFDF8] rounded">
-            {t.m1.sqlInput}
-          </span>
-          <code className="font-mono text-sm sm:text-base text-stone-100 whitespace-nowrap">
-            <span className="text-amber-400 font-semibold">SELECT</span> id, name{' '}
-            <span className="text-amber-400 font-semibold">FROM</span> users{' '}
-            <span className="text-amber-400 font-semibold">WHERE</span> price &gt;{' '}
-            <span className="text-emerald-400 font-semibold">100</span>;
-          </code>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={vm.togglePlay}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-[#D94E28] hover:bg-[#C2411F] border-2 border-stone-950 text-[#FFFDF8] font-semibold text-sm transition cursor-pointer"
-          >
-            {vm.isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {vm.isPlaying ? t.pause : t.play}
-          </button>
-          <button
-            onClick={vm.stepStage}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-[#FFFDF8] hover:bg-stone-200 text-stone-900 font-semibold text-sm border-2 border-stone-950 transition cursor-pointer"
-          >
-            {t.step} <ChevronRight className="w-4 h-4" />
-          </button>
-          <button
-            onClick={vm.reset}
-            className="p-2 rounded-md bg-stone-800 hover:bg-stone-700 text-stone-200 border-2 border-stone-950 transition cursor-pointer"
-            title={t.reset}
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {t.m1.stages.map((st, idx) => {
-          const active = idx === vm.stage;
-          const done = idx < vm.stage;
-          return (
-            <button
-              key={st.name}
-              onClick={() => vm.selectStage(idx)}
-              className={`text-left p-3 rounded-lg border-2 transition-all cursor-pointer relative ${
-                active
-                  ? 'bg-[#FFFDF8] border-stone-900 shadow-[3px_3px_0px_#D94E28]'
-                  : done
-                  ? 'bg-emerald-50 border-stone-900 text-stone-800'
-                  : 'bg-[#EFE9DC]/70 border-stone-900/30 text-stone-600 hover:border-stone-900'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-mono font-bold text-stone-500">0{idx + 1}</span>
-                {done && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />}
-                {active && <span className="w-2.5 h-2.5 rounded-full bg-[#D94E28] animate-ping" />}
-              </div>
-              <div className={`font-semibold text-xs sm:text-sm ${active ? 'text-[#B83B1D]' : 'text-stone-900'}`}>
-                {st.name}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      <AccordionPanel
-        title={t.m1.stages[vm.stage].name}
-        badge={`0${vm.stage + 1}`}
-        defaultOpen={true}
-      >
-        <div className="min-h-[280px] flex flex-col justify-center">
-          {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
-          {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
-          {vm.stage === 3 && <OptimizerStageView t={t} />}
-          {vm.stage === 4 && (
-            <ExecutionStageView
-              t={t}
-              execTarget={vm.execTarget}
-              vmPc={vm.vmPc}
-              opcodes={vm.opcodes}
-              onSetExecTarget={vm.setExecTarget}
-              onStepVm={vm.stepVm}
-              onSelectPc={vm.setVmPc}
-            />
-          )}
-        </div>
-      </AccordionPanel>
-
-      <AccordionPanel
-        title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
-        badge="INFO"
-        defaultOpen={false}
-      >
-        <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
-      </AccordionPanel>
-    </div>
-  );
-}
-````
-
-## `src/features/queryPipeline/useQueryPipelineViewModel.ts`
-
-````typescript
-import { useEffect, useState } from 'react';
-import type { Locale } from '../../core/i18n';
-import {
-  advancePipelineStage,
-  getSqlTokens,
-  getVdbeOpcodes,
-  stepVmProgramCounter,
-} from '../../core/queryPipeline';
-
-/**
- * ViewModel for Module 1 (Query Pipeline).
- * Owns stage playback timer, execution target toggle, and VDBE program counter.
- */
-export function useQueryPipelineViewModel(lang: Locale) {
-  const [stage, setStage] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
-  const [vmPc, setVmPc] = useState(0);
-
-  const tokens = getSqlTokens();
-  const opcodes = getVdbeOpcodes(lang);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    const timer = setInterval(() => {
-      setStage((prev) => {
-        if (prev < 4) return prev + 1;
-        setIsPlaying(false);
-        return prev;
-      });
-    }, 1800);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
-
-  return {
-    stage,
-    isPlaying,
-    execTarget,
-    vmPc,
-    tokens,
-    opcodes,
-    setExecTarget,
-    setVmPc,
-    selectStage: (idx: number) => {
-      setIsPlaying(false);
-      setStage(idx);
-    },
-    togglePlay: () => {
-      if (stage === 4) setStage(0);
-      setIsPlaying((prev) => !prev);
-    },
-    stepStage: () => {
-      setIsPlaying(false);
-      setStage((prev) => advancePipelineStage(prev));
-    },
-    stepVm: () => setVmPc((pc) => stepVmProgramCounter(pc, opcodes.length)),
-    reset: () => {
-      setIsPlaying(false);
-      setStage(0);
-      setVmPc(0);
-    },
-  };
 }
 ````

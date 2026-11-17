@@ -1,6 +1,6 @@
 # 02_core_domain_part1
 
-> Generated snapshot containing 7 file(s).
+> Generated snapshot containing 6 file(s).
 
 ## Table of Contents
 
@@ -10,7 +10,6 @@
 - [`src/core/queryPipeline.ts`](#src-core-querypipeline-ts)
 - [`src/core/README.md`](#src-core-readme-md)
 - [`src/core/slottedPage.ts`](#src-core-slottedpage-ts)
-- [`src/core/storageHierarchy.ts`](#src-core-storagehierarchy-ts)
 
 ---
 
@@ -240,10 +239,16 @@ export interface TranslationBundle {
     lanesPerClk: string;
     branchlessSimd: string;
   };
-  deployModal: {
-    title: string;
-    close: string;
-    steps: string[];
+  home: {
+    badge: string;
+    headline: string;
+    intro: string;
+    startBtn: string;
+    whatIsSqlTitle: string;
+    whatIsSqlPoints: { title: string; body: string }[];
+    howToUseTitle: string;
+    howToUseSteps: { title: string; body: string }[];
+    exploreModulesTitle: string;
   };
 }
 
@@ -395,15 +400,47 @@ export const I18N: Record<Locale, TranslationBundle> = {
       lanesPerClk: 'pistas/clk',
       branchlessSimd: 'SIMD sem Desvios',
     },
-    deployModal: {
-      title: 'Como publicar no Cloudflare Pages + Vite',
-      close: 'Fechar',
-      steps: [
-        '1. Build de produção: npm run build (gera os arquivos estáticos em dist/).',
-        '2. Testes automatizados: npm test e npm run test:coverage.',
-        '3. Deploy via CLI: npx wrangler pages deploy dist (usando wrangler.toml).',
-        '4. Ou conecte o repositório GitHub ao Cloudflare Pages (Build command: npm run build | Output directory: dist).',
+    home: {
+      badge: 'BEM-VINDO',
+      headline: 'Entenda como o banco de dados lê suas perguntas.',
+      intro:
+        'Não precisa ser programador para acompanhar. Aqui você vê, passo a passo, o caminho de uma pergunta SQL até o processador do computador.',
+      startBtn: 'Começar pelo Módulo 1',
+      whatIsSqlTitle: 'O que é SQL e o que ele faz?',
+      whatIsSqlPoints: [
+        {
+          title: 'Um arquivo organizado',
+          body: 'Pense em um banco de dados como uma grande planilha com linhas e colunas guardada no computador.',
+        },
+        {
+          title: 'A língua das perguntas',
+          body: 'SQL é a língua usada para pedir dados a esse arquivo, como "mostre produtos acima de R$ 100" ou "salve este cliente".',
+        },
+        {
+          title: 'O trabalho por trás',
+          body: 'Antes de responder, o banco lê sua frase, escolhe o caminho mais curto no disco e usa a memória e a CPU para filtrar os dados.',
+        },
       ],
+      howToUseTitle: 'Como usar este site (Tutorial rápido)',
+      howToUseSteps: [
+        {
+          title: '1. Escolha um módulo no topo',
+          body: 'As abas de 1 a 5 mostram cada etapa, do texto em SQL até os bits na memória.',
+        },
+        {
+          title: '2. Clique nos botões para testar',
+          body: 'Use Executar, Passo, Buscar Página ou Inserir Tupla para ver a máquina reagir na hora.',
+        },
+        {
+          title: '3. Abra os painéis fechados',
+          body: 'Clique em qualquer barra com seta para abrir ou fechar explicações extras quando quiser.',
+        },
+        {
+          title: '4. Troque idioma ou tela cheia',
+          body: 'No canto superior direito, alterne entre PT-BR e EN ou ative o Modo Apresentação.',
+        },
+      ],
+      exploreModulesTitle: 'Módulos interativos (clique para abrir)',
     },
   },
   en: {
@@ -553,15 +590,47 @@ export const I18N: Record<Locale, TranslationBundle> = {
       lanesPerClk: 'lanes/clk',
       branchlessSimd: 'Branchless SIMD',
     },
-    deployModal: {
-      title: 'Deploy to Cloudflare Pages + Vite',
-      close: 'Close',
-      steps: [
-        '1. Production build: npm run build (outputs static bundle to dist/).',
-        '2. Automated tests: npm test and npm run test:coverage.',
-        '3. Direct CLI deploy: npx wrangler pages deploy dist (configured via wrangler.toml).',
-        '4. Or connect your GitHub repo to Cloudflare Pages (Build command: npm run build | Output directory: dist).',
+    home: {
+      badge: 'WELCOME',
+      headline: 'See how a database answers your questions.',
+      intro:
+        'You do not need a computer science background. Follow step by step how a SQL question travels to the computer processor.',
+      startBtn: 'Start at Module 1',
+      whatIsSqlTitle: 'What is SQL and what does it do?',
+      whatIsSqlPoints: [
+        {
+          title: 'An organized filing cabinet',
+          body: 'Think of a database as a large spreadsheet with rows and columns saved on a computer.',
+        },
+        {
+          title: 'The language of questions',
+          body: 'SQL is the language used to ask that cabinet for data, like "show items over $100" or "save this customer".',
+        },
+        {
+          title: 'The work underneath',
+          body: 'Before answering, the database reads your sentence, picks the shortest path on disk, and uses memory and the CPU to filter rows.',
+        },
       ],
+      howToUseTitle: 'How to use this site (Quick tutorial)',
+      howToUseSteps: [
+        {
+          title: '1. Pick a module at the top',
+          body: 'Tabs 1 to 5 show each step, from SQL text down to bits in memory.',
+        },
+        {
+          title: '2. Click buttons to experiment',
+          body: 'Use Play, Step, Fetch Page, or Insert Tuple to watch the engine react live.',
+        },
+        {
+          title: '3. Open collapsed panels',
+          body: 'Click any bar with an arrow to expand or collapse extra explanations anytime.',
+        },
+        {
+          title: '4. Switch language or fullscreen',
+          body: 'At the top right, toggle PT-BR / EN or turn on Presentation Mode.',
+        },
+      ],
+      exploreModulesTitle: 'Interactive modules (click to open)',
     },
   },
 };
@@ -779,115 +848,5 @@ export function compactSlottedPage(tuples: readonly SlottedTuple[]): SlottedTupl
       cursor -= item.len;
       return { ...item, slot: idx + 1, offset: cursor };
     });
-}
-````
-
-## `src/core/storageHierarchy.ts`
-
-````typescript
-/**
- * Pure domain logic for Module 2 (Storage Hierarchy & Buffer Pool Simulator).
- * Models hardware latency tiers, physical heap-file byte offsets, and a fixed-capacity
- * FIFO/LRU-style page frame pool without touching React state.
- */
-
-import type { Locale } from './i18n';
-
-export const BUFFER_POOL_CAPACITY = 3;
-
-export type BufferFetchStatus = 'hit' | 'miss';
-
-export interface HardwareTier {
-  name: string;
-  real: string;
-  human: string;
-  barWidth: string;
-  color: string;
-  text: string;
-  animDurationSec: number;
-}
-
-export interface BufferFetchResult {
-  status: BufferFetchStatus;
-  nextPool: number[];
-}
-
-/**
- * Build the 5 hardware memory/storage tiers with localized human-scale equivalents.
- */
-export function getHardwareTiers(locale: Locale): HardwareTier[] {
-  const isPt = locale === 'pt';
-  return [
-    {
-      name: 'L1 Cache',
-      real: '1 ns',
-      human: isPt ? '1 seg' : '1 sec',
-      barWidth: 'w-[6%]',
-      color: 'bg-[#D94E28]',
-      text: 'text-[#B83B1D]',
-      animDurationSec: 0.45,
-    },
-    {
-      name: 'L2 Cache',
-      real: '4 ns',
-      human: isPt ? '4 seg' : '4 sec',
-      barWidth: 'w-[14%]',
-      color: 'bg-emerald-700',
-      text: 'text-emerald-800',
-      animDurationSec: 0.9,
-    },
-    {
-      name: 'DRAM (Buffer Pool)',
-      real: '100 ns',
-      human: isPt ? '100 seg' : '100 sec',
-      barWidth: 'w-[32%]',
-      color: 'bg-blue-700',
-      text: 'text-blue-800',
-      animDurationSec: 2.0,
-    },
-    {
-      name: 'NVMe SSD',
-      real: '16,000 ns',
-      human: isPt ? '4,4 horas' : '4.4 hours',
-      barWidth: 'w-[68%]',
-      color: 'bg-amber-600',
-      text: 'text-amber-800',
-      animDurationSec: 4.5,
-    },
-    {
-      name: 'HDD Magnético',
-      real: '2,000,000 ns',
-      human: isPt ? '3,3 semanas' : '3.3 weeks',
-      barWidth: 'w-full',
-      color: 'bg-rose-700',
-      text: 'text-rose-800',
-      animDurationSec: 9.0,
-    },
-  ];
-}
-
-/**
- * Compute the physical byte offset of a page in a heap file.
- */
-export function computeByteOffset(pageNumber: number, pageSizeKb: number): number {
-  if (pageNumber < 0 || pageSizeKb <= 0) return 0;
-  return pageNumber * pageSizeKb * 1024;
-}
-
-/**
- * Simulate fetching a page into the 3-frame DRAM Buffer Pool.
- * Returns a cache hit if present, or evicts the oldest frame on miss when full.
- */
-export function fetchBufferPage(
-  currentPool: readonly number[],
-  pageNumber: number,
-  capacity: number = BUFFER_POOL_CAPACITY
-): BufferFetchResult {
-  if (currentPool.includes(pageNumber)) {
-    return { status: 'hit', nextPool: [...currentPool] };
-  }
-  const next = [...currentPool, pageNumber];
-  const nextPool = next.length > capacity ? next.slice(next.length - capacity) : next;
-  return { status: 'miss', nextPool };
 }
 ````
