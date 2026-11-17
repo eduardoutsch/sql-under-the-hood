@@ -25,7 +25,7 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
             }`}
           >
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-stone-600 font-semibold">
+              <span className="text-stone-800 font-semibold">
                 col[{idx}] • {col.type}
               </span>
               <span
@@ -36,14 +36,14 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
                 bit={col.isNull ? '0' : '1'}
               </span>
             </div>
-            <div className="text-base font-mono font-bold text-stone-900 mt-2">
+            <div className="text-base sm:text-lg font-mono font-bold text-stone-900 mt-2">
               {col.key}:{' '}
-              <span className={col.isNull ? 'text-[#B83B1D] italic' : 'text-blue-800'}>
+              <span className={col.isNull ? 'text-[#B83B1D] italic' : 'text-blue-900'}>
                 {col.isNull ? 'NULL' : col.val}
               </span>
             </div>
-            <div className="text-[11px] font-mono text-stone-600 mt-1.5">
-              Hex: {col.isNull ? '(0 bytes stored!)' : col.hex}
+            <div className="text-xs font-mono text-stone-800 mt-1.5">
+              Hex: {col.isNull ? t.m4.zeroBytesStored : col.hex}
             </div>
           </button>
         ))}
@@ -52,31 +52,31 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <h4 className="font-bold text-stone-900">{t.m4.bitmapTitle}</h4>
-            <p className="text-xs text-stone-600">{t.m4.bitmapExplain}</p>
+            <h4 className="font-bold text-base sm:text-lg text-stone-900">{t.m4.bitmapTitle}</h4>
+            <p className="text-xs sm:text-sm text-stone-700">{t.m4.bitmapExplain}</p>
           </div>
-          <div className="font-mono text-xs font-bold px-3 py-1.5 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950">
-            Payload Size: {vm.payloadBytes} Bytes (+ 1B Null Bitmap)
+          <div className="font-mono text-xs sm:text-sm font-bold px-3 py-1.5 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950">
+            {t.m4.payloadSize}: {vm.payloadBytes} Bytes ({t.m4.nullBitmapSuffix})
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
           <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
-            <div className="text-[10px] text-amber-300 uppercase">t_bits[0] (Null Bitmap)</div>
+            <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
             <div className="text-lg font-bold tracking-widest text-white mt-0.5">
               0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
             </div>
           </div>
 
-          <ArrowRight className="w-4 h-4 text-stone-400 hidden sm:block" />
+          <ArrowRight className="w-4 h-4 text-stone-300 hidden sm:block" />
 
           {vm.cols.map((col) =>
             col.isNull ? null : (
               <div
                 key={col.key}
-                className="p-3 rounded-md bg-stone-800 border border-stone-600 text-center"
+                className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
               >
-                <div className="text-[10px] text-emerald-400">
+                <div className="text-xs text-emerald-300">
                   {col.key} ({col.bytes}B)
                 </div>
                 <div className="text-sm font-bold text-stone-100 mt-1">{col.hex}</div>
@@ -88,24 +88,24 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
 
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h4 className="font-bold text-stone-900">{t.m4.alignTitle}</h4>
+          <h4 className="font-bold text-base sm:text-lg text-stone-900">{t.m4.alignTitle}</h4>
           <div className="flex items-center gap-2">
             <button
               onClick={() => vm.setAlignMode('good')}
-              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs font-mono font-bold cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
                 vm.alignMode === 'good'
                   ? 'bg-emerald-700 text-white shadow-[2px_2px_0px_#1c1917]'
-                  : 'bg-[#EFE9DC] text-stone-800'
+                  : 'bg-[#EFE9DC] text-stone-900'
               }`}
             >
               ✓ {t.m4.goodAlign}
             </button>
             <button
               onClick={() => vm.setAlignMode('bad')}
-              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs font-mono font-bold cursor-pointer ${
+              className={`px-3 py-1.5 rounded-md border-2 border-stone-900 text-xs sm:text-sm font-mono font-bold cursor-pointer ${
                 vm.alignMode === 'bad'
                   ? 'bg-rose-700 text-white shadow-[2px_2px_0px_#1c1917]'
-                  : 'bg-[#EFE9DC] text-stone-800'
+                  : 'bg-[#EFE9DC] text-stone-900'
               }`}
             >
               ✕ {t.m4.badAlign}
@@ -121,7 +121,7 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
                   key={b}
                   className="p-3 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950"
                 >
-                  <div className="text-[10px] text-stone-600">Byte {b}</div>
+                  <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
                   <div className="font-bold mt-0.5">id[{b}]</div>
                 </div>
               ))}
@@ -130,30 +130,30 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
                   key={b}
                   className="p-3 rounded-md bg-blue-100 border-2 border-stone-900 text-blue-950"
                 >
-                  <div className="text-[10px] text-stone-600">Byte {b}</div>
+                  <div className="text-xs text-stone-700">{t.m4.bytePrefix} {b}</div>
                   <div className="font-bold mt-0.5">price[{b - 4}]</div>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-emerald-900 font-mono font-semibold">{t.m4.goodDesc}</p>
+            <p className="text-xs sm:text-sm text-emerald-950 font-mono font-semibold">{t.m4.goodDesc}</p>
           </div>
         ) : (
           <div className="space-y-3">
-            <div className="flex items-center gap-1 overflow-x-auto font-mono text-xs text-center pb-1">
+            <div className="flex items-center gap-1 overflow-x-auto font-mono text-xs sm:text-sm text-center pb-1">
               <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
-                1-bit Flag
+                {t.m4.flag1Bit}
               </div>
               <div className="p-2.5 rounded bg-[#EFE9DC] border-2 border-stone-900 text-stone-900 flex-1">
                 id (32 bits) [Bit 1..32]
               </div>
               <div className="p-2.5 rounded bg-rose-700 border-2 border-stone-900 text-white font-bold shrink-0">
-                1-bit Flag
+                {t.m4.flag1Bit}
               </div>
               <div className="p-2.5 rounded bg-amber-200 border-2 border-dashed border-rose-800 text-rose-950 font-bold flex-1">
-                ⚠ price [Bit 34..65] STRADDLES 64-BIT WORD BOUNDARY!
+                {t.m4.straddlesWarning}
               </div>
             </div>
-            <p className="text-xs text-rose-900 font-mono font-semibold">{t.m4.badDesc}</p>
+            <p className="text-xs sm:text-sm text-rose-950 font-mono font-semibold">{t.m4.badDesc}</p>
           </div>
         )}
       </div>
