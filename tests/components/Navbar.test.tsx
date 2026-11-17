@@ -8,9 +8,10 @@ describe('Navbar component', () => {
   const baseProps = {
     t: I18N.pt,
     lang: 'pt' as const,
-    activeModule: 0,
+    activeModule: 0 as number | null,
     presMode: false,
     progressPct: 20,
+    onGoHome: vi.fn(),
     onSelectModule: vi.fn(),
     onToggleLang: vi.fn(),
     onTogglePresMode: vi.fn(),
@@ -21,12 +22,15 @@ describe('Navbar component', () => {
     expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
     expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.png');
     expect(screen.getByText('PT-BR')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(7);
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(8);
   });
 
-  it('invokes callbacks when clicking tabs, language toggle, and presentation mode', async () => {
+  it('invokes callbacks when clicking logo, tabs, language toggle, and presentation mode', async () => {
     const user = userEvent.setup();
     render(<Navbar {...baseProps} />);
+
+    await user.click(screen.getByAltText('SQL por Baixo dos Panos'));
+    expect(baseProps.onGoHome).toHaveBeenCalledTimes(1);
 
     await user.click(screen.getByText('2. Hierarquia & Buffer'));
     expect(baseProps.onSelectModule).toHaveBeenCalledWith(1);
