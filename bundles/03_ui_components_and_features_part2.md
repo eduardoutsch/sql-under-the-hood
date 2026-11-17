@@ -1,10 +1,9 @@
 # 03_ui_components_and_features_part2
 
-> Generated snapshot containing 11 file(s).
+> Generated snapshot containing 10 file(s).
 
 ## Table of Contents
 
-- [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 - [`src/features/README.md`](#src-features-readme-md)
 - [`src/features/slottedPage/SlottedPageModule.tsx`](#src-features-slottedpage-slottedpagemodule-tsx)
 - [`src/features/slottedPage/useSlottedPageViewModel.ts`](#src-features-slottedpage-useslottedpageviewmodel-ts)
@@ -17,74 +16,6 @@
 - [`src/useAppViewModel.ts`](#src-useappviewmodel-ts)
 
 ---
-
-## `src/features/queryPipeline/useQueryPipelineViewModel.ts`
-
-````typescript
-import { useEffect, useState } from 'react';
-import type { Locale } from '../../core/i18n';
-import {
-  advancePipelineStage,
-  getSqlTokens,
-  getVdbeOpcodes,
-  stepVmProgramCounter,
-} from '../../core/queryPipeline';
-
-/**
- * ViewModel for Module 1 (Query Pipeline).
- * Owns stage playback timer, execution target toggle, and VDBE program counter.
- */
-export function useQueryPipelineViewModel(lang: Locale) {
-  const [stage, setStage] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
-  const [vmPc, setVmPc] = useState(0);
-
-  const tokens = getSqlTokens();
-  const opcodes = getVdbeOpcodes(lang);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    const timer = setInterval(() => {
-      setStage((prev) => {
-        if (prev < 4) return prev + 1;
-        setIsPlaying(false);
-        return prev;
-      });
-    }, 1800);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
-
-  return {
-    stage,
-    isPlaying,
-    execTarget,
-    vmPc,
-    tokens,
-    opcodes,
-    setExecTarget,
-    setVmPc,
-    selectStage: (idx: number) => {
-      setIsPlaying(false);
-      setStage(idx);
-    },
-    togglePlay: () => {
-      if (stage === 4) setStage(0);
-      setIsPlaying((prev) => !prev);
-    },
-    stepStage: () => {
-      setIsPlaying(false);
-      setStage((prev) => advancePipelineStage(prev));
-    },
-    stepVm: () => setVmPc((pc) => stepVmProgramCounter(pc, opcodes.length)),
-    reset: () => {
-      setIsPlaying(false);
-      setStage(0);
-      setVmPc(0);
-    },
-  };
-}
-````
 
 ## `src/features/README.md`
 
@@ -126,9 +57,9 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-4 rounded-xl">
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs">
+        <div className="flex flex-wrap items-center gap-3 font-mono text-xs sm:text-sm">
           <span className="px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-bold">
-            Page Size: 8192 B
+            {t.m3.pageSizeBadge}
           </span>
           <span className="px-2 py-1 rounded bg-blue-100 text-blue-950 font-semibold border border-stone-900">
             pd_lower: {pdLower} B
@@ -137,7 +68,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
             pd_upper: {pdUpper} B
           </span>
           <span className="px-2 py-1 rounded bg-amber-100 text-amber-950 font-semibold border border-stone-900">
-            Free: {freeBytes} B
+            {t.m3.freeLabel}: {freeBytes} B
           </span>
         </div>
 
@@ -145,13 +76,13 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
           <button
             onClick={vm.insert}
             disabled={vm.isPageFull}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-semibold text-xs sm:text-sm transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-emerald-700 hover:bg-emerald-800 disabled:opacity-40 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-white font-semibold text-sm transition cursor-pointer"
           >
             <Plus className="w-4 h-4" /> {t.m3.insertBtn}
           </button>
           <button
             onClick={vm.compact}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-amber-300 hover:bg-amber-400 text-stone-950 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] font-semibold text-xs sm:text-sm transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-amber-300 hover:bg-amber-400 text-stone-950 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] font-semibold text-sm transition cursor-pointer"
           >
             <Zap className="w-4 h-4" /> {t.m3.compactBtn}
           </button>
@@ -159,7 +90,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
       </div>
 
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5 relative overflow-hidden">
-        <div className="flex justify-between text-[11px] font-mono font-semibold text-stone-600">
+        <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
           <span>Byte 0x0000 (0)</span>
           <span>{t.m3.clickDelete}</span>
           <span>Byte 0x2000 (8192)</span>
@@ -168,7 +99,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         <div className="flex flex-wrap items-center gap-2">
           <div className="p-3 rounded-lg bg-[#1C1917] border-2 border-stone-900 font-mono text-xs shrink-0 text-amber-200">
             <div className="font-bold">PageHeaderData</div>
-            <div className="text-[10px] text-stone-400">24 Bytes [0..23]</div>
+            <div className="text-xs text-stone-300">24 Bytes [0..23]</div>
           </div>
 
           {vm.tuples.map((item) => (
@@ -179,34 +110,34 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
               onClick={() => vm.markDead(item.slot)}
               className={`p-2.5 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
                 !item.alive
-                  ? 'bg-rose-100 text-rose-800 line-through opacity-75'
+                  ? 'bg-rose-100 text-rose-900 line-through opacity-80'
                   : vm.hoveredSlot === item.slot
                   ? 'bg-blue-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
                   : 'bg-blue-50 text-blue-950'
               }`}
             >
-              <div className="text-[10px] font-bold">Slot #{item.slot} (4B)</div>
-              <div className="text-[10px] text-stone-700">
+              <div className="text-xs font-bold">{t.m3.slotPrefix} #{item.slot} (4B)</div>
+              <div className="text-xs text-stone-800">
                 {item.alive ? `off:${item.offset} len:${item.len}` : 'LP_DEAD (0)'}
               </div>
             </button>
           ))}
 
-          <div className="flex items-center text-blue-800 font-mono font-bold text-xs px-2 animate-pulse">
+          <div className="flex items-center text-blue-900 font-mono font-bold text-xs sm:text-sm px-2 animate-pulse">
             pd_lower →
           </div>
         </div>
 
-        <div className="py-6 rounded-lg border-2 border-dashed border-stone-900/40 bg-[#EFE9DC]/60 text-center font-mono">
-          <div className="text-xs text-stone-600 uppercase tracking-widest font-semibold">{t.m3.freeDesc}</div>
+        <div className="py-6 rounded-lg border-2 border-dashed border-stone-900/50 bg-[#EFE9DC]/60 text-center font-mono">
+          <div className="text-xs sm:text-sm text-stone-800 uppercase tracking-widest font-semibold">{t.m3.freeDesc}</div>
           <div className="text-lg font-bold text-stone-900 mt-1">
             {freeBytes} Bytes ({((freeBytes / PAGE_SIZE_BYTES) * 100).toFixed(1)}%)
           </div>
-          {vm.isPageFull && <div className="text-xs text-[#B83B1D] font-bold mt-1">{t.m3.pageFull}</div>}
+          {vm.isPageFull && <div className="text-sm text-[#B83B1D] font-bold mt-1">{t.m3.pageFull}</div>}
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-2">
-          <div className="flex items-center text-emerald-800 font-mono font-bold text-xs px-2 animate-pulse">
+          <div className="flex items-center text-emerald-900 font-mono font-bold text-xs sm:text-sm px-2 animate-pulse">
             ← pd_upper
           </div>
 
@@ -218,28 +149,28 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
               onClick={() => vm.markDead(item.slot)}
               className={`p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
                 !item.alive
-                  ? 'bg-rose-100 text-rose-800 opacity-70'
+                  ? 'bg-rose-100 text-rose-900 opacity-80'
                   : vm.hoveredSlot === item.slot
                   ? 'bg-emerald-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
                   : 'bg-emerald-50 text-emerald-950'
               }`}
             >
-              <div className="flex items-center justify-between gap-3 text-[10px]">
-                <span className="font-bold text-emerald-900">Tuple #{item.slot}</span>
-                <span className="text-stone-600">@{item.offset}</span>
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <span className="font-bold text-emerald-950">{t.m3.tuplePrefix} #{item.slot}</span>
+                <span className="text-stone-700">@{item.offset}</span>
               </div>
-              <div className="text-xs font-bold text-stone-900 mt-1">
+              <div className="text-sm font-bold text-stone-900 mt-1">
                 ('{item.name}', ${item.price})
               </div>
-              <div className="text-[10px] text-stone-600 mt-0.5">
-                {item.alive ? `${item.len}B HeapTuple` : 'Dead Space (Awaiting VACUUM)'}
+              <div className="text-xs text-stone-800 mt-0.5">
+                {item.alive ? `${item.len}B HeapTuple` : t.m3.deadSpace}
               </div>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
         <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
           {t.m3.headerDesc}
         </div>
@@ -316,15 +247,15 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
     <div className="space-y-6">
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="font-bold text-stone-900 flex items-center gap-2">
-            <Activity className="w-4 h-4 text-[#D94E28]" />
+          <h3 className="font-bold text-base sm:text-lg text-stone-900 flex items-center gap-2">
+            <Activity className="w-5 h-5 text-[#D94E28]" />
             {t.m2.realLatency} vs. {t.m2.humanScale}
           </h3>
           <button
             onClick={vm.togglePulsing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-xs font-mono font-semibold text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-xs sm:text-sm font-mono font-semibold text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
           >
-            {vm.pulsing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+            {vm.pulsing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
             {vm.pulsing ? t.pause : t.m2.startPulse}
           </button>
         </div>
@@ -332,11 +263,11 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
         <div className="space-y-3">
           {vm.tiers.map((tier) => (
             <div key={tier.name} className="bg-[#EFE9DC]/60 border-2 border-stone-900/80 rounded-lg p-3">
-              <div className="flex flex-wrap items-center justify-between text-xs font-mono mb-2 gap-2">
+              <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm font-mono mb-2 gap-2">
                 <span className={`font-bold ${tier.text}`}>{tier.name}</span>
                 <div className="flex items-center gap-4">
-                  <span className="text-stone-700 font-semibold">{tier.real}</span>
-                  <span className="px-2 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
+                  <span className="text-stone-800 font-semibold">{tier.real}</span>
+                  <span className="px-2.5 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
                     ⏱ {tier.human}
                   </span>
                 </div>
@@ -358,23 +289,23 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="font-bold text-stone-900">{t.m2.bufferSimTitle}</h3>
-            <p className="text-xs font-mono text-stone-600 mt-0.5">
-              {t.m2.formula}: Offset = Page#{vm.activePage} × {vm.pageSizeKb * 1024} bytes ={' '}
+            <h3 className="font-bold text-base sm:text-lg text-stone-900">{t.m2.bufferSimTitle}</h3>
+            <p className="text-xs sm:text-sm font-mono text-stone-800 mt-0.5">
+              {t.m2.formula}: Offset = {t.m2.pagePrefix}#{vm.activePage} × {vm.pageSizeKb * 1024} bytes ={' '}
               <span className="text-[#B83B1D] font-bold">{vm.byteOffset.toLocaleString()} bytes</span>
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-stone-600 font-mono">{t.m2.pageSizeLabel}:</span>
+            <span className="text-xs sm:text-sm text-stone-800 font-mono font-semibold">{t.m2.pageSizeLabel}:</span>
             {[4, 8].map((sz) => (
               <button
                 key={sz}
                 onClick={() => vm.setPageSizeKb(sz)}
-                className={`px-2.5 py-1 rounded-md text-xs font-mono border-2 border-stone-900 cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-xs sm:text-sm font-mono border-2 border-stone-900 cursor-pointer ${
                   vm.pageSizeKb === sz
                     ? 'bg-[#D94E28] text-white font-bold shadow-[2px_2px_0px_#1c1917]'
-                    : 'bg-[#EFE9DC] text-stone-800'
+                    : 'bg-[#EFE9DC] text-stone-900'
                 }`}
               >
                 {sz} KB
@@ -382,7 +313,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             ))}
             <button
               onClick={vm.clearBufferPool}
-              className="px-2.5 py-1 rounded-md text-xs font-mono bg-rose-100 hover:bg-rose-200 text-rose-900 font-semibold border-2 border-stone-900 cursor-pointer"
+              className="px-3 py-1 rounded-md text-xs sm:text-sm font-mono bg-rose-100 hover:bg-rose-200 text-rose-950 font-semibold border-2 border-stone-900 cursor-pointer"
             >
               {t.m2.evictBtn}
             </button>
@@ -391,14 +322,14 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         {vm.lastStatus && (
           <div
-            className={`px-4 py-2.5 rounded-lg font-mono text-xs font-bold border-2 border-stone-900 flex items-center justify-between ${
+            className={`px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
               vm.lastStatus === 'hit'
-                ? 'bg-emerald-100 text-emerald-900'
+                ? 'bg-emerald-100 text-emerald-950'
                 : 'bg-amber-100 text-amber-950'
             }`}
           >
             <span>
-              Page #{vm.activePage}: {vm.lastStatus === 'hit' ? t.m2.hit : t.m2.miss}
+              {t.m2.pagePrefix} #{vm.activePage}: {vm.lastStatus === 'hit' ? t.m2.hit : t.m2.miss}
             </span>
             <span>{vm.lastStatus === 'hit' ? '~100 ns' : '~16,000 ns'}</span>
           </div>
@@ -406,11 +337,11 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900 space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono text-stone-700">
+            <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-stone-800">
               <span className="flex items-center gap-1.5 text-[#B83B1D] font-bold">
-                <HardDrive className="w-4 h-4" /> DISK HEAP FILE (users.heap)
+                <HardDrive className="w-4 h-4" /> {t.m2.diskHeapTitle}
               </span>
-              <span>Click to Fetch</span>
+              <span className="font-semibold">{t.m2.clickToFetch}</span>
             </div>
             <div className="grid grid-cols-5 gap-2">
               {[0, 1, 2, 3, 4].map((pg) => {
@@ -425,11 +356,11 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                         ? 'bg-[#D94E28] text-white shadow-[2px_2px_0px_#1c1917] -translate-y-0.5'
                         : inRam
                         ? 'bg-emerald-100 text-emerald-950'
-                        : 'bg-[#FFFDF8] text-stone-800 hover:bg-stone-100'
+                        : 'bg-[#FFFDF8] text-stone-900 hover:bg-stone-100'
                     }`}
                   >
                     <div className="text-xs font-bold">Pág #{pg}</div>
-                    <div className={`text-[10px] mt-1 ${selected ? 'text-amber-100' : 'text-stone-500'}`}>
+                    <div className={`text-xs mt-1 ${selected ? 'text-amber-100' : 'text-stone-700'}`}>
                       @{pg * vm.pageSizeKb}KB
                     </div>
                   </button>
@@ -439,11 +370,11 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           </div>
 
           <div className="p-4 rounded-xl bg-[#1C1917] border-2 border-stone-900 space-y-3">
-            <div className="flex items-center justify-between text-xs font-mono">
-              <span className="flex items-center gap-1.5 text-amber-400 font-bold">
-                <Layers className="w-4 h-4" /> MEMORY BUFFER POOL (3 Frames LRU)
+            <div className="flex items-center justify-between text-xs sm:text-sm font-mono">
+              <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+                <Layers className="w-4 h-4" /> {t.m2.bufferPoolTitle}
               </span>
-              <span className="text-stone-400">{vm.bufferPool.length}/3 frames</span>
+              <span className="text-stone-200">{vm.bufferPool.length}/3 frames</span>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {[0, 1, 2].map((frameIdx) => {
@@ -455,12 +386,14 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                     className={`p-3 rounded-lg border-2 font-mono text-center transition-all ${
                       occupied
                         ? 'bg-stone-800 border-amber-400 text-amber-100'
-                        : 'bg-stone-900/60 border-dashed border-stone-700 text-stone-500'
+                        : 'bg-stone-900/60 border-dashed border-stone-600 text-stone-300'
                     }`}
                   >
-                    <div className="text-[10px] text-stone-400">Frame [{frameIdx}]</div>
-                    <div className="text-sm font-bold mt-1">{occupied ? `Page #${pageId}` : 'EMPTY'}</div>
-                    {occupied && <div className="text-[10px] text-emerald-400 mt-0.5">Pinned ptr ✓</div>}
+                    <div className="text-xs text-stone-300">Frame [{frameIdx}]</div>
+                    <div className="text-sm font-bold mt-1">
+                      {occupied ? `${t.m2.pagePrefix} #${pageId}` : t.m2.emptyFrame}
+                    </div>
+                    {occupied && <div className="text-xs text-emerald-300 mt-0.5">{t.m2.pinnedPtr}</div>}
                   </div>
                 );
               })}
@@ -633,14 +566,14 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
           </button>
         </div>
 
-        <div className="flex items-center gap-2 font-mono text-xs">
-          <span className="text-stone-600 font-semibold">{t.m5.simdWidth}:</span>
+        <div className="flex items-center gap-2 font-mono text-xs sm:text-sm">
+          <span className="text-stone-800 font-semibold">{t.m5.simdWidth}:</span>
           <button
             onClick={() => vm.selectLaneWidth(8)}
             className={`px-3 py-1.5 rounded-md border-2 border-stone-900 cursor-pointer ${
               vm.simdLane === 8
                 ? 'bg-emerald-700 text-white font-bold shadow-[2px_2px_0px_#1c1917]'
-                : 'bg-[#EFE9DC] text-stone-800'
+                : 'bg-[#EFE9DC] text-stone-900'
             }`}
           >
             AVX2 (8× int32)
@@ -650,7 +583,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
             className={`px-3 py-1.5 rounded-md border-2 border-stone-900 cursor-pointer ${
               vm.simdLane === 16
                 ? 'bg-[#1C1917] text-amber-300 font-bold shadow-[2px_2px_0px_#D94E28]'
-                : 'bg-[#EFE9DC] text-stone-800'
+                : 'bg-[#EFE9DC] text-stone-900'
             }`}
           >
             AVX-512 (16× int32)
@@ -662,22 +595,22 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
         <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#b45309] rounded-xl p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-stone-900">
+              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-950 border border-stone-900">
                 PostgreSQL / SQLite / MySQL
               </span>
-              <h4 className="font-bold text-stone-900 mt-1.5">{t.m5.volcanoTitle}</h4>
+              <h4 className="font-bold text-base sm:text-lg text-stone-900 mt-1.5">{t.m5.volcanoTitle}</h4>
             </div>
             <div className="text-right font-mono">
-              <div className="text-xs text-stone-600">{t.m5.cycles}</div>
-              <div className="text-xl font-bold text-amber-800">{vm.volcanoCycles} clk</div>
+              <div className="text-xs text-stone-700">{t.m5.cycles}</div>
+              <div className="text-xl font-bold text-amber-900">{vm.volcanoCycles} clk</div>
             </div>
           </div>
 
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs flex items-center justify-between">
-            <span className="text-stone-200">
-              Filter.next() → Scan.next() <span className="text-amber-400">[1 row/call]</span>
+          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex items-center justify-between">
+            <span className="text-stone-100">
+              Filter.next() → Scan.next() <span className="text-amber-300">{t.m5.rowPerCall}</span>
             </span>
-            <span className="text-rose-400 font-semibold">~65% Dispatch Tax</span>
+            <span className="text-rose-300 font-semibold">{t.m5.dispatchTax}</span>
           </div>
 
           <div className="grid grid-cols-8 gap-1.5">
@@ -688,14 +621,14 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
               return (
                 <div
                   key={idx}
-                  className={`p-2 rounded-md font-mono text-xs text-center border-2 transition-all ${
+                  className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     current
                       ? 'bg-[#D94E28] text-white font-bold border-stone-900 scale-110'
                       : processed
                       ? match
                         ? 'bg-emerald-100 border-stone-900 text-emerald-950 font-bold'
-                        : 'bg-stone-200 border-stone-400 text-stone-500'
-                      : 'bg-[#EFE9DC] border-stone-900/30 text-stone-700'
+                        : 'bg-stone-200 border-stone-500 text-stone-700'
+                      : 'bg-[#EFE9DC] border-stone-900/40 text-stone-800'
                   }`}
                 >
                   {price}
@@ -704,9 +637,9 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
             })}
           </div>
 
-          <div className="flex justify-between text-xs font-mono text-stone-600 pt-1">
+          <div className="flex justify-between text-xs sm:text-sm font-mono text-stone-800 pt-1">
             <span>
-              Rows: {vm.progress.volcanoIdx}/{DATASET_PRICES.length}
+              {t.m5.rowsLabel}: {vm.progress.volcanoIdx}/{DATASET_PRICES.length}
             </span>
             <span>
               {t.m5.cacheLocality}: {t.m5.poor}
@@ -717,22 +650,22 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
         <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#15803d] rounded-xl p-5 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-950 border border-stone-900">
+              <span className="text-xs font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-950 border border-stone-900">
                 ClickHouse / DuckDB / Photon
               </span>
-              <h4 className="font-bold text-stone-900 mt-1.5">{t.m5.vectorTitle}</h4>
+              <h4 className="font-bold text-base sm:text-lg text-stone-900 mt-1.5">{t.m5.vectorTitle}</h4>
             </div>
             <div className="text-right font-mono">
-              <div className="text-xs text-stone-600">{t.m5.cycles}</div>
-              <div className="text-xl font-bold text-emerald-800">{vm.simdCycles} clk</div>
+              <div className="text-xs text-stone-700">{t.m5.cycles}</div>
+              <div className="text-xl font-bold text-emerald-900">{vm.simdCycles} clk</div>
             </div>
           </div>
 
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs flex items-center justify-between">
-            <span className="text-emerald-400">
-              {vm.simdLane === 8 ? 'vpcmpgtd ymm0, ymm1' : 'vpcmpgtd zmm0, zmm1'} ({vm.simdLane} lanes/clk)
+          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm flex items-center justify-between">
+            <span className="text-emerald-300">
+              {vm.simdLane === 8 ? 'vpcmpgtd ymm0, ymm1' : 'vpcmpgtd zmm0, zmm1'} ({vm.simdLane} {t.m5.lanesPerClk})
             </span>
-            <span className="text-amber-300 font-semibold">Branchless SIMD</span>
+            <span className="text-amber-300 font-semibold">{t.m5.branchlessSimd}</span>
           </div>
 
           <div className="grid grid-cols-8 gap-1.5">
@@ -743,14 +676,14 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
               return (
                 <div
                   key={idx}
-                  className={`p-2 rounded-md font-mono text-xs text-center border-2 transition-all ${
+                  className={`p-2 rounded-md font-mono text-xs sm:text-sm text-center border-2 transition-all ${
                     inNextVector
                       ? 'bg-blue-100 border-stone-900 text-blue-950 font-semibold'
                       : processed
                       ? match
                         ? 'bg-emerald-700 border-stone-900 text-white font-bold'
-                        : 'bg-stone-200 border-stone-400 text-stone-500'
-                      : 'bg-[#EFE9DC] border-stone-900/30 text-stone-700'
+                        : 'bg-stone-200 border-stone-500 text-stone-700'
+                      : 'bg-[#EFE9DC] border-stone-900/40 text-stone-800'
                   }`}
                 >
                   {price}
@@ -759,9 +692,9 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
             })}
           </div>
 
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs">
-            <div className="text-stone-400 mb-1">{t.m5.selVector}:</div>
-            <div className="text-emerald-400 truncate">
+          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm">
+            <div className="text-stone-200 mb-1">{t.m5.selVector}:</div>
+            <div className="text-emerald-300 truncate">
               sel_vec[{vm.survivingIndices.length}] = [{vm.survivingIndices.join(', ')}]
             </div>
           </div>
@@ -779,7 +712,10 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
 
 @layer base {
   body {
-    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
     background-color: #f6f2ea;
     background-image:
       linear-gradient(to right, rgba(28, 25, 23, 0.045) 1px, transparent 1px),
@@ -792,6 +728,7 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
   pre,
   .font-mono {
     font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    letter-spacing: 0.015em;
   }
 }
 

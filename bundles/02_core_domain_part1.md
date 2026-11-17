@@ -1,6 +1,6 @@
-# 02_core_domain
+# 02_core_domain_part1
 
-> Generated snapshot containing 8 file(s).
+> Generated snapshot containing 7 file(s).
 
 ## Table of Contents
 
@@ -11,7 +11,6 @@
 - [`src/core/README.md`](#src-core-readme-md)
 - [`src/core/slottedPage.ts`](#src-core-slottedpage-ts)
 - [`src/core/storageHierarchy.ts`](#src-core-storagehierarchy-ts)
-- [`src/core/volcanoSimd.ts`](#src-core-volcanosimd-ts)
 
 ---
 
@@ -131,6 +130,8 @@ export interface PipelineStageCopy {
 export interface TranslationBundle {
   brandSub: string;
   brandTitle: string;
+  labSubtitle: string;
+  keyboardNav: string;
   presMode: string;
   exitPres: string;
   cfDeploy: string;
@@ -144,6 +145,20 @@ export interface TranslationBundle {
   modules: ModuleMeta[];
   m1: {
     subtitle: string;
+    sqlInput: string;
+    lexerBanner: string;
+    astHeading: string;
+    rewriterHeading: string;
+    candidatePlanA: string;
+    costLabel: string;
+    seqFormula: string;
+    seqIo: string;
+    idxSelectivity: string;
+    idxSpeedup: string;
+    tupleDeforming: string;
+    unrolledOffsets: string;
+    exprEval: string;
+    threeInstructions: string;
     stages: PipelineStageCopy[];
     seqScan: string;
     idxScan: string;
@@ -165,6 +180,12 @@ export interface TranslationBundle {
     hit: string;
     miss: string;
     formula: string;
+    diskHeapTitle: string;
+    clickToFetch: string;
+    pagePrefix: string;
+    bufferPoolTitle: string;
+    emptyFrame: string;
+    pinnedPtr: string;
   };
   m3: {
     subtitle: string;
@@ -176,6 +197,11 @@ export interface TranslationBundle {
     tuplesDesc: string;
     pageFull: string;
     clickDelete: string;
+    pageSizeBadge: string;
+    freeLabel: string;
+    slotPrefix: string;
+    tuplePrefix: string;
+    deadSpace: string;
   };
   m4: {
     subtitle: string;
@@ -187,6 +213,13 @@ export interface TranslationBundle {
     badAlign: string;
     goodDesc: string;
     badDesc: string;
+    payloadSize: string;
+    nullBitmapSuffix: string;
+    zeroBytesStored: string;
+    nullBitmapHeader: string;
+    bytePrefix: string;
+    flag1Bit: string;
+    straddlesWarning: string;
   };
   m5: {
     subtitle: string;
@@ -199,6 +232,11 @@ export interface TranslationBundle {
     poor: string;
     tight: string;
     selVector: string;
+    rowPerCall: string;
+    dispatchTax: string;
+    rowsLabel: string;
+    lanesPerClk: string;
+    branchlessSimd: string;
   };
   deployModal: {
     title: string;
@@ -211,6 +249,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
   pt: {
     brandSub: 'Do SELECT ao Silício',
     brandTitle: 'SQL por Baixo dos Panos',
+    labSubtitle: 'LABORATÓRIO DE INTERNOS SQL',
+    keyboardNav: '← / → Navegação por Teclado',
     presMode: 'Modo Apresentação',
     exitPres: 'Sair da Apresentação',
     cfDeploy: 'Deploy Cloudflare',
@@ -231,6 +271,20 @@ export const I18N: Record<Locale, TranslationBundle> = {
     m1: {
       subtitle:
         'Acompanhe como uma string SQL bruta atravessa o analisador léxico, vira árvore sintática, passa pelo otimizador baseado em custo e executa como Bytecode ou código nativo via LLVM JIT.',
+      sqlInput: 'ENTRADA SQL',
+      lexerBanner: 'Stream de Bytes ASCII/UTF-8 → Scanner Léxico (Flex) → Lista de Tokens',
+      astHeading: 'Árvore Sintática Abstrata (Nó SelectStmt)',
+      rewriterHeading: 'Árvore de Consulta Reescrita (Catálogo pg_class + Predicado Normalizado)',
+      candidatePlanA: 'PLANO CANDIDATO A',
+      costLabel: 'Custo',
+      seqFormula: '1.000 páginas × seq_page_cost(1.0) + 80.000 linhas × cpu_tuple_cost(0.01)',
+      seqIo: 'E/S: 8.000 KB lidos do Heap File',
+      idxSelectivity: 'Profundidade B-Tree=3 + Seletividade estimada (4,2% das linhas > 100)',
+      idxSpeedup: '43x mais rápido • Saltando direto para páginas folha relevantes',
+      tupleDeforming: 'Decodificação de Tupla',
+      unrolledOffsets: 'Offsets Nativos Desenrolados',
+      exprEval: 'Avaliação de Expressão',
+      threeInstructions: '3 Instruções de CPU',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -246,7 +300,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
         },
         {
           name: 'Optimizer (CBO)',
-          desc: 'Estima cardinalidade usando estatísticas e compara custos de I/O + CPU entre planos físicos.',
+          desc: 'Estima cardinalidade usando estatísticas e compara custos de E/S + CPU entre planos físicos.',
         },
         {
           name: 'Execução (VM / JIT)',
@@ -264,7 +318,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
     },
     m2: {
       subtitle:
-        'A CPU opera em nanosegundos, mas o disco leva milissegundos. Veja a escala humana de latência e como o Buffer Pool evita idas caras ao armazenamento.',
+        'A CPU opera em nanossegundos, mas o disco leva milissegundos. Veja a escala humana de latência e como o Buffer Pool evita idas caras ao armazenamento.',
       startPulse: 'Disparar Pulso de Leitura',
       humanScale: 'Escala Humana (1 ns = 1 s)',
       realLatency: 'Latência Real',
@@ -275,6 +329,12 @@ export const I18N: Record<Locale, TranslationBundle> = {
       hit: 'CACHE HIT (100 ns na DRAM!)',
       miss: 'PAGE FAULT / MISS (Buscando no Disco via Offset...)',
       formula: 'Deslocamento Físico no Arquivo',
+      diskHeapTitle: 'ARQUIVO HEAP EM DISCO (users.heap)',
+      clickToFetch: 'Clique para Buscar',
+      pagePrefix: 'Pág',
+      bufferPoolTitle: 'BUFFER POOL EM MEMÓRIA (3 Frames LRU)',
+      emptyFrame: 'VAZIO',
+      pinnedPtr: 'Pont. Fixado ✓',
     },
     m3: {
       subtitle:
@@ -286,13 +346,18 @@ export const I18N: Record<Locale, TranslationBundle> = {
       freeDesc: 'Espaço Livre Contíguo',
       tuplesDesc: ' ← Tuplas binárias crescendo do fim (8192) para o início',
       pageFull: 'Página cheia! Remova uma tupla ou compacte.',
-      clickDelete: 'Clique em um slot ou tupla para deletar (dead tuple)',
+      clickDelete: 'Clique em um slot ou tupla para deletar (tupla morta)',
+      pageSizeBadge: 'Tamanho da Página: 8192 B',
+      freeLabel: 'Livre',
+      slotPrefix: 'Slot',
+      tuplePrefix: 'Tupla',
+      deadSpace: 'Espaço Morto (Aguardando VACUUM)',
     },
     m4: {
       subtitle:
         'Como representar NULL sem desperdiçar bytes ou quebrar o alinhamento de palavras de 64 bits da CPU? Ative ou anule colunas abaixo e inspecione os bits reais.',
       toggleNull: 'Alternar Valor / NULL',
-      bitmapTitle: 'Header Centralizado: Null Bitmap (1 bit por coluna)',
+      bitmapTitle: 'Header Centralizado: Bitmap de Nulos (1 bit por coluna)',
       bitmapExplain: '1 = Valor Presente | 0 = NULL (Colunas NULL ocupam ZERO bytes no payload da tupla!)',
       alignTitle: 'Alinhamento de Palavra de 64-bit (8 Bytes) na CPU',
       goodAlign: 'Bitmap Centralizado / Placeholder Colunar (Alinhado)',
@@ -300,6 +365,13 @@ export const I18N: Record<Locale, TranslationBundle> = {
       goodDesc: 'Inteiros começam em múltiplos exatos de 4/8 bytes. A CPU lê em 1 único ciclo de memória.',
       badDesc:
         'Inserir 1 bit de flag antes de cada coluna desloca os campos seguintes, atravessando fronteiras de Cache Line / Word e exigindo múltiplos shifts e leituras da CPU.',
+      payloadSize: 'Tamanho do Payload',
+      nullBitmapSuffix: '+ 1B Bitmap de Nulos',
+      zeroBytesStored: '(0 bytes gravados!)',
+      nullBitmapHeader: 't_bits[0] (Bitmap de Nulos)',
+      bytePrefix: 'Byte',
+      flag1Bit: 'Flag 1-bit',
+      straddlesWarning: '⚠ price [Bit 34..65] ATRAVESSA A FRONTEIRA DE 64 BITS!',
     },
     m5: {
       subtitle:
@@ -313,6 +385,11 @@ export const I18N: Record<Locale, TranslationBundle> = {
       poor: 'Baixa (Tuplas inteiras)',
       tight: 'Alta (Buffer colunar contíguo)',
       selVector: 'Selection Vector (Índices aprovados sem copiar memória)',
+      rowPerCall: '[1 linha/chamada]',
+      dispatchTax: '~65% Custo de Dispatch',
+      rowsLabel: 'Linhas',
+      lanesPerClk: 'pistas/clk',
+      branchlessSimd: 'SIMD sem Desvios',
     },
     deployModal: {
       title: 'Como publicar no Cloudflare Pages + Vite',
@@ -328,6 +405,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
   en: {
     brandSub: 'From SELECT to Silicon',
     brandTitle: 'SQL Under the Hood',
+    labSubtitle: 'SQL INTERNALS LAB',
+    keyboardNav: '← / → Keyboard Navigation',
     presMode: 'Presentation Mode',
     exitPres: 'Exit Presentation',
     cfDeploy: 'Cloudflare Deploy',
@@ -348,6 +427,20 @@ export const I18N: Record<Locale, TranslationBundle> = {
     m1: {
       subtitle:
         'Trace how raw SQL text flows through the lexer, forms an Abstract Syntax Tree, gets optimized by cost, and executes as VDBE Bytecode or LLVM JIT machine code.',
+      sqlInput: 'SQL INPUT',
+      lexerBanner: 'ASCII/UTF-8 Byte Stream → Lexical Scanner (Flex) → Token List',
+      astHeading: 'Abstract Syntax Tree (SelectStmt Node)',
+      rewriterHeading: 'Rewritten Query Tree (Catalog OIDs Bound + Normalized Predicate)',
+      candidatePlanA: 'CANDIDATE PLAN A',
+      costLabel: 'Cost',
+      seqFormula: '1,000 pages × seq_page_cost(1.0) + 80,000 rows × cpu_tuple_cost(0.01)',
+      seqIo: 'I/O: 8,000 KB read from Heap File',
+      idxSelectivity: 'B-Tree depth=3 + Estimated selectivity (4.2% of rows > 100)',
+      idxSpeedup: '43x faster • Jumping directly to relevant leaf pages',
+      tupleDeforming: 'Tuple Deforming',
+      unrolledOffsets: 'Unrolled Native Offsets',
+      exprEval: 'Expr Eval',
+      threeInstructions: '3 CPU Instructions',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -392,6 +485,12 @@ export const I18N: Record<Locale, TranslationBundle> = {
       hit: 'CACHE HIT (100 ns from DRAM!)',
       miss: 'PAGE FAULT / MISS (Reading Disk Offset...)',
       formula: 'Physical File Byte Offset',
+      diskHeapTitle: 'DISK HEAP FILE (users.heap)',
+      clickToFetch: 'Click to Fetch',
+      pagePrefix: 'Page',
+      bufferPoolTitle: 'MEMORY BUFFER POOL (3 Frames LRU)',
+      emptyFrame: 'EMPTY',
+      pinnedPtr: 'Pinned ptr ✓',
     },
     m3: {
       subtitle:
@@ -404,6 +503,11 @@ export const I18N: Record<Locale, TranslationBundle> = {
       tuplesDesc: ' ← Binary Tuple Items growing backward from byte 8192',
       pageFull: 'Page full! Delete a tuple or compact space.',
       clickDelete: 'Click any slot pointer or tuple block to delete it',
+      pageSizeBadge: 'Page Size: 8192 B',
+      freeLabel: 'Free',
+      slotPrefix: 'Slot',
+      tuplePrefix: 'Tuple',
+      deadSpace: 'Dead Space (Awaiting VACUUM)',
     },
     m4: {
       subtitle:
@@ -417,6 +521,13 @@ export const I18N: Record<Locale, TranslationBundle> = {
       goodDesc: '32-bit integers land cleanly on 4/8-byte boundaries. The CPU fetches each field in a single aligned load.',
       badDesc:
         'Placing a 1-bit null flag inline shifts every subsequent attribute off byte/word boundaries, straddling cache lines and forcing bit-shifts.',
+      payloadSize: 'Payload Size',
+      nullBitmapSuffix: '+ 1B Null Bitmap',
+      zeroBytesStored: '(0 bytes stored!)',
+      nullBitmapHeader: 't_bits[0] (Null Bitmap)',
+      bytePrefix: 'Byte',
+      flag1Bit: '1-bit Flag',
+      straddlesWarning: '⚠ price [Bit 34..65] STRADDLES 64-BIT WORD BOUNDARY!',
     },
     m5: {
       subtitle:
@@ -430,6 +541,11 @@ export const I18N: Record<Locale, TranslationBundle> = {
       poor: 'Poor (Row tuple hopping)',
       tight: 'Tight (Contiguous column buffer)',
       selVector: 'Selection Vector (Surviving row indices — zero data copying)',
+      rowPerCall: '[1 row/call]',
+      dispatchTax: '~65% Dispatch Tax',
+      rowsLabel: 'Rows',
+      lanesPerClk: 'lanes/clk',
+      branchlessSimd: 'Branchless SIMD',
     },
     deployModal: {
       title: 'Deploy to Cloudflare Pages + Vite',
@@ -767,84 +883,5 @@ export function fetchBufferPage(
   const next = [...currentPool, pageNumber];
   const nextPool = next.length > capacity ? next.slice(next.length - capacity) : next;
   return { status: 'miss', nextPool };
-}
-````
-
-## `src/core/volcanoSimd.ts`
-
-````typescript
-/**
- * Pure domain logic for Module 5 (Volcano Iterator vs. Vectorized SIMD Execution).
- * Models row-at-a-time vs. AVX2/AVX-512 batch progress, CPU cycle estimates, and
- * zero-copy Selection Vector index extraction.
- */
-
-export type SimdLaneWidth = 8 | 16;
-
-export interface RaceProgress {
-  volcanoIdx: number;
-  simdIdx: number;
-}
-
-export interface ExecutionMetrics {
-  volcanoCycles: number;
-  simdCycles: number;
-}
-
-export const DATASET_PRICES: readonly number[] = [
-  45, 120, 88, 250, 30, 175, 99, 310,
-  140, 60, 205, 15, 190, 102, 75, 400,
-  55, 130, 95, 280, 110, 40, 160, 82,
-  210, 19, 145, 305, 90, 115, 64, 500,
-];
-
-const VOLCANO_CYCLES_PER_ROW = 18;
-const SIMD_CYCLES_PER_BATCH = 2;
-const FILTER_THRESHOLD = 100;
-
-/**
- * Advance Volcano by 1 row and SIMD by `simdLane` rows, clamped to dataset length.
- */
-export function stepExecutionRace(
-  progress: RaceProgress,
-  simdLane: SimdLaneWidth,
-  totalRows: number = DATASET_PRICES.length
-): RaceProgress {
-  return {
-    volcanoIdx: Math.min(totalRows, progress.volcanoIdx + 1),
-    simdIdx: Math.min(totalRows, progress.simdIdx + simdLane),
-  };
-}
-
-/**
- * Collect indices of rows matching `price > 100` within the processed SIMD prefix.
- */
-export function computeSurvivingIndices(
-  prices: readonly number[],
-  simdIdx: number
-): number[] {
-  const surviving: number[] = [];
-  const limit = Math.min(prices.length, simdIdx);
-  for (let i = 0; i < limit; i += 1) {
-    if (prices[i] > FILTER_THRESHOLD) {
-      surviving.push(i);
-    }
-  }
-  return surviving;
-}
-
-/**
- * Estimate CPU clock cycles consumed by Volcano vs. SIMD execution.
- */
-export function computeExecutionMetrics(
-  volcanoIdx: number,
-  simdIdx: number,
-  simdLane: SimdLaneWidth
-): ExecutionMetrics {
-  const simdBatchesDone = Math.ceil(simdIdx / simdLane);
-  return {
-    volcanoCycles: volcanoIdx * VOLCANO_CYCLES_PER_ROW,
-    simdCycles: simdBatchesDone * SIMD_CYCLES_PER_BATCH,
-  };
 }
 ````
