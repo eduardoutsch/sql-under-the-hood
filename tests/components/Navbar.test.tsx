@@ -14,17 +14,17 @@ describe('Navbar component', () => {
     onSelectModule: vi.fn(),
     onToggleLang: vi.fn(),
     onTogglePresMode: vi.fn(),
-    onOpenDeployModal: vi.fn(),
   };
 
-  it('renders brand title, 5 module tabs, and PT-BR toggle by default', () => {
+  it('renders brand title, logo image, 5 module tabs, and PT-BR toggle by default', () => {
     render(<Navbar {...baseProps} />);
     expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
+    expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.jpg');
     expect(screen.getByText('PT-BR')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(8);
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(7);
   });
 
-  it('invokes callbacks when clicking tabs, language toggle, presentation mode, and deploy button', async () => {
+  it('invokes callbacks when clicking tabs, language toggle, and presentation mode', async () => {
     const user = userEvent.setup();
     render(<Navbar {...baseProps} />);
 
@@ -36,14 +36,10 @@ describe('Navbar component', () => {
 
     await user.click(screen.getByText('Modo Apresentação'));
     expect(baseProps.onTogglePresMode).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getByText('Deploy Cloudflare'));
-    expect(baseProps.onOpenDeployModal).toHaveBeenCalledTimes(1);
   });
 
-  it('hides deploy button and shows exit presentation label when presMode is true', () => {
+  it('shows exit presentation label and EN toggle when presMode is true', () => {
     render(<Navbar {...baseProps} presMode={true} lang="en" t={I18N.en} />);
-    expect(screen.queryByText('Cloudflare Deploy')).not.toBeInTheDocument();
     expect(screen.getByText('Exit Presentation')).toBeInTheDocument();
     expect(screen.getByText('EN')).toBeInTheDocument();
   });

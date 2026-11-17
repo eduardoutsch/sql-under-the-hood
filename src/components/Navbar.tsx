@@ -1,9 +1,7 @@
 import {
   Binary,
-  Cloud,
   Code2,
   Cpu,
-  Database,
   Globe,
   HardDrive,
   Layers,
@@ -23,12 +21,11 @@ export interface NavbarProps {
   onSelectModule: (index: number) => void;
   onToggleLang: () => void;
   onTogglePresMode: () => void;
-  onOpenDeployModal: () => void;
 }
 
 /**
  * Sticky top navigation bar styled as a hardware lab instrument panel
- * with binder-tab module selectors and tactile mechanical switches.
+ * with the custom vault-gear logo, binder-tab module selectors, and tactile switches.
  */
 export function Navbar({
   t,
@@ -39,7 +36,6 @@ export function Navbar({
   onSelectModule,
   onToggleLang,
   onTogglePresMode,
-  onOpenDeployModal,
 }: NavbarProps) {
   const containerWidth = presMode ? 'max-w-full px-6' : 'max-w-7xl px-4 sm:px-6';
 
@@ -47,9 +43,11 @@ export function Navbar({
     <header className="sticky top-0 z-40 bg-[#EFE9DC]/95 backdrop-blur-md border-b-2 border-stone-900">
       <div className={`${containerWidth} mx-auto h-16 flex items-center justify-between gap-3`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-lg bg-[#D94E28] border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] flex items-center justify-center text-[#FFFDF8] shrink-0">
-            <Database className="w-5 h-5 stroke-[2.25]" />
-          </div>
+          <img
+            src="/assets/logo.jpg"
+            alt={t.brandTitle}
+            className="w-11 h-11 rounded-lg border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-cover bg-[#F6F2EA] shrink-0"
+          />
           <div className="truncate">
             <div className="text-xs font-mono font-semibold uppercase tracking-[0.12em] text-[#B83B1D]">
               {t.brandSub}
@@ -61,15 +59,6 @@ export function Navbar({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {!presMode && (
-            <button
-              onClick={onOpenDeployModal}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#FFFDF8] hover:bg-amber-50 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-mono font-semibold text-stone-900 transition cursor-pointer"
-            >
-              <Cloud className="w-3.5 h-3.5 text-[#D94E28]" /> {t.cfDeploy}
-            </button>
-          )}
-
           <button
             onClick={onTogglePresMode}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-semibold transition cursor-pointer ${
