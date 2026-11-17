@@ -96,7 +96,7 @@ function writeGroupBundles(groupName, files) {
 }
 
 for (const file of fs.readdirSync(BUNDLES_DIR)) {
-  if (file.endsWith('.md')) fs.unlinkSync(path.join(BUNDLES_DIR, file));
+  if (file.endsWith('.md') && file !== 'README.md') fs.unlinkSync(path.join(BUNDLES_DIR, file));
 }
 for (const [groupName, files] of Object.entries(collectFiles())) {
   writeGroupBundles(groupName, files);

@@ -105,7 +105,8 @@ def write_group_bundles(group_name: str, files: list[Path]) -> list[tuple[str, i
 def main() -> None:
     """Regenerate all bundles and verify the 1,000-line ceiling."""
     for old in BUNDLES_DIR.glob("*.md"):
-        old.unlink()
+        if old.name != "README.md":
+            old.unlink()
     for group_name, files in collect_files().items():
         for name, lines in write_group_bundles(group_name, files):
             print(f"{name}: {lines} lines")
