@@ -22,7 +22,7 @@ describe('BitInspectorModule component', () => {
 
     expect(screen.getByText(I18N.en.m4.goodDesc)).toBeInTheDocument();
 
-    await user.click(screen.getByRole('button', { name: /Naive Per-Attribute/i }));
+    await user.click(screen.getByRole('button', { name: /1-Bit Flag per Column/i }));
     expect(screen.getByText(/STRADDLES 64-BIT WORD BOUNDARY/i)).toBeInTheDocument();
   });
 });

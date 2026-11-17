@@ -17,7 +17,7 @@ describe('QueryPipelineModule component', () => {
 
     // Step to Rewriter
     await user.click(screen.getByText(I18N.pt.step));
-    expect(screen.getByText(/Árvore de Consulta Reescrita/i)).toBeInTheDocument();
+    expect(screen.getByText(I18N.pt.m1.rewriterHeading)).toBeInTheDocument();
 
     // Step to Optimizer (CBO)
     await user.click(screen.getByText(I18N.pt.step));
