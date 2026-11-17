@@ -289,7 +289,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
     ],
     m1: {
       subtitle:
-        'Veja como uma consulta SQL vira tokens, árvore sintática, plano de execução e código de máquina.',
+        'Veja uma consulta SQL virar tokens, árvore sintática, plano de execução e código nativo.',
       sqlInput: 'ENTRADA SQL',
       lexerBanner: 'Texto SQL → Scanner Léxico → Tokens',
       astHeading: 'Árvore Sintática (SelectStmt)',
@@ -299,7 +299,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       seqFormula: '1.000 páginas × seq_page_cost(1.0) + 80.000 linhas × cpu_tuple_cost(0.01)',
       seqIo: 'E/S: 8.000 KB lidos do Heap File',
       idxSelectivity: 'B-Tree profundidade=3 + 4,2% das linhas > 100',
-      idxSpeedup: '43x mais rápido • Vai direto para as páginas folha',
+      idxSpeedup: '43x mais rápido • Vai direto nas páginas folha',
       tupleDeforming: 'Leitura de Tupla',
       unrolledOffsets: 'Offsets Nativos',
       exprEval: 'Avaliação do Filtro',
@@ -308,11 +308,11 @@ export const I18N: Record<Locale, TranslationBundle> = {
       stages: [
         {
           name: 'Lexer / Tokenizer',
-          desc: 'Quebra o texto SQL em tokens (palavras-chave, nomes, operadores e números).',
+          desc: 'Separa o texto SQL em tokens (palavras-chave, nomes, operadores e números).',
         },
         {
           name: 'Parser (AST)',
-          desc: 'Checa a gramática e monta a Árvore Sintática (AST) na memória.',
+          desc: 'Confere a gramática e monta a Árvore Sintática (AST) na memória.',
         },
         {
           name: 'Rewriter',
@@ -320,11 +320,11 @@ export const I18N: Record<Locale, TranslationBundle> = {
         },
         {
           name: 'Optimizer (CBO)',
-          desc: 'Estima o custo de disco e CPU para escolher o melhor plano.',
+          desc: 'Calcula o custo de disco e CPU para escolher o plano mais rápido.',
         },
         {
           name: 'Execução (VM / JIT)',
-          desc: 'Gera bytecode VDBE (SQLite) ou código nativo via LLVM JIT (PostgreSQL).',
+          desc: 'Gera bytecode VDBE (SQLite) ou código nativo com LLVM JIT (PostgreSQL).',
         },
       ],
       seqScan: 'Sequential Scan (Tabela Inteira)',
@@ -338,7 +338,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
     },
     m2: {
       subtitle:
-        'A CPU trabalha em nanossegundos e o disco em milissegundos. Veja como o Buffer Pool evita leituras no disco.',
+        'A CPU trabalha em nanossegundos; o disco, em milissegundos. Veja como o Buffer Pool evita ir ao disco toda hora.',
       startPulse: 'Disparar Pulso de Leitura',
       humanScale: 'Escala Humana (1 ns = 1 s)',
       realLatency: 'Latência Real',
@@ -346,11 +346,11 @@ export const I18N: Record<Locale, TranslationBundle> = {
       pageSizeLabel: 'Tamanho da Página',
       fetchBtn: 'Buscar Página',
       evictBtn: 'Limpar Buffer Pool',
-      hit: 'CACHE HIT (100 ns na DRAM!)',
-      miss: 'PAGE FAULT / MISS (Lendo do Disco...)',
+      hit: 'CACHE HIT (100 ns na DRAM)',
+      miss: 'PAGE FAULT / MISS (Lendo do disco...)',
       formula: 'Offset no Arquivo',
       diskHeapTitle: 'ARQUIVO HEAP EM DISCO (users.heap)',
-      clickToFetch: 'Clique para Buscar',
+      clickToFetch: 'Clique para buscar',
       pagePrefix: 'Pág',
       bufferPoolTitle: 'BUFFER POOL EM MEMÓRIA (3 Frames LRU)',
       emptyFrame: 'VAZIO',
@@ -365,8 +365,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
       slotsDesc: 'ItemIdData (4B cada): Ponteiros [offset, length] crescendo →',
       freeDesc: 'Espaço Livre',
       tuplesDesc: ' ← Tuplas crescendo do fim (8192) para o início',
-      pageFull: 'Página cheia! Remova uma tupla ou compacte.',
-      clickDelete: 'Clique em um slot ou tupla para deletar (tupla morta)',
+      pageFull: 'Página cheia. Remova uma tupla ou compacte.',
+      clickDelete: 'Clique em um slot ou tupla para apagar (tupla morta)',
       pageSizeBadge: 'Tamanho da Página: 8192 B',
       freeLabel: 'Livre',
       slotPrefix: 'Slot',
@@ -376,7 +376,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
     },
     m4: {
       subtitle:
-        'Veja como o banco guarda valores NULL sem desperdício e sem quebrar o alinhamento de 64 bits.',
+        'Veja como o banco guarda campos NULL sem gastar espaço extra nem quebrar o alinhamento de 64 bits.',
       toggleNull: 'Alternar Valor / NULL',
       bitmapTitle: 'Header Centralizado: Bitmap de Nulos (1 bit por coluna)',
       bitmapExplain: '1 = Tem valor | 0 = NULL (Colunas NULL ocupam 0 bytes no payload)',
@@ -396,7 +396,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
     },
     m5: {
       subtitle:
-        'Compare o modelo linha-a-linha (Volcano) com a execução em lote usando SIMD (AVX2 / AVX-512).',
+        'Compare a leitura linha por linha (Volcano) com a execução em lote usando SIMD (AVX2 / AVX-512).',
       volcanoTitle: 'Modelo Iterador Volcano (Linha por Linha)',
       vectorTitle: 'Execução Vetorizada + SIMD',
       simdWidth: 'Largura do Registrador',
@@ -416,21 +416,21 @@ export const I18N: Record<Locale, TranslationBundle> = {
       badge: 'BEM-VINDO',
       headline: 'Entenda como o banco de dados lê suas perguntas.',
       intro:
-        'Não precisa ser programador para acompanhar. Aqui você vê, passo a passo, o caminho de uma pergunta SQL até o processador do computador.',
+        'Não precisa entender de programação. Acompanhe o caminho de uma consulta SQL até o processador.',
       startBtn: 'Começar pelo Módulo 1',
       whatIsSqlTitle: 'O que é SQL e o que ele faz?',
       whatIsSqlPoints: [
         {
           title: 'Um arquivo organizado',
-          body: 'Pense em um banco de dados como uma grande planilha com linhas e colunas guardada no computador.',
+          body: 'Um banco de dados funciona como uma planilha com linhas e colunas salva no computador.',
         },
         {
-          title: 'A língua das perguntas',
-          body: 'SQL é a língua usada para pedir dados a esse arquivo, como "mostre produtos acima de R$ 100" ou "salve este cliente".',
+          title: 'A linguagem das perguntas',
+          body: 'SQL é a linguagem que você usa para pedir dados, como "mostre produtos acima de R$ 100" ou "salve este cliente".',
         },
         {
           title: 'O trabalho por trás',
-          body: 'Antes de responder, o banco lê sua frase, escolhe o caminho mais curto no disco e usa a memória e a CPU para filtrar os dados.',
+          body: 'Para responder rápido, o banco lê o pedido, acha onde os dados estão no disco e filtra tudo na memória.',
         },
       ],
       howToUseTitle: 'Como usar este site (Tutorial rápido)',
@@ -441,15 +441,15 @@ export const I18N: Record<Locale, TranslationBundle> = {
         },
         {
           title: '2. Clique nos botões para testar',
-          body: 'Use Executar, Passo, Buscar Página ou Inserir Tupla para ver a máquina reagir na hora.',
+          body: 'Clique em Executar, Passo, Buscar Página ou Inserir Tupla para ver o que acontece.',
         },
         {
           title: '3. Abra os painéis fechados',
-          body: 'Clique em qualquer barra com seta para abrir ou fechar explicações extras quando quiser.',
+          body: 'Clique nas barras com seta para abrir ou fechar mais detalhes.',
         },
         {
           title: '4. Troque idioma ou tela cheia',
-          body: 'No canto superior direito, alterne entre PT-BR e EN ou ative o Modo Apresentação.',
+          body: 'No topo à direita, dá para trocar o idioma ou usar o Modo Apresentação.',
         },
       ],
       exploreModulesTitle: 'Módulos interativos (clique para abrir)',
@@ -712,9 +712,9 @@ const VDBE_OPCODES: Record<Locale, readonly VdbeOpcode[]> = {
     { addr: 2, op: 'Rewind', p1: 0, p2: 6, p3: 0, comment: 'Posiciona cursor na 1ª tupla' },
     { addr: 3, op: 'Column', p1: 0, p2: 2, p3: 1, comment: 'Extrai col[2] (price) -> Reg[1]' },
     { addr: 4, op: 'Le', p1: 100, p2: 5, p3: 1, comment: 'Se Reg[1] <= 100, pula para Next (5)' },
-    { addr: 5, op: 'ResultRow', p1: 2, p2: 2, p3: 0, comment: 'Emite linha (id, name) para aplicação!' },
+    { addr: 5, op: 'ResultRow', p1: 2, p2: 2, p3: 0, comment: 'Devolve (id, name) para quem pediu' },
     { addr: 6, op: 'Next', p1: 0, p2: 3, p3: 0, comment: 'Avança cursor e volta p/ addr 3' },
-    { addr: 7, op: 'Halt', p1: 0, p2: 0, p3: 0, comment: 'Fim da execução' },
+    { addr: 7, op: 'Halt', p1: 0, p2: 0, p3: 0, comment: 'Fim do programa' },
   ],
   en: [
     { addr: 0, op: 'Init', p1: 0, p2: 7, p3: 0, comment: 'Start bytecode program' },

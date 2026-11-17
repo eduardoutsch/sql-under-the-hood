@@ -559,11 +559,12 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
     <div className="space-y-6 animate-fadeIn">
       {/* Hero Banner */}
       <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[5px_5px_0px_#1c1917] rounded-xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6">
-        <img
-          src="/assets/logo.png"
-          alt={t.brandTitle}
-          className="w-28 h-28 sm:w-32 sm:h-32 object-contain shrink-0 animate-springIn"
-        />
+        <div
+          aria-hidden="true"
+          className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#EFE9DC] border-2 border-stone-900 shadow-[4px_4px_0px_#D94E28] flex items-center justify-center text-5xl sm:text-6xl shrink-0 animate-springIn select-none"
+        >
+          😊
+        </div>
         <div className="space-y-3 text-center md:text-left">
           <span className="inline-block px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-mono text-xs font-bold tracking-wider">
             {t.home.badge}
