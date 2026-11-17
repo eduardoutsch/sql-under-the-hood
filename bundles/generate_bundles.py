@@ -12,6 +12,7 @@ BUNDLES_DIR = ROOT / "bundles"
 
 IGNORE_DIRS = {"node_modules", "dist", "coverage", ".git", "bundles", ".venv"}
 IGNORE_FILES = {"GEMINI.md", "package-lock.json"}
+IGNORE_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".gif", ".ico"}
 
 LANG_MAP = {
     ".ts": "typescript",
@@ -47,6 +48,8 @@ def collect_files() -> dict[str, list[Path]]:
             if fname in IGNORE_FILES:
                 continue
             path = Path(dirpath) / fname
+            if path.suffix.lower() in IGNORE_EXTS:
+                continue
             rel = path.relative_to(ROOT).as_posix()
             if rel.startswith("src/core/"):
                 groups["02_core_domain"].append(path)

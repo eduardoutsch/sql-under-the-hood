@@ -4,7 +4,6 @@
 
 ## Table of Contents
 
-- [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 - [`src/features/README.md`](#src-features-readme-md)
 - [`src/features/slottedPage/SlottedPageModule.tsx`](#src-features-slottedpage-slottedpagemodule-tsx)
 - [`src/features/slottedPage/useSlottedPageViewModel.ts`](#src-features-slottedpage-useslottedpageviewmodel-ts)
@@ -14,76 +13,9 @@
 - [`src/features/volcanoSimd/VolcanoVsSimdModule.tsx`](#src-features-volcanosimd-volcanovssimdmodule-tsx)
 - [`src/index.css`](#src-index-css)
 - [`src/main.tsx`](#src-main-tsx)
+- [`src/useAppViewModel.ts`](#src-useappviewmodel-ts)
 
 ---
-
-## `src/features/queryPipeline/useQueryPipelineViewModel.ts`
-
-````typescript
-import { useEffect, useState } from 'react';
-import type { Locale } from '../../core/i18n';
-import {
-  advancePipelineStage,
-  getSqlTokens,
-  getVdbeOpcodes,
-  stepVmProgramCounter,
-} from '../../core/queryPipeline';
-
-/**
- * ViewModel for Module 1 (Query Pipeline).
- * Owns stage playback timer, execution target toggle, and VDBE program counter.
- */
-export function useQueryPipelineViewModel(lang: Locale) {
-  const [stage, setStage] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
-  const [vmPc, setVmPc] = useState(0);
-
-  const tokens = getSqlTokens();
-  const opcodes = getVdbeOpcodes(lang);
-
-  useEffect(() => {
-    if (!isPlaying) return;
-    const timer = setInterval(() => {
-      setStage((prev) => {
-        if (prev < 4) return prev + 1;
-        setIsPlaying(false);
-        return prev;
-      });
-    }, 1800);
-    return () => clearInterval(timer);
-  }, [isPlaying]);
-
-  return {
-    stage,
-    isPlaying,
-    execTarget,
-    vmPc,
-    tokens,
-    opcodes,
-    setExecTarget,
-    setVmPc,
-    selectStage: (idx: number) => {
-      setIsPlaying(false);
-      setStage(idx);
-    },
-    togglePlay: () => {
-      if (stage === 4) setStage(0);
-      setIsPlaying((prev) => !prev);
-    },
-    stepStage: () => {
-      setIsPlaying(false);
-      setStage((prev) => advancePipelineStage(prev));
-    },
-    stepVm: () => setVmPc((pc) => stepVmProgramCounter(pc, opcodes.length)),
-    reset: () => {
-      setIsPlaying(false);
-      setStage(0);
-      setVmPc(0);
-    },
-  };
-}
-````
 
 ## `src/features/README.md`
 
@@ -158,86 +90,88 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         </div>
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5 relative overflow-hidden">
-        <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
-          <span>Byte 0x0000 (0)</span>
-          <span>{t.m3.clickDelete}</span>
-          <span>Byte 0x2000 (8192)</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="p-3 rounded-lg bg-[#1C1917] border-2 border-stone-900 font-mono text-xs shrink-0 text-amber-200">
-            <div className="font-bold">PageHeaderData</div>
-            <div className="text-xs text-stone-300">24 Bytes [0..23]</div>
+      <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
+        <div className="space-y-5 relative overflow-hidden">
+          <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
+            <span>Byte 0x0000 (0)</span>
+            <span>{t.m3.clickDelete}</span>
+            <span>Byte 0x2000 (8192)</span>
           </div>
 
-          {vm.tuples.map((item) => (
-            <button
-              key={item.slot}
-              onMouseEnter={() => vm.setHoveredSlot(item.slot)}
-              onMouseLeave={() => vm.setHoveredSlot(null)}
-              onClick={() => vm.markDead(item.slot)}
-              className={`p-2.5 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
-                !item.alive
-                  ? 'bg-rose-100 text-rose-900 line-through opacity-80'
-                  : vm.hoveredSlot === item.slot
-                  ? 'bg-blue-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
-                  : 'bg-blue-50 text-blue-950'
-              }`}
-            >
-              <div className="text-xs font-bold">{t.m3.slotPrefix} #{item.slot} (4B)</div>
-              <div className="text-xs text-stone-800">
-                {item.alive ? `off:${item.offset} len:${item.len}` : 'LP_DEAD (0)'}
-              </div>
-            </button>
-          ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="p-3 rounded-lg bg-[#1C1917] border-2 border-stone-900 font-mono text-xs shrink-0 text-amber-200">
+              <div className="font-bold">PageHeaderData</div>
+              <div className="text-xs text-stone-300">24 Bytes [0..23]</div>
+            </div>
 
-          <div className="flex items-center text-blue-900 font-mono font-bold text-xs sm:text-sm px-2 animate-pulse">
-            pd_lower →
-          </div>
-        </div>
+            {vm.tuples.map((item) => (
+              <button
+                key={item.slot}
+                onMouseEnter={() => vm.setHoveredSlot(item.slot)}
+                onMouseLeave={() => vm.setHoveredSlot(null)}
+                onClick={() => vm.markDead(item.slot)}
+                className={`p-2.5 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
+                  !item.alive
+                    ? 'bg-rose-100 text-rose-900 line-through opacity-80'
+                    : vm.hoveredSlot === item.slot
+                    ? 'bg-blue-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
+                    : 'bg-blue-50 text-blue-950'
+                }`}
+              >
+                <div className="text-xs font-bold">{t.m3.slotPrefix} #{item.slot} (4B)</div>
+                <div className="text-xs text-stone-800">
+                  {item.alive ? `off:${item.offset} len:${item.len}` : 'LP_DEAD (0)'}
+                </div>
+              </button>
+            ))}
 
-        <div className="py-6 rounded-lg border-2 border-dashed border-stone-900/50 bg-[#EFE9DC]/60 text-center font-mono">
-          <div className="text-xs sm:text-sm text-stone-800 uppercase tracking-widest font-semibold">{t.m3.freeDesc}</div>
-          <div className="text-lg font-bold text-stone-900 mt-1">
-            {freeBytes} Bytes ({((freeBytes / PAGE_SIZE_BYTES) * 100).toFixed(1)}%)
-          </div>
-          {vm.isPageFull && <div className="text-sm text-[#B83B1D] font-bold mt-1">{t.m3.pageFull}</div>}
-        </div>
-
-        <div className="flex flex-wrap items-center justify-end gap-2">
-          <div className="flex items-center text-emerald-900 font-mono font-bold text-xs sm:text-sm px-2 animate-pulse">
-            ← pd_upper
+            <div className="flex items-center text-blue-900 font-mono font-bold text-xs sm:text-sm px-2 animate-pulse">
+              pd_lower →
+            </div>
           </div>
 
-          {[...vm.tuples].reverse().map((item) => (
-            <button
-              key={item.slot}
-              onMouseEnter={() => vm.setHoveredSlot(item.slot)}
-              onMouseLeave={() => vm.setHoveredSlot(null)}
-              onClick={() => vm.markDead(item.slot)}
-              className={`animate-springIn p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
-                !item.alive
-                  ? 'bg-rose-100 text-rose-900 opacity-80'
-                  : vm.hoveredSlot === item.slot
-                  ? 'bg-emerald-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
-                  : 'bg-emerald-50 text-emerald-950'
-              }`}
-            >
-              <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="font-bold text-emerald-950">{t.m3.tuplePrefix} #{item.slot}</span>
-                <span className="text-stone-700">@{item.offset}</span>
-              </div>
-              <div className="text-sm font-bold text-stone-900 mt-1">
-                ('{item.name}', ${item.price})
-              </div>
-              <div className="text-xs text-stone-800 mt-0.5">
-                {item.alive ? `${item.len}B HeapTuple` : t.m3.deadSpace}
-              </div>
-            </button>
-          ))}
+          <div className="py-6 rounded-lg border-2 border-dashed border-stone-900/50 bg-[#EFE9DC]/60 text-center font-mono">
+            <div className="text-xs sm:text-sm text-stone-800 uppercase tracking-widest font-semibold">{t.m3.freeDesc}</div>
+            <div className="text-lg font-bold text-stone-900 mt-1">
+              {freeBytes} Bytes ({((freeBytes / PAGE_SIZE_BYTES) * 100).toFixed(1)}%)
+            </div>
+            {vm.isPageFull && <div className="text-sm text-[#B83B1D] font-bold mt-1">{t.m3.pageFull}</div>}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            <div className="flex items-center text-emerald-900 font-mono font-bold text-xs sm:text-sm px-2 animate-pulse">
+              ← pd_upper
+            </div>
+
+            {[...vm.tuples].reverse().map((item) => (
+              <button
+                key={item.slot}
+                onMouseEnter={() => vm.setHoveredSlot(item.slot)}
+                onMouseLeave={() => vm.setHoveredSlot(null)}
+                onClick={() => vm.markDead(item.slot)}
+                className={`animate-springIn p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
+                  !item.alive
+                    ? 'bg-rose-100 text-rose-900 opacity-80'
+                    : vm.hoveredSlot === item.slot
+                    ? 'bg-emerald-200 shadow-[2px_2px_0px_#1c1917] -translate-y-0.5 text-stone-950'
+                    : 'bg-emerald-50 text-emerald-950'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <span className="font-bold text-emerald-950">{t.m3.tuplePrefix} #{item.slot}</span>
+                  <span className="text-stone-700">@{item.offset}</span>
+                </div>
+                <div className="text-sm font-bold text-stone-900 mt-1">
+                  ('{item.name}', ${item.price})
+                </div>
+                <div className="text-xs text-stone-800 mt-0.5">
+                  {item.alive ? `${item.len}B HeapTuple` : t.m3.deadSpace}
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </AccordionPanel>
 
       <AccordionPanel title={t.m3.legendSectionLabel} badge="8 KB" defaultOpen={false}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
@@ -608,6 +542,7 @@ export function useVolcanoSimdViewModel() {
 
 ````tsx
 import { ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { TranslationBundle } from '../../core/i18n';
 import { DATASET_PRICES } from '../../core/volcanoSimd';
 import { useVolcanoSimdViewModel } from './useVolcanoSimdViewModel';
@@ -773,15 +708,16 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
               );
             })}
           </div>
-
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm">
-            <div className="text-stone-200 mb-1">{t.m5.selVector}:</div>
-            <div className="text-emerald-300 truncate">
-              sel_vec[{vm.survivingIndices.length}] = [{vm.survivingIndices.join(', ')}]
-            </div>
-          </div>
         </div>
       </div>
+
+      <AccordionPanel title={t.m5.selVector} badge={`[${vm.survivingIndices.length}]`} defaultOpen={false}>
+        <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm">
+          <div className="text-emerald-300 break-all">
+            sel_vec[{vm.survivingIndices.length}] = [{vm.survivingIndices.join(', ')}]
+          </div>
+        </div>
+      </AccordionPanel>
     </div>
   );
 }
@@ -911,4 +847,50 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>
 );
+````
+
+## `src/useAppViewModel.ts`
+
+````typescript
+import { useEffect, useState } from 'react';
+import { computeProgressPct, stepModuleIndex } from './core/appNavigation';
+import { DEFAULT_LOCALE, getTranslations, type Locale, toggleLocale } from './core/i18n';
+
+/**
+ * ViewModel for the top-level App shell.
+ * Manages locale, active module index, presentation mode, and keyboard shortcuts.
+ */
+export function useAppViewModel() {
+  const [lang, setLang] = useState<Locale>(DEFAULT_LOCALE);
+  const [activeModule, setActiveModule] = useState(0);
+  const [presMode, setPresMode] = useState(false);
+
+  const t = getTranslations(lang);
+  const progressPct = computeProgressPct(activeModule, t.modules.length);
+  const subtitles = [t.m1.subtitle, t.m2.subtitle, t.m3.subtitle, t.m4.subtitle, t.m5.subtitle];
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') setActiveModule((m) => stepModuleIndex(m, 1));
+      else if (e.key === 'ArrowLeft') setActiveModule((m) => stepModuleIndex(m, -1));
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
+
+  return {
+    lang,
+    t,
+    activeModule,
+    presMode,
+    progressPct,
+    activeTitle: t.modules[activeModule].title,
+    activeSubtitle: subtitles[activeModule],
+    selectModule: setActiveModule,
+    prevModule: () => setActiveModule((m) => stepModuleIndex(m, -1)),
+    nextModule: () => setActiveModule((m) => stepModuleIndex(m, 1)),
+    toggleLang: () => setLang((prev) => toggleLocale(prev)),
+    togglePresMode: () => setPresMode((prev) => !prev),
+  };
+}
 ````

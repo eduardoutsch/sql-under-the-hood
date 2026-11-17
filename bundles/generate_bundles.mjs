@@ -13,6 +13,7 @@ const BUNDLES_DIR = __dirname;
 
 const IGNORE_DIRS = new Set(['node_modules', 'dist', 'coverage', '.git', 'bundles', '.venv']);
 const IGNORE_FILES = new Set(['GEMINI.md', 'package-lock.json']);
+const IGNORE_EXTS = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.ico']);
 
 const LANG_MAP = {
   '.ts': 'typescript',
@@ -36,7 +37,7 @@ function walk(dir, acc = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
     if (entry.isDirectory()) {
       if (!IGNORE_DIRS.has(entry.name)) walk(path.join(dir, entry.name), acc);
-    } else if (!IGNORE_FILES.has(entry.name)) {
+    } else if (!IGNORE_FILES.has(entry.name) && !IGNORE_EXTS.has(path.extname(entry.name).toLowerCase())) {
       acc.push(path.join(dir, entry.name));
     }
   }

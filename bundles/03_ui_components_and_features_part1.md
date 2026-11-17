@@ -6,13 +6,13 @@
 
 - [`src/App.tsx`](#src-app-tsx)
 - [`src/components/AccordionPanel.tsx`](#src-components-accordionpanel-tsx)
-- [`src/components/DeployModal.tsx`](#src-components-deploymodal-tsx)
 - [`src/components/Navbar.tsx`](#src-components-navbar-tsx)
 - [`src/components/README.md`](#src-components-readme-md)
 - [`src/features/bitInspector/BitInspectorModule.tsx`](#src-features-bitinspector-bitinspectormodule-tsx)
 - [`src/features/bitInspector/useBitInspectorViewModel.ts`](#src-features-bitinspector-usebitinspectorviewmodel-ts)
 - [`src/features/queryPipeline/PipelineStageViews.tsx`](#src-features-querypipeline-pipelinestageviews-tsx)
 - [`src/features/queryPipeline/QueryPipelineModule.tsx`](#src-features-querypipeline-querypipelinemodule-tsx)
+- [`src/features/queryPipeline/useQueryPipelineViewModel.ts`](#src-features-querypipeline-usequerypipelineviewmodel-ts)
 
 ---
 
@@ -20,7 +20,6 @@
 
 ````tsx
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { DeployModal } from './components/DeployModal';
 import { Navbar } from './components/Navbar';
 import { MODULE_COUNT } from './core/appNavigation';
 import { BitInspectorModule } from './features/bitInspector/BitInspectorModule';
@@ -56,7 +55,6 @@ export default function App() {
         onSelectModule={vm.selectModule}
         onToggleLang={vm.toggleLang}
         onTogglePresMode={vm.togglePresMode}
-        onOpenDeployModal={vm.openDeployModal}
       />
 
       <main
@@ -108,12 +106,6 @@ export default function App() {
           </button>
         </div>
       </main>
-
-      <DeployModal
-        isOpen={vm.showDeployModal}
-        t={vm.t}
-        onClose={vm.closeDeployModal}
-      />
     </div>
   );
 }
@@ -181,61 +173,13 @@ export function AccordionPanel({
 }
 ````
 
-## `src/components/DeployModal.tsx`
-
-````tsx
-import { Cloud } from 'lucide-react';
-import type { TranslationBundle } from '../core/i18n';
-
-export interface DeployModalProps {
-  isOpen: boolean;
-  t: TranslationBundle;
-  onClose: () => void;
-}
-
-/**
- * Modal displaying Cloudflare Pages + Vite deployment instructions.
- */
-export function DeployModal({ isOpen, t, onClose }: DeployModalProps) {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-[2px] flex items-center justify-center p-4">
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 rounded-xl max-w-xl w-full p-6 space-y-4 shadow-[6px_6px_0px_#1c1917]">
-        <div className="flex items-center justify-between border-b-2 border-stone-900 pb-3">
-          <h3 className="font-bold text-lg text-stone-900 flex items-center gap-2">
-            <Cloud className="w-5 h-5 text-[#D94E28]" />
-            {t.deployModal.title}
-          </h3>
-          <button
-            onClick={onClose}
-            className="px-3 py-1 rounded-md bg-[#EFE9DC] hover:bg-stone-200 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-xs font-mono font-semibold text-stone-900 cursor-pointer"
-          >
-            {t.deployModal.close}
-          </button>
-        </div>
-        <div className="space-y-2.5 font-mono text-xs text-amber-100 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900">
-          {t.deployModal.steps.map((stepText, idx) => (
-            <div key={idx} className="leading-relaxed">
-              {stepText}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-````
-
 ## `src/components/Navbar.tsx`
 
 ````tsx
 import {
   Binary,
-  Cloud,
   Code2,
   Cpu,
-  Database,
   Globe,
   HardDrive,
   Layers,
@@ -255,12 +199,11 @@ export interface NavbarProps {
   onSelectModule: (index: number) => void;
   onToggleLang: () => void;
   onTogglePresMode: () => void;
-  onOpenDeployModal: () => void;
 }
 
 /**
  * Sticky top navigation bar styled as a hardware lab instrument panel
- * with binder-tab module selectors and tactile mechanical switches.
+ * with the custom vault-gear logo, binder-tab module selectors, and tactile switches.
  */
 export function Navbar({
   t,
@@ -271,7 +214,6 @@ export function Navbar({
   onSelectModule,
   onToggleLang,
   onTogglePresMode,
-  onOpenDeployModal,
 }: NavbarProps) {
   const containerWidth = presMode ? 'max-w-full px-6' : 'max-w-7xl px-4 sm:px-6';
 
@@ -279,9 +221,11 @@ export function Navbar({
     <header className="sticky top-0 z-40 bg-[#EFE9DC]/95 backdrop-blur-md border-b-2 border-stone-900">
       <div className={`${containerWidth} mx-auto h-16 flex items-center justify-between gap-3`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-lg bg-[#D94E28] border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] flex items-center justify-center text-[#FFFDF8] shrink-0">
-            <Database className="w-5 h-5 stroke-[2.25]" />
-          </div>
+          <img
+            src="/assets/logo.jpg"
+            alt={t.brandTitle}
+            className="w-11 h-11 rounded-lg border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] object-cover bg-[#F6F2EA] shrink-0"
+          />
           <div className="truncate">
             <div className="text-xs font-mono font-semibold uppercase tracking-[0.12em] text-[#B83B1D]">
               {t.brandSub}
@@ -293,15 +237,6 @@ export function Navbar({
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {!presMode && (
-            <button
-              onClick={onOpenDeployModal}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#FFFDF8] hover:bg-amber-50 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-mono font-semibold text-stone-900 transition cursor-pointer"
-            >
-              <Cloud className="w-3.5 h-3.5 text-[#D94E28]" /> {t.cfDeploy}
-            </button>
-          )}
-
           <button
             onClick={onTogglePresMode}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-semibold transition cursor-pointer ${
@@ -362,10 +297,10 @@ export function Navbar({
 ````markdown
 # `src/components/` — Shared Shell Components
 
-Stateless UI components used by the top-level application shell:
+Stateless UI components used by the top-level application shell and feature drawers:
 
-- `Navbar.tsx`: Sticky header with branding, module tabs, presentation mode toggle, and PT-BR/EN language switcher.
-- `DeployModal.tsx`: Modal displaying Cloudflare Pages + Vite build and deployment steps.
+- `Navbar.tsx`: Sticky header with logo, module tabs, presentation mode toggle, and PT-BR/EN language switcher.
+- `AccordionPanel.tsx`: Collapsible drawer with smooth height transition for progressive disclosure.
 ````
 
 ## `src/features/bitInspector/BitInspectorModule.tsx`
@@ -423,42 +358,41 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
         ))}
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h4 className="font-bold text-base sm:text-lg text-stone-900">{t.m4.bitmapTitle}</h4>
+      <AccordionPanel title={t.m4.bitmapTitle} badge="t_bits" defaultOpen={true}>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs sm:text-sm text-stone-700">{t.m4.bitmapExplain}</p>
-          </div>
-          <div className="font-mono text-xs sm:text-sm font-bold px-3 py-1.5 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950">
-            {t.m4.payloadSize}: {vm.payloadBytes} Bytes ({t.m4.nullBitmapSuffix})
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
-          <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
-            <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
-            <div className="text-lg font-bold tracking-widest text-white mt-0.5">
-              0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
+            <div className="font-mono text-xs sm:text-sm font-bold px-3 py-1.5 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950">
+              {t.m4.payloadSize}: {vm.payloadBytes} Bytes ({t.m4.nullBitmapSuffix})
             </div>
           </div>
 
-          <ArrowRight className="w-4 h-4 text-stone-300 hidden sm:block" />
-
-          {vm.cols.map((col) =>
-            col.isNull ? null : (
-              <div
-                key={col.key}
-                className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
-              >
-                <div className="text-xs text-emerald-300">
-                  {col.key} ({col.bytes}B)
-                </div>
-                <div className="text-sm font-bold text-stone-100 mt-1">{col.hex}</div>
+          <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
+            <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
+              <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
+              <div className="text-lg font-bold tracking-widest text-white mt-0.5">
+                0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
               </div>
-            )
-          )}
+            </div>
+
+            <ArrowRight className="w-4 h-4 text-stone-300 hidden sm:block" />
+
+            {vm.cols.map((col) =>
+              col.isNull ? null : (
+                <div
+                  key={col.key}
+                  className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
+                >
+                  <div className="text-xs text-emerald-300">
+                    {col.key} ({col.bytes}B)
+                  </div>
+                  <div className="text-sm font-bold text-stone-100 mt-1">{col.hex}</div>
+                </div>
+              )
+            )}
+          </div>
         </div>
-      </div>
+      </AccordionPanel>
 
       <AccordionPanel title={t.m4.alignTitle} badge="64-BIT" defaultOpen={false}>
         <div className="space-y-4">
@@ -910,31 +844,105 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[320px] flex flex-col justify-center">
-        {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
-        {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
-        {vm.stage === 3 && <OptimizerStageView t={t} />}
-        {vm.stage === 4 && (
-          <ExecutionStageView
-            t={t}
-            execTarget={vm.execTarget}
-            vmPc={vm.vmPc}
-            opcodes={vm.opcodes}
-            onSetExecTarget={vm.setExecTarget}
-            onStepVm={vm.stepVm}
-            onSelectPc={vm.setVmPc}
-          />
-        )}
-      </div>
+      <AccordionPanel
+        title={t.m1.stages[vm.stage].name}
+        badge={`0${vm.stage + 1}`}
+        defaultOpen={true}
+      >
+        <div className="min-h-[280px] flex flex-col justify-center">
+          {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
+          {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
+          {vm.stage === 3 && <OptimizerStageView t={t} />}
+          {vm.stage === 4 && (
+            <ExecutionStageView
+              t={t}
+              execTarget={vm.execTarget}
+              vmPc={vm.vmPc}
+              opcodes={vm.opcodes}
+              onSetExecTarget={vm.setExecTarget}
+              onStepVm={vm.stepVm}
+              onSelectPc={vm.setVmPc}
+            />
+          )}
+        </div>
+      </AccordionPanel>
 
       <AccordionPanel
         title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
-        badge={`0${vm.stage + 1}`}
+        badge="INFO"
         defaultOpen={false}
       >
         <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>
       </AccordionPanel>
     </div>
   );
+}
+````
+
+## `src/features/queryPipeline/useQueryPipelineViewModel.ts`
+
+````typescript
+import { useEffect, useState } from 'react';
+import type { Locale } from '../../core/i18n';
+import {
+  advancePipelineStage,
+  getSqlTokens,
+  getVdbeOpcodes,
+  stepVmProgramCounter,
+} from '../../core/queryPipeline';
+
+/**
+ * ViewModel for Module 1 (Query Pipeline).
+ * Owns stage playback timer, execution target toggle, and VDBE program counter.
+ */
+export function useQueryPipelineViewModel(lang: Locale) {
+  const [stage, setStage] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
+  const [vmPc, setVmPc] = useState(0);
+
+  const tokens = getSqlTokens();
+  const opcodes = getVdbeOpcodes(lang);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const timer = setInterval(() => {
+      setStage((prev) => {
+        if (prev < 4) return prev + 1;
+        setIsPlaying(false);
+        return prev;
+      });
+    }, 1800);
+    return () => clearInterval(timer);
+  }, [isPlaying]);
+
+  return {
+    stage,
+    isPlaying,
+    execTarget,
+    vmPc,
+    tokens,
+    opcodes,
+    setExecTarget,
+    setVmPc,
+    selectStage: (idx: number) => {
+      setIsPlaying(false);
+      setStage(idx);
+    },
+    togglePlay: () => {
+      if (stage === 4) setStage(0);
+      setIsPlaying((prev) => !prev);
+    },
+    stepStage: () => {
+      setIsPlaying(false);
+      setStage((prev) => advancePipelineStage(prev));
+    },
+    stepVm: () => setVmPc((pc) => stepVmProgramCounter(pc, opcodes.length)),
+    reset: () => {
+      setIsPlaying(false);
+      setStage(0);
+      setVmPc(0);
+    },
+  };
 }
 ````

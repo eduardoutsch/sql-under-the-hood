@@ -1,12 +1,11 @@
 # 04_tests
 
-> Generated snapshot containing 24 file(s).
+> Generated snapshot containing 23 file(s).
 
 ## Table of Contents
 
 - [`tests/App.test.tsx`](#tests-app-test-tsx)
 - [`tests/components/AccordionPanel.test.tsx`](#tests-components-accordionpanel-test-tsx)
-- [`tests/components/DeployModal.test.tsx`](#tests-components-deploymodal-test-tsx)
 - [`tests/components/Navbar.test.tsx`](#tests-components-navbar-test-tsx)
 - [`tests/core/appNavigation.test.ts`](#tests-core-appnavigation-test-ts)
 - [`tests/core/bitInspector.test.ts`](#tests-core-bitinspector-test-ts)
@@ -61,12 +60,6 @@ describe('App integration', () => {
 
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
     expect(screen.getByText(/Module 02 \/ 05/)).toBeInTheDocument();
-
-    // Open and close Cloudflare Deploy modal
-    await user.click(screen.getByText('Cloudflare Deploy'));
-    expect(screen.getByText('Deploy to Cloudflare Pages + Vite')).toBeInTheDocument();
-    await user.click(screen.getByText('Close'));
-    expect(screen.queryByText('Deploy to Cloudflare Pages + Vite')).not.toBeInTheDocument();
   });
 });
 ````
@@ -113,37 +106,6 @@ describe('AccordionPanel component', () => {
 });
 ````
 
-## `tests/components/DeployModal.test.tsx`
-
-````tsx
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
-import { DeployModal } from '../../src/components/DeployModal';
-import { I18N } from '../../src/core/i18n';
-
-describe('DeployModal component', () => {
-  it('does not render when isOpen is false', () => {
-    render(<DeployModal isOpen={false} t={I18N.pt} onClose={vi.fn()} />);
-    expect(screen.queryByText(I18N.pt.deployModal.title)).not.toBeInTheDocument();
-  });
-
-  it('renders deploy steps and triggers onClose when Close is clicked', async () => {
-    const user = userEvent.setup();
-    const onClose = vi.fn();
-    render(<DeployModal isOpen={true} t={I18N.en} onClose={onClose} />);
-
-    expect(screen.getByText(I18N.en.deployModal.title)).toBeInTheDocument();
-    for (const step of I18N.en.deployModal.steps) {
-      expect(screen.getByText(step)).toBeInTheDocument();
-    }
-
-    await user.click(screen.getByText(I18N.en.deployModal.close));
-    expect(onClose).toHaveBeenCalledTimes(1);
-  });
-});
-````
-
 ## `tests/components/Navbar.test.tsx`
 
 ````tsx
@@ -163,17 +125,17 @@ describe('Navbar component', () => {
     onSelectModule: vi.fn(),
     onToggleLang: vi.fn(),
     onTogglePresMode: vi.fn(),
-    onOpenDeployModal: vi.fn(),
   };
 
-  it('renders brand title, 5 module tabs, and PT-BR toggle by default', () => {
+  it('renders brand title, logo image, 5 module tabs, and PT-BR toggle by default', () => {
     render(<Navbar {...baseProps} />);
     expect(screen.getByText('SQL por Baixo dos Panos')).toBeInTheDocument();
+    expect(screen.getByAltText('SQL por Baixo dos Panos')).toHaveAttribute('src', '/assets/logo.jpg');
     expect(screen.getByText('PT-BR')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(8);
+    expect(screen.getAllByRole('button').length).toBeGreaterThanOrEqual(7);
   });
 
-  it('invokes callbacks when clicking tabs, language toggle, presentation mode, and deploy button', async () => {
+  it('invokes callbacks when clicking tabs, language toggle, and presentation mode', async () => {
     const user = userEvent.setup();
     render(<Navbar {...baseProps} />);
 
@@ -185,14 +147,10 @@ describe('Navbar component', () => {
 
     await user.click(screen.getByText('Modo Apresentação'));
     expect(baseProps.onTogglePresMode).toHaveBeenCalledTimes(1);
-
-    await user.click(screen.getByText('Deploy Cloudflare'));
-    expect(baseProps.onOpenDeployModal).toHaveBeenCalledTimes(1);
   });
 
-  it('hides deploy button and shows exit presentation label when presMode is true', () => {
+  it('shows exit presentation label and EN toggle when presMode is true', () => {
     render(<Navbar {...baseProps} presMode={true} lang="en" t={I18N.en} />);
-    expect(screen.queryByText('Cloudflare Deploy')).not.toBeInTheDocument();
     expect(screen.getByText('Exit Presentation')).toBeInTheDocument();
     expect(screen.getByText('EN')).toBeInTheDocument();
   });
@@ -883,16 +841,15 @@ import { describe, expect, it } from 'vitest';
 import { useAppViewModel } from '../src/useAppViewModel';
 
 describe('useAppViewModel', () => {
-  it('initializes with pt locale, module 0, and closed modal', () => {
+  it('initializes with pt locale, module 0, and 20% progress', () => {
     const { result } = renderHook(() => useAppViewModel());
     expect(result.current.lang).toBe('pt');
     expect(result.current.activeModule).toBe(0);
     expect(result.current.presMode).toBe(false);
-    expect(result.current.showDeployModal).toBe(false);
     expect(result.current.progressPct).toBe(20);
   });
 
-  it('handles language toggle, presentation mode, modal, and keyboard navigation', () => {
+  it('handles language toggle, presentation mode, and keyboard navigation', () => {
     const { result } = renderHook(() => useAppViewModel());
 
     act(() => result.current.toggleLang());
@@ -900,11 +857,6 @@ describe('useAppViewModel', () => {
 
     act(() => result.current.togglePresMode());
     expect(result.current.presMode).toBe(true);
-
-    act(() => result.current.openDeployModal());
-    expect(result.current.showDeployModal).toBe(true);
-    act(() => result.current.closeDeployModal());
-    expect(result.current.showDeployModal).toBe(false);
 
     act(() => {
       fireEvent.keyDown(window, { key: 'ArrowRight' });
