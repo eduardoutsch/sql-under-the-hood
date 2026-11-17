@@ -4,6 +4,7 @@ import {
   advancePipelineStage,
   getSqlTokens,
   getVdbeOpcodes,
+  pickChatBubblePlacement,
   stepVmProgramCounter,
 } from '../../core/queryPipeline';
 
@@ -17,6 +18,7 @@ export function useQueryPipelineViewModel(lang: Locale) {
   const [execTarget, setExecTarget] = useState<'sqlite' | 'jit'>('sqlite');
   const [vmPc, setVmPc] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
+  const [bubblePlacement] = useState(() => pickChatBubblePlacement());
 
   const tokens = getSqlTokens();
   const opcodes = getVdbeOpcodes(lang);
@@ -39,6 +41,7 @@ export function useQueryPipelineViewModel(lang: Locale) {
     execTarget,
     vmPc,
     notesOpen,
+    bubblePlacement,
     tokens,
     opcodes,
     setExecTarget,
