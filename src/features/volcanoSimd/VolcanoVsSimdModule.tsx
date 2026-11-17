@@ -1,4 +1,5 @@
 import { ChevronRight, Pause, Play, RotateCcw } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { TranslationBundle } from '../../core/i18n';
 import { DATASET_PRICES } from '../../core/volcanoSimd';
 import { useVolcanoSimdViewModel } from './useVolcanoSimdViewModel';
@@ -164,15 +165,16 @@ export function VolcanoVsSimdModule({ t }: VolcanoVsSimdModuleProps) {
               );
             })}
           </div>
-
-          <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm">
-            <div className="text-stone-200 mb-1">{t.m5.selVector}:</div>
-            <div className="text-emerald-300 truncate">
-              sel_vec[{vm.survivingIndices.length}] = [{vm.survivingIndices.join(', ')}]
-            </div>
-          </div>
         </div>
       </div>
+
+      <AccordionPanel title={t.m5.selVector} badge={`[${vm.survivingIndices.length}]`} defaultOpen={false}>
+        <div className="bg-[#1C1917] p-3 rounded-lg border-2 border-stone-900 font-mono text-xs sm:text-sm">
+          <div className="text-emerald-300 break-all">
+            sel_vec[{vm.survivingIndices.length}] = [{vm.survivingIndices.join(', ')}]
+          </div>
+        </div>
+      </AccordionPanel>
     </div>
   );
 }

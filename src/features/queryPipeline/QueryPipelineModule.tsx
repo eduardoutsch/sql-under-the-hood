@@ -89,26 +89,32 @@ export function QueryPipelineModule({ t, lang }: QueryPipelineModuleProps) {
         })}
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 sm:p-6 min-h-[320px] flex flex-col justify-center">
-        {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
-        {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
-        {vm.stage === 3 && <OptimizerStageView t={t} />}
-        {vm.stage === 4 && (
-          <ExecutionStageView
-            t={t}
-            execTarget={vm.execTarget}
-            vmPc={vm.vmPc}
-            opcodes={vm.opcodes}
-            onSetExecTarget={vm.setExecTarget}
-            onStepVm={vm.stepVm}
-            onSelectPc={vm.setVmPc}
-          />
-        )}
-      </div>
+      <AccordionPanel
+        title={t.m1.stages[vm.stage].name}
+        badge={`0${vm.stage + 1}`}
+        defaultOpen={true}
+      >
+        <div className="min-h-[280px] flex flex-col justify-center">
+          {vm.stage === 0 && <LexerStageView tokens={vm.tokens} banner={t.m1.lexerBanner} />}
+          {(vm.stage === 1 || vm.stage === 2) && <AstStageView isRewriter={vm.stage === 2} t={t} />}
+          {vm.stage === 3 && <OptimizerStageView t={t} />}
+          {vm.stage === 4 && (
+            <ExecutionStageView
+              t={t}
+              execTarget={vm.execTarget}
+              vmPc={vm.vmPc}
+              opcodes={vm.opcodes}
+              onSetExecTarget={vm.setExecTarget}
+              onStepVm={vm.stepVm}
+              onSelectPc={vm.setVmPc}
+            />
+          )}
+        </div>
+      </AccordionPanel>
 
       <AccordionPanel
         title={`${t.m1.stageNotesLabel}: ${t.m1.stages[vm.stage].name}`}
-        badge={`0${vm.stage + 1}`}
+        badge="INFO"
         defaultOpen={false}
       >
         <p className="text-sm sm:text-base text-stone-800 leading-relaxed">{t.m1.stages[vm.stage].desc}</p>

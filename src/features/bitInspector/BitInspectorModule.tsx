@@ -50,42 +50,41 @@ export function BitInspectorModule({ t }: BitInspectorModuleProps) {
         ))}
       </div>
 
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h4 className="font-bold text-base sm:text-lg text-stone-900">{t.m4.bitmapTitle}</h4>
+      <AccordionPanel title={t.m4.bitmapTitle} badge="t_bits" defaultOpen={true}>
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs sm:text-sm text-stone-700">{t.m4.bitmapExplain}</p>
-          </div>
-          <div className="font-mono text-xs sm:text-sm font-bold px-3 py-1.5 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950">
-            {t.m4.payloadSize}: {vm.payloadBytes} Bytes ({t.m4.nullBitmapSuffix})
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
-          <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
-            <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
-            <div className="text-lg font-bold tracking-widest text-white mt-0.5">
-              0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
+            <div className="font-mono text-xs sm:text-sm font-bold px-3 py-1.5 rounded-md bg-emerald-100 border-2 border-stone-900 text-emerald-950">
+              {t.m4.payloadSize}: {vm.payloadBytes} Bytes ({t.m4.nullBitmapSuffix})
             </div>
           </div>
 
-          <ArrowRight className="w-4 h-4 text-stone-300 hidden sm:block" />
-
-          {vm.cols.map((col) =>
-            col.isNull ? null : (
-              <div
-                key={col.key}
-                className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
-              >
-                <div className="text-xs text-emerald-300">
-                  {col.key} ({col.bytes}B)
-                </div>
-                <div className="text-sm font-bold text-stone-100 mt-1">{col.hex}</div>
+          <div className="flex flex-wrap items-center gap-3 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900 font-mono">
+            <div className="p-3 rounded-md bg-stone-800 border-2 border-[#D94E28] text-center">
+              <div className="text-xs text-amber-300 uppercase">{t.m4.nullBitmapHeader}</div>
+              <div className="text-lg font-bold tracking-widest text-white mt-0.5">
+                0000<span className="text-[#D94E28]">{vm.bitmapBits}</span>
               </div>
-            )
-          )}
+            </div>
+
+            <ArrowRight className="w-4 h-4 text-stone-300 hidden sm:block" />
+
+            {vm.cols.map((col) =>
+              col.isNull ? null : (
+                <div
+                  key={col.key}
+                  className="p-3 rounded-md bg-stone-800 border border-stone-500 text-center"
+                >
+                  <div className="text-xs text-emerald-300">
+                    {col.key} ({col.bytes}B)
+                  </div>
+                  <div className="text-sm font-bold text-stone-100 mt-1">{col.hex}</div>
+                </div>
+              )
+            )}
+          </div>
         </div>
-      </div>
+      </AccordionPanel>
 
       <AccordionPanel title={t.m4.alignTitle} badge="64-BIT" defaultOpen={false}>
         <div className="space-y-4">
