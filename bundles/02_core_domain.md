@@ -488,16 +488,16 @@ export interface VdbeOpcode {
 }
 
 const SQL_TOKENS: readonly SqlToken[] = [
-  { text: 'SELECT', type: 'KEYWORD', color: 'text-cyan-400 border-cyan-500/40 bg-cyan-950/50' },
-  { text: 'id', type: 'IDENT', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-950/50' },
-  { text: ',', type: 'PUNCT', color: 'text-slate-400 border-slate-600 bg-slate-900' },
-  { text: 'name', type: 'IDENT', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-950/50' },
-  { text: 'FROM', type: 'KEYWORD', color: 'text-cyan-400 border-cyan-500/40 bg-cyan-950/50' },
-  { text: 'users', type: 'IDENT', color: 'text-violet-400 border-violet-500/40 bg-violet-950/50' },
-  { text: 'WHERE', type: 'KEYWORD', color: 'text-cyan-400 border-cyan-500/40 bg-cyan-950/50' },
-  { text: 'price', type: 'IDENT', color: 'text-emerald-400 border-emerald-500/40 bg-emerald-950/50' },
-  { text: '>', type: 'OPERATOR', color: 'text-amber-400 border-amber-500/40 bg-amber-950/50' },
-  { text: '100', type: 'NUMBER', color: 'text-rose-400 border-rose-500/40 bg-rose-950/50' },
+  { text: 'SELECT', type: 'KEYWORD', color: 'text-[#B83B1D] border-stone-900 bg-[#FDE8E1]' },
+  { text: 'id', type: 'IDENT', color: 'text-emerald-900 border-stone-900 bg-emerald-100' },
+  { text: ',', type: 'PUNCT', color: 'text-stone-700 border-stone-900 bg-[#EFE9DC]' },
+  { text: 'name', type: 'IDENT', color: 'text-emerald-900 border-stone-900 bg-emerald-100' },
+  { text: 'FROM', type: 'KEYWORD', color: 'text-[#B83B1D] border-stone-900 bg-[#FDE8E1]' },
+  { text: 'users', type: 'IDENT', color: 'text-blue-900 border-stone-900 bg-blue-100' },
+  { text: 'WHERE', type: 'KEYWORD', color: 'text-[#B83B1D] border-stone-900 bg-[#FDE8E1]' },
+  { text: 'price', type: 'IDENT', color: 'text-emerald-900 border-stone-900 bg-emerald-100' },
+  { text: '>', type: 'OPERATOR', color: 'text-amber-900 border-stone-900 bg-amber-100' },
+  { text: '100', type: 'NUMBER', color: 'text-rose-900 border-stone-900 bg-rose-100' },
 ];
 
 const VDBE_OPCODES: Record<Locale, readonly VdbeOpcode[]> = {
@@ -701,8 +701,8 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       real: '1 ns',
       human: isPt ? '1 seg' : '1 sec',
       barWidth: 'w-[6%]',
-      color: 'bg-cyan-400',
-      text: 'text-cyan-400',
+      color: 'bg-[#D94E28]',
+      text: 'text-[#B83B1D]',
       animDurationSec: 0.45,
     },
     {
@@ -710,8 +710,8 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       real: '4 ns',
       human: isPt ? '4 seg' : '4 sec',
       barWidth: 'w-[14%]',
-      color: 'bg-emerald-400',
-      text: 'text-emerald-400',
+      color: 'bg-emerald-700',
+      text: 'text-emerald-800',
       animDurationSec: 0.9,
     },
     {
@@ -719,8 +719,8 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       real: '100 ns',
       human: isPt ? '100 seg' : '100 sec',
       barWidth: 'w-[32%]',
-      color: 'bg-violet-400',
-      text: 'text-violet-400',
+      color: 'bg-blue-700',
+      text: 'text-blue-800',
       animDurationSec: 2.0,
     },
     {
@@ -728,8 +728,8 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       real: '16,000 ns',
       human: isPt ? '4,4 horas' : '4.4 hours',
       barWidth: 'w-[68%]',
-      color: 'bg-amber-400',
-      text: 'text-amber-400',
+      color: 'bg-amber-600',
+      text: 'text-amber-800',
       animDurationSec: 4.5,
     },
     {
@@ -737,8 +737,8 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       real: '2,000,000 ns',
       human: isPt ? '3,3 semanas' : '3.3 weeks',
       barWidth: 'w-full',
-      color: 'bg-rose-500',
-      text: 'text-rose-400',
+      color: 'bg-rose-700',
+      text: 'text-rose-800',
       animDurationSec: 9.0,
     },
   ];

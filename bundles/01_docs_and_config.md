@@ -113,8 +113,14 @@ Clean code does NOT substitute for thorough technical documentation.
       content="Visualizador interativo da arquitetura interna de bancos de dados SQL: Pipeline, Buffer Pool, Slotted Page 8KB, Null Bitmaps e SIMD."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
-  <body class="bg-slate-950 text-slate-100 antialiased">
+  <body class="bg-[#F6F2EA] text-stone-900 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
