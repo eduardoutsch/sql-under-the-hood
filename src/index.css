@@ -2,7 +2,10 @@
 
 @layer base {
   body {
-    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    font-family: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
     background-color: #f6f2ea;
     background-image:
       linear-gradient(to right, rgba(28, 25, 23, 0.045) 1px, transparent 1px),
@@ -15,6 +18,7 @@
   pre,
   .font-mono {
     font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    letter-spacing: 0.015em;
   }
 }
 
