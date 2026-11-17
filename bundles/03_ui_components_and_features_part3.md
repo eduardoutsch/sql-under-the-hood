@@ -388,7 +388,8 @@ html.dark .bg-\[\#FDE8E1\] {
 }
 
 html.dark .bg-emerald-50,
-html.dark .bg-emerald-100 {
+html.dark .bg-emerald-100,
+html.dark .bg-emerald-200 {
   background-color: #0c2e22 !important;
 }
 
