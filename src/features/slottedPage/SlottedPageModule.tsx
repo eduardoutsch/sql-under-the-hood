@@ -19,8 +19,8 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-4 rounded-xl">
-        <div className="flex flex-wrap items-center gap-3 font-mono text-xs sm:text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] p-3.5 sm:p-4 rounded-xl">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 font-mono text-xs sm:text-sm">
           <span className="px-2.5 py-1 rounded bg-[#1C1917] text-amber-300 font-bold">
             {t.m3.pageSizeBadge}
           </span>
@@ -35,7 +35,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={vm.insert}
             disabled={vm.isPageFull}
@@ -55,7 +55,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
       <div className="relative">
         <AccordionPanel title={t.m3.pageSizeBadge} badge="HEX" defaultOpen={true}>
         <div className="space-y-5 relative overflow-hidden">
-          <div className="flex justify-between text-xs font-mono font-semibold text-stone-700">
+          <div className="flex flex-wrap items-center justify-between gap-1.5 text-[11px] sm:text-xs font-mono font-semibold text-stone-700">
             <span>Byte 0x0000 (0)</span>
             <span>{t.m3.clickDelete}</span>
             <span>Byte 0x2000 (8192)</span>

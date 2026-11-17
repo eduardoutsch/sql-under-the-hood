@@ -18,7 +18,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
   return (
     <div className="space-y-6">
-      <div className="relative bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
+      <div className="relative bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-3.5 sm:p-5 space-y-4 sm:space-y-5">
         <StageMessageBubble
           label={t.m1.stageNotesLabel}
           badge="02"
@@ -37,7 +37,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs sm:text-sm text-stone-800 font-mono font-semibold">{t.m2.pageSizeLabel}:</span>
             {[4, 8].map((sz) => (
               <button
@@ -63,7 +63,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         {vm.lastStatus && (
           <div
-            className={`animate-springIn px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
+            className={`animate-springIn px-3 sm:px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex flex-wrap items-center justify-between gap-2 ${
               vm.lastStatus === 'hit'
                 ? 'bg-emerald-100 text-emerald-950'
                 : 'bg-amber-100 text-amber-950'
@@ -80,15 +80,15 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           <div className="h-1.5 w-full rounded-full animate-busFlow" aria-hidden="true" />
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900 space-y-3">
-            <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-stone-800">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-[#EFE9DC] border-2 border-stone-900 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs sm:text-sm font-mono text-stone-800">
               <span className="flex items-center gap-1.5 text-[#B83B1D] font-bold">
                 <HardDrive className="w-4 h-4" /> {t.m2.diskHeapTitle}
               </span>
               <span className="font-semibold">{t.m2.clickToFetch}</span>
             </div>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
               {[0, 1, 2, 3, 4].map((pg) => {
                 const inRam = vm.bufferPool.includes(pg);
                 const selected = vm.activePage === pg;
@@ -96,7 +96,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                   <button
                     key={pg}
                     onClick={() => vm.fetchPage(pg)}
-                    className={`p-3 rounded-lg border-2 border-stone-900 font-mono text-center transition-all cursor-pointer ${
+                    className={`p-2 sm:p-3 rounded-lg border-2 border-stone-900 font-mono text-center transition-all cursor-pointer ${
                       selected
                         ? 'bg-[#D94E28] text-white shadow-[2px_2px_0px_#1c1917] -translate-y-0.5'
                         : inRam
@@ -114,14 +114,14 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </div>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1C1917] border-2 border-stone-900 space-y-3">
-            <div className="flex items-center justify-between text-xs sm:text-sm font-mono">
+          <div className="p-3.5 sm:p-4 rounded-xl bg-[#1C1917] border-2 border-stone-900 space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs sm:text-sm font-mono">
               <span className="flex items-center gap-1.5 text-amber-300 font-bold">
                 <Layers className="w-4 h-4" /> {t.m2.bufferPoolTitle}
               </span>
               <span className="text-stone-200">{vm.bufferPool.length}/3 frames</span>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
               {[0, 1, 2].map((frameIdx) => {
                 const pageId = vm.bufferPool[frameIdx];
                 const occupied = pageId !== undefined;
@@ -153,7 +153,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
         defaultOpen={false}
       >
         <div className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
             <span className="text-sm text-stone-700 flex items-center gap-2 font-semibold">
               <Activity className="w-4 h-4 text-[#D94E28]" />
               {t.m2.humanScale}
