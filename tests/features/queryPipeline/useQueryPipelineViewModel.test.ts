@@ -27,6 +27,9 @@ describe('useQueryPipelineViewModel', () => {
     act(() => result.current.stepVm());
     expect(result.current.vmPc).toBe(1);
 
+    act(() => result.current.toggleNotes());
+    expect(result.current.notesOpen).toBe(true);
+
     act(() => result.current.reset());
     expect(result.current.stage).toBe(0);
     expect(result.current.vmPc).toBe(0);

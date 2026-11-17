@@ -5,11 +5,19 @@ import { I18N } from '../../../src/core/i18n';
 import { QueryPipelineModule } from '../../../src/features/queryPipeline/QueryPipelineModule';
 
 describe('QueryPipelineModule component', () => {
-  it('renders initial Lexer stage and steps through all 5 stages', async () => {
+  it('renders initial Lexer stage, toggles stage chat bubble, and steps through all 5 stages', async () => {
     const user = userEvent.setup();
     render(<QueryPipelineModule t={I18N.pt} lang="pt" />);
 
     expect(screen.getAllByText('KEYWORD')).toHaveLength(3);
+
+    // Chat bubble appears and disappears on click
+    const notesBtn = screen.getByRole('button', { name: new RegExp(I18N.pt.m1.stageNotesLabel) });
+    expect(notesBtn).toHaveAttribute('aria-expanded', 'false');
+    await user.click(notesBtn);
+    expect(screen.getByRole('status')).toHaveTextContent(I18N.pt.m1.stages[0].desc);
+    await user.click(screen.getByRole('button', { name: 'Close stage note' }));
+    expect(screen.queryByRole('status')).not.toBeInTheDocument();
 
     // Step to Parser (AST)
     await user.click(screen.getByText(I18N.pt.step));
@@ -35,7 +43,7 @@ describe('QueryPipelineModule component', () => {
     expect(screen.getByText(/eval_qual_jit:/i)).toBeInTheDocument();
   });
 
-  it('auto-advances stages when Play is clicked and resets on Reset', async () => {
+  it('auto-advances stages when Play is clicked and resets on Reset', () => {
     vi.useFakeTimers();
     render(<QueryPipelineModule t={I18N.en} lang="en" />);
 
