@@ -1,4 +1,5 @@
 import { Activity, HardDrive, Layers, Pause, Play } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { Locale, TranslationBundle } from '../../core/i18n';
 import { useStorageHierarchyViewModel } from './useStorageHierarchyViewModel';
 
@@ -16,47 +17,6 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
   return (
     <div className="space-y-6">
-      <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h3 className="font-bold text-base sm:text-lg text-stone-900 flex items-center gap-2">
-            <Activity className="w-5 h-5 text-[#D94E28]" />
-            {t.m2.realLatency} vs. {t.m2.humanScale}
-          </h3>
-          <button
-            onClick={vm.togglePulsing}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-xs sm:text-sm font-mono font-semibold text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
-          >
-            {vm.pulsing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-            {vm.pulsing ? t.pause : t.m2.startPulse}
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {vm.tiers.map((tier) => (
-            <div key={tier.name} className="bg-[#EFE9DC]/60 border-2 border-stone-900/80 rounded-lg p-3">
-              <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm font-mono mb-2 gap-2">
-                <span className={`font-bold ${tier.text}`}>{tier.name}</span>
-                <div className="flex items-center gap-4">
-                  <span className="text-stone-800 font-semibold">{tier.real}</span>
-                  <span className="px-2.5 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
-                    ⏱ {tier.human}
-                  </span>
-                </div>
-              </div>
-              <div className="relative h-3.5 bg-stone-200 rounded-full overflow-hidden border border-stone-900">
-                <div className={`h-full opacity-30 ${tier.color} ${tier.barWidth}`} />
-                {vm.pulsing && (
-                  <div
-                    style={{ animation: `pulseRace ${tier.animDurationSec}s linear infinite` }}
-                    className={`absolute top-0 bottom-0 w-8 rounded-full ${tier.color}`}
-                  />
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-5 space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -93,7 +53,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         {vm.lastStatus && (
           <div
-            className={`px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
+            className={`animate-springIn px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex items-center justify-between ${
               vm.lastStatus === 'hit'
                 ? 'bg-emerald-100 text-emerald-950'
                 : 'bg-amber-100 text-amber-950'
@@ -104,6 +64,10 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
             </span>
             <span>{vm.lastStatus === 'hit' ? '~100 ns' : '~16,000 ns'}</span>
           </div>
+        )}
+
+        {vm.lastStatus === 'miss' && (
+          <div className="h-1.5 w-full rounded-full animate-busFlow" aria-hidden="true" />
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -156,7 +120,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
                     key={frameIdx}
                     className={`p-3 rounded-lg border-2 font-mono text-center transition-all ${
                       occupied
-                        ? 'bg-stone-800 border-amber-400 text-amber-100'
+                        ? 'animate-springIn bg-stone-800 border-amber-400 text-amber-100'
                         : 'bg-stone-900/60 border-dashed border-stone-600 text-stone-300'
                     }`}
                   >
@@ -172,6 +136,53 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
           </div>
         </div>
       </div>
+
+      <AccordionPanel
+        title={`${t.m2.realLatency} vs. ${t.m2.humanScale}`}
+        badge="L1 → HDD"
+        defaultOpen={false}
+      >
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-sm text-stone-700 flex items-center gap-2 font-semibold">
+              <Activity className="w-4 h-4 text-[#D94E28]" />
+              {t.m2.humanScale}
+            </span>
+            <button
+              onClick={vm.togglePulsing}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE9DC] hover:bg-stone-200 text-xs sm:text-sm font-mono font-semibold text-stone-900 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] cursor-pointer"
+            >
+              {vm.pulsing ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+              {vm.pulsing ? t.pause : t.m2.startPulse}
+            </button>
+          </div>
+
+          <div className="space-y-3">
+            {vm.tiers.map((tier) => (
+              <div key={tier.name} className="bg-[#EFE9DC]/60 border-2 border-stone-900/80 rounded-lg p-3">
+                <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm font-mono mb-2 gap-2">
+                  <span className={`font-bold ${tier.text}`}>{tier.name}</span>
+                  <div className="flex items-center gap-4">
+                    <span className="text-stone-800 font-semibold">{tier.real}</span>
+                    <span className="px-2.5 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
+                      ⏱ {tier.human}
+                    </span>
+                  </div>
+                </div>
+                <div className="relative h-3.5 bg-stone-200 rounded-full overflow-hidden border border-stone-900">
+                  <div className={`h-full opacity-30 ${tier.color} ${tier.barWidth}`} />
+                  {vm.pulsing && (
+                    <div
+                      style={{ animation: `pulseRace ${tier.animDurationSec}s linear infinite` }}
+                      className={`absolute top-0 bottom-0 w-8 rounded-full ${tier.color}`}
+                    />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </AccordionPanel>
     </div>
   );
 }

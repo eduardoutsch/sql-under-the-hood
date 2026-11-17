@@ -1,4 +1,5 @@
 import { Plus, Zap } from 'lucide-react';
+import { AccordionPanel } from '../../components/AccordionPanel';
 import type { TranslationBundle } from '../../core/i18n';
 import { PAGE_SIZE_BYTES } from '../../core/slottedPage';
 import { useSlottedPageViewModel } from './useSlottedPageViewModel';
@@ -108,7 +109,7 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
               onMouseEnter={() => vm.setHoveredSlot(item.slot)}
               onMouseLeave={() => vm.setHoveredSlot(null)}
               onClick={() => vm.markDead(item.slot)}
-              className={`p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
+              className={`animate-springIn p-3 rounded-lg border-2 border-stone-900 font-mono text-left transition-all cursor-pointer ${
                 !item.alive
                   ? 'bg-rose-100 text-rose-900 opacity-80'
                   : vm.hoveredSlot === item.slot
@@ -131,17 +132,19 @@ export function SlottedPageModule({ t }: SlottedPageModuleProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
-        <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
-          {t.m3.headerDesc}
+      <AccordionPanel title={t.m3.legendSectionLabel} badge="8 KB" defaultOpen={false}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs sm:text-sm font-mono">
+          <div className="p-3 rounded-lg bg-[#EFE9DC] border-2 border-stone-900 text-stone-900">
+            {t.m3.headerDesc}
+          </div>
+          <div className="p-3 rounded-lg bg-blue-50 border-2 border-stone-900 text-blue-950">
+            {t.m3.slotsDesc}
+          </div>
+          <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-emerald-950">
+            {t.m3.tuplesDesc}
+          </div>
         </div>
-        <div className="p-3 rounded-lg bg-blue-50 border-2 border-stone-900 text-blue-950">
-          {t.m3.slotsDesc}
-        </div>
-        <div className="p-3 rounded-lg bg-emerald-50 border-2 border-stone-900 text-emerald-950">
-          {t.m3.tuplesDesc}
-        </div>
-      </div>
+      </AccordionPanel>
     </div>
   );
 }
