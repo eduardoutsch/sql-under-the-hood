@@ -1,6 +1,6 @@
 # 01_docs_and_config
 
-> Generated snapshot containing 12 file(s).
+> Generated snapshot containing 11 file(s).
 
 ## Table of Contents
 
@@ -14,7 +14,6 @@
 - [`README.md`](#readme-md)
 - [`tsconfig.json`](#tsconfig-json)
 - [`vite.config.ts`](#vite-config-ts)
-- [`vitest.config.ts`](#vitest-config-ts)
 - [`wrangler.toml`](#wrangler-toml)
 
 ---
@@ -468,23 +467,12 @@ npm run build
 ## `vite.config.ts`
 
 ````typescript
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-});
-````
-
-## `vitest.config.ts`
-
-````typescript
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
   test: {
     environment: 'jsdom',
     globals: true,
