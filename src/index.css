@@ -22,6 +22,47 @@
   }
 }
 
+/* Dark mode: Carbon Blueprint theme with high-contrast text */
+html.dark body {
+  background-color: #141311;
+  background-image:
+    linear-gradient(to right, rgba(245, 242, 235, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(245, 242, 235, 0.06) 1px, transparent 1px);
+  color: #f5f2eb;
+}
+
+html.dark .bg-\[\#FFFDF8\],
+html.dark .bg-\[\#F6F2EA\] {
+  background-color: #1e1c19 !important;
+}
+
+html.dark .bg-\[\#EFE9DC\],
+html.dark .bg-\[\#EFE9DC\]\/95,
+html.dark .bg-\[\#EFE9DC\]\/80,
+html.dark .bg-\[\#EFE9DC\]\/70,
+html.dark .bg-\[\#EFE9DC\]\/60 {
+  background-color: #282521 !important;
+}
+
+html.dark .text-stone-900,
+html.dark .text-stone-950,
+html.dark .text-stone-800,
+html.dark .text-stone-700 {
+  color: #f5f2eb !important;
+}
+
+html.dark .text-stone-600 {
+  color: #d6d3cd !important;
+}
+
+html.dark .border-stone-900 {
+  border-color: #a8a29e !important;
+}
+
+html.dark .text-\[\#B83B1D\] {
+  color: #fb923c !important;
+}
+
 @keyframes pulseRace {
   0% {
     left: 0%;

@@ -29,12 +29,14 @@ export default function App() {
       <Navbar
         t={vm.t}
         lang={vm.lang}
+        theme={vm.theme}
         activeModule={vm.activeModule}
         presMode={vm.presMode}
         progressPct={vm.progressPct}
         onGoHome={vm.goHome}
         onSelectModule={vm.selectModule}
         onToggleLang={vm.toggleLang}
+        onToggleTheme={vm.toggleTheme}
         onTogglePresMode={vm.togglePresMode}
       />
 
