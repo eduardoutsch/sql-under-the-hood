@@ -42,8 +42,58 @@
   }
 }
 
+@keyframes springIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes busFlow {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 28px 0;
+  }
+}
+
+@keyframes laneSweep {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 78, 40, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(217, 78, 40, 0);
+  }
+}
+
 .animate-fadeIn {
   animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-springIn {
+  animation: springIn 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-busFlow {
+  background-image: repeating-linear-gradient(
+    90deg,
+    #d94e28 0px,
+    #d94e28 10px,
+    transparent 10px,
+    transparent 18px
+  );
+  background-size: 28px 4px;
+  animation: busFlow 0.7s linear infinite;
+}
+
+.animate-laneSweep {
+  animation: laneSweep 1.3s ease-in-out infinite;
 }
 
 .no-scrollbar::-webkit-scrollbar {
