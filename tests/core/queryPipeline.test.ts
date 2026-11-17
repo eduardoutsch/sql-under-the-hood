@@ -3,6 +3,7 @@ import {
   advancePipelineStage,
   getSqlTokens,
   getVdbeOpcodes,
+  pickChatBubblePlacement,
   PIPELINE_STAGE_COUNT,
   stepVmProgramCounter,
 } from '../../src/core/queryPipeline';
@@ -33,5 +34,11 @@ describe('queryPipeline pure domain logic', () => {
     expect(stepVmProgramCounter(0, 8)).toBe(1);
     expect(stepVmProgramCounter(7, 8)).toBe(0);
     expect(stepVmProgramCounter(2, 0)).toBe(0);
+  });
+
+  it('picks left or right chat bubble placement with vertical alignment', () => {
+    expect(pickChatBubblePlacement(0.1, 0.2)).toEqual({ side: 'left', alignClass: 'lg:self-start' });
+    expect(pickChatBubblePlacement(0.8, 0.5)).toEqual({ side: 'right', alignClass: 'lg:self-center' });
+    expect(pickChatBubblePlacement(0.9, 0.9)).toEqual({ side: 'right', alignClass: 'lg:self-end' });
   });
 });

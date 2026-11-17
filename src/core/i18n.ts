@@ -197,7 +197,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       unrolledOffsets: 'Offsets Nativos',
       exprEval: 'Avaliação do Filtro',
       threeInstructions: '3 Instruções de CPU',
-      stageNotesLabel: 'Notas do Estágio',
+      stageNotesLabel: 'Mensagem',
       stages: [
         {
           name: 'Lexer / Tokenizer',
@@ -389,7 +389,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       unrolledOffsets: 'Native Offsets',
       exprEval: 'Filter Eval',
       threeInstructions: '3 CPU Instructions',
-      stageNotesLabel: 'Stage Notes',
+      stageNotesLabel: 'Message',
       stages: [
         {
           name: 'Lexer / Tokenizer',

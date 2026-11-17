@@ -87,3 +87,22 @@ export function stepVmProgramCounter(currentPc: number, opcodeCount: number): nu
   if (opcodeCount <= 0) return 0;
   return (currentPc + 1) % opcodeCount;
 }
+
+export interface ChatBubblePlacement {
+  side: 'left' | 'right';
+  alignClass: string;
+}
+
+const ALIGN_CLASSES = ['lg:self-start', 'lg:self-center', 'lg:self-end'] as const;
+
+/**
+ * Pick a side (left/right) and vertical alignment for the stage Message chat bubble.
+ */
+export function pickChatBubblePlacement(
+  sideRand: number = Math.random(),
+  alignRand: number = Math.random()
+): ChatBubblePlacement {
+  const side = sideRand < 0.5 ? 'left' : 'right';
+  const alignIdx = Math.min(ALIGN_CLASSES.length - 1, Math.floor(alignRand * ALIGN_CLASSES.length));
+  return { side, alignClass: ALIGN_CLASSES[alignIdx] };
+}
