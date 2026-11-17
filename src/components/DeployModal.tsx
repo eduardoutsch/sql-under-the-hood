@@ -14,21 +14,21 @@ export function DeployModal({ isOpen, t, onClose }: DeployModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl">
-        <div className="flex items-center justify-between">
-          <h3 className="font-bold text-lg text-white flex items-center gap-2">
-            <Cloud className="w-5 h-5 text-amber-400" />
+    <div className="fixed inset-0 z-50 bg-stone-950/60 backdrop-blur-[2px] flex items-center justify-center p-4">
+      <div className="bg-[#FFFDF8] border-2 border-stone-900 rounded-xl max-w-xl w-full p-6 space-y-4 shadow-[6px_6px_0px_#1c1917]">
+        <div className="flex items-center justify-between border-b-2 border-stone-900 pb-3">
+          <h3 className="font-bold text-lg text-stone-900 flex items-center gap-2">
+            <Cloud className="w-5 h-5 text-[#D94E28]" />
             {t.deployModal.title}
           </h3>
           <button
             onClick={onClose}
-            className="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono text-slate-300 cursor-pointer"
+            className="px-3 py-1 rounded-md bg-[#EFE9DC] hover:bg-stone-200 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] text-xs font-mono font-semibold text-stone-900 cursor-pointer"
           >
             {t.deployModal.close}
           </button>
         </div>
-        <div className="space-y-2.5 font-mono text-xs text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800">
+        <div className="space-y-2.5 font-mono text-xs text-amber-100 bg-[#1C1917] p-4 rounded-lg border-2 border-stone-900">
           {t.deployModal.steps.map((stepText, idx) => (
             <div key={idx} className="leading-relaxed">
               {stepText}

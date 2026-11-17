@@ -27,8 +27,8 @@ export interface NavbarProps {
 }
 
 /**
- * Sticky top navigation bar projecting seminar branding, module tabs,
- * presentation mode toggle, and PT-BR/EN language switcher.
+ * Sticky top navigation bar styled as a hardware lab instrument panel
+ * with binder-tab module selectors and tactile mechanical switches.
  */
 export function Navbar({
   t,
@@ -44,17 +44,19 @@ export function Navbar({
   const containerWidth = presMode ? 'max-w-full px-6' : 'max-w-7xl px-4 sm:px-6';
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-slate-950/90 border-b border-slate-800/90">
+    <header className="sticky top-0 z-40 bg-[#EFE9DC]/95 backdrop-blur-md border-b-2 border-stone-900">
       <div className={`${containerWidth} mx-auto h-16 flex items-center justify-between gap-3`}>
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-violet-500 flex items-center justify-center text-slate-950 shadow-lg shrink-0">
-            <Database className="w-5 h-5 stroke-[2.5]" />
+          <div className="w-10 h-10 rounded-lg bg-[#D94E28] border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] flex items-center justify-center text-[#FFFDF8] shrink-0">
+            <Database className="w-5 h-5 stroke-[2.25]" />
           </div>
           <div className="truncate">
-            <div className="text-[10px] font-mono uppercase tracking-widest text-cyan-400">
+            <div className="text-[10px] font-mono font-semibold uppercase tracking-[0.18em] text-[#B83B1D]">
               {t.brandSub}
             </div>
-            <h1 className="font-bold text-sm sm:text-base text-white truncate">{t.brandTitle}</h1>
+            <h1 className="font-bold text-sm sm:text-base text-stone-900 tracking-tight truncate">
+              {t.brandTitle}
+            </h1>
           </div>
         </div>
 
@@ -62,18 +64,18 @@ export function Navbar({
           {!presMode && (
             <button
               onClick={onOpenDeployModal}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-700 text-xs font-mono text-amber-300 transition cursor-pointer"
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#FFFDF8] hover:bg-amber-50 border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-mono font-semibold text-stone-900 transition cursor-pointer"
             >
-              <Cloud className="w-3.5 h-3.5" /> {t.cfDeploy}
+              <Cloud className="w-3.5 h-3.5 text-[#D94E28]" /> {t.cfDeploy}
             </button>
           )}
 
           <button
             onClick={onTogglePresMode}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md border-2 border-stone-900 shadow-[2px_2px_0px_#1c1917] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-xs font-semibold transition cursor-pointer ${
               presMode
-                ? 'bg-violet-500 text-white border-violet-400'
-                : 'bg-slate-900 hover:bg-slate-800 text-slate-200 border-slate-700'
+                ? 'bg-stone-900 text-[#F6F2EA]'
+                : 'bg-[#FFFDF8] hover:bg-stone-100 text-stone-900'
             }`}
           >
             {presMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
@@ -82,16 +84,16 @@ export function Navbar({
 
           <button
             onClick={onToggleLang}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold transition cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#1C1917] hover:bg-stone-800 border-2 border-stone-900 shadow-[2px_2px_0px_#D94E28] active:translate-x-[1px] active:translate-y-[1px] active:shadow-none text-[#F6F2EA] font-mono text-xs font-bold transition cursor-pointer"
             title="Toggle Language PT-BR / EN"
           >
-            <Globe className="w-3.5 h-3.5" />
+            <Globe className="w-3.5 h-3.5 text-[#F59E0B]" />
             <span>{lang === 'pt' ? 'PT-BR' : 'EN'}</span>
           </button>
         </div>
       </div>
 
-      <div className={`${containerWidth} mx-auto flex items-center gap-1.5 overflow-x-auto py-2 no-scrollbar`}>
+      <div className={`${containerWidth} mx-auto flex items-center gap-2 overflow-x-auto pt-1 pb-2.5 no-scrollbar`}>
         {t.modules.map((mod, idx) => {
           const active = idx === activeModule;
           const Icon = MODULE_ICONS[idx];
@@ -99,10 +101,10 @@ export function Navbar({
             <button
               key={mod.id}
               onClick={() => onSelectModule(idx)}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-mono whitespace-nowrap transition-all cursor-pointer ${
+              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-mono whitespace-nowrap border-2 transition-all cursor-pointer ${
                 active
-                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-[0_0_15px_rgba(34,211,238,0.3)]'
-                  : 'bg-slate-900/70 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                  ? 'bg-[#D94E28] text-[#FFFDF8] border-stone-900 font-bold shadow-[2px_2px_0px_#1c1917]'
+                  : 'bg-[#FFFDF8] text-stone-700 border-stone-900/30 hover:border-stone-900 hover:text-stone-900'
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -112,9 +114,9 @@ export function Navbar({
         })}
       </div>
 
-      <div className="w-full h-1 bg-slate-900">
+      <div className="w-full h-1.5 bg-stone-300 border-t border-stone-900/20">
         <div
-          className="h-full bg-gradient-to-r from-cyan-400 via-emerald-400 to-violet-500 transition-all duration-300"
+          className="h-full bg-[#D94E28] transition-all duration-300"
           style={{ width: `${progressPct}%` }}
         />
       </div>
