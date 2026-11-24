@@ -1,9 +1,9 @@
 /**
- * Pure navigation helpers for the 5-module SQL seminar shell.
+ * Pure navigation helpers for the 6-module SQL seminar shell.
  * Keeps index bounds and progress bar math deterministic and decoupled from React/DOM.
  */
 
-export const MODULE_COUNT = 5;
+export const MODULE_COUNT = 6;
 
 /**
  * Clamp a module index within [0, MODULE_COUNT - 1].

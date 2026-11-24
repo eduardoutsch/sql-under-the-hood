@@ -48,7 +48,14 @@ export function useAppViewModel() {
   const t = getTranslations(lang);
   const progressPct =
     activeModule === null ? 0 : computeProgressPct(activeModule, t.modules.length);
-  const subtitles = [t.m1.subtitle, t.m2.subtitle, t.m3.subtitle, t.m4.subtitle, t.m5.subtitle];
+  const subtitles = [
+    t.m1.subtitle,
+    t.m2.subtitle,
+    t.m3.subtitle,
+    t.m4.subtitle,
+    t.m5.subtitle,
+    t.m6.subtitle,
+  ];
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');

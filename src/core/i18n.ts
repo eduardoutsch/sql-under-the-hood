@@ -152,6 +152,26 @@ export interface TranslationBundle {
     lanesPerClk: string;
     branchlessSimd: string;
   };
+  m6: {
+    subtitle: string;
+    launcherTitle: string;
+    launcherDesc: string;
+    downloadBatBtn: string;
+    step1Title: string;
+    step1Body: string;
+    step2Title: string;
+    step2Body: string;
+    step3Title: string;
+    step3Body: string;
+    cliAlternativeLabel: string;
+    copyCmd: string;
+    copyScript: string;
+    copied: string;
+    inspectBatTitle: string;
+    compareTitle: string;
+    compareDesc: string;
+    whyDifferentLabel: string;
+  };
   home: {
     badge: string;
     headline: string;
@@ -189,6 +209,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       { id: 2, short: '3. Slotted Page 8KB', title: 'Layout Físico: Slotted Page de 8 KB (PostgreSQL)' },
       { id: 3, short: '4. Bits & Alinhamento', title: 'Inspetor de Bits: Null Bitmaps & Alinhamento de CPU' },
       { id: 4, short: '5. Volcano vs SIMD', title: 'Corrida na CPU: Iterador Volcano vs. Execução Vetorizada SIMD' },
+      { id: 5, short: '6. Terminais SQL', title: 'Playground 3 Motores: PostgreSQL, MySQL & SQLite' },
     ],
     m1: {
       subtitle:
@@ -328,6 +349,29 @@ export const I18N: Record<Locale, TranslationBundle> = {
       lanesPerClk: 'pistas/clk',
       branchlessSimd: 'SIMD sem Desvios',
     },
+    m6: {
+      subtitle:
+        'Baixe e execute o script .bat para abrir 3 terminais reais (PostgreSQL, MySQL e SQLite) lado a lado.',
+      launcherTitle: 'Inicializador Automático (.bat) — terminal-sequel',
+      launcherDesc:
+        'Um único clique baixa o repositório, inicia o Docker Desktop, sobe PostgreSQL 17, MySQL 8.4 e SQLite 3 com dados de exemplo e abre 3 abas no Windows Terminal.',
+      downloadBatBtn: 'Baixar setup-terminal-sequel.bat',
+      step1Title: 'Baixe o .bat',
+      step1Body: 'Clique em Baixar acima e dê um duplo clique em setup-terminal-sequel.bat no Windows.',
+      step2Title: 'Suba os 3 motores',
+      step2Body: 'O script clona o terminal-sequel, inicia o Docker e cria as tabelas student, course e enrolled.',
+      step3Title: 'Troque de aba (Ctrl+Tab)',
+      step3Body: 'Alterne entre PostgreSQL, MySQL e SQLite com Ctrl+Tab ou rode tudo junto com run-all.ps1.',
+      cliAlternativeLabel: 'Ou execute direto pelo terminal',
+      copyCmd: 'Copiar comando',
+      copyScript: 'Copiar script .bat',
+      copied: 'Copiado!',
+      inspectBatTitle: 'Ver conteúdo do setup-terminal-sequel.bat antes de baixar',
+      compareTitle: 'Compare as peculiaridades dos 3 motores',
+      compareDesc:
+        'Selecione uma consulta abaixo para ver como o mesmo SQL se comporta de forma diferente em cada motor:',
+      whyDifferentLabel: 'Por que muda?',
+    },
     home: {
       badge: 'BEM-VINDO',
       headline: 'Entenda como o banco de dados lê suas perguntas.',
@@ -394,6 +438,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       { id: 2, short: '3. 8KB Slotted Page', title: 'Physical Storage: 8 KB Slotted Page (PostgreSQL)' },
       { id: 3, short: '4. Bits & Alignment', title: 'Bit-Level Inspector: Null Bitmaps & Word Alignment' },
       { id: 4, short: '5. Volcano vs SIMD', title: 'CPU Execution Race: Volcano Iterator vs. Vectorized SIMD' },
+      { id: 5, short: '6. SQL Terminals', title: '3-Engine Playground: PostgreSQL, MySQL & SQLite' },
     ],
     m1: {
       subtitle:
@@ -532,6 +577,29 @@ export const I18N: Record<Locale, TranslationBundle> = {
       rowsLabel: 'Rows',
       lanesPerClk: 'lanes/clk',
       branchlessSimd: 'Branchless SIMD',
+    },
+    m6: {
+      subtitle:
+        'Download and run the .bat script to launch 3 real engine terminals (PostgreSQL, MySQL, and SQLite) in one window.',
+      launcherTitle: 'One-Click Windows Launcher (.bat) — terminal-sequel',
+      launcherDesc:
+        'Downloads the repo, starts Docker Desktop if needed, boots PostgreSQL 17, MySQL 8.4, and SQLite 3 with a shared sample dataset, and opens 3 color-coded tabs in Windows Terminal.',
+      downloadBatBtn: 'Download setup-terminal-sequel.bat',
+      step1Title: 'Download the .bat',
+      step1Body: 'Click Download above and double-click setup-terminal-sequel.bat on Windows.',
+      step2Title: 'Boot all 3 engines',
+      step2Body: 'The script clones terminal-sequel, starts Docker, and seeds student, course, and enrolled.',
+      step3Title: 'Switch tabs (Ctrl+Tab)',
+      step3Body: 'Cycle between PostgreSQL, MySQL, and SQLite with Ctrl+Tab, or broadcast with run-all.ps1.',
+      cliAlternativeLabel: 'Or run directly from your terminal',
+      copyCmd: 'Copy command',
+      copyScript: 'Copy .bat script',
+      copied: 'Copied!',
+      inspectBatTitle: 'Inspect setup-terminal-sequel.bat before downloading',
+      compareTitle: 'Compare SQL Engine Peculiarities',
+      compareDesc:
+        'Pick a query below to see how the exact same SQL behaves differently across the three engines:',
+      whyDifferentLabel: 'Why it differs',
     },
     home: {
       badge: 'WELCOME',

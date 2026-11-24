@@ -17,8 +17,8 @@ describe('appNavigation pure helpers', () => {
   it('steps module index forward and backward without overflowing', () => {
     expect(stepModuleIndex(0, -1)).toBe(0);
     expect(stepModuleIndex(0, 1)).toBe(1);
-    expect(stepModuleIndex(4, 1)).toBe(4);
-    expect(stepModuleIndex(4, -1)).toBe(3);
+    expect(stepModuleIndex(MODULE_COUNT - 1, 1)).toBe(MODULE_COUNT - 1);
+    expect(stepModuleIndex(MODULE_COUNT - 1, -1)).toBe(MODULE_COUNT - 2);
   });
 
   it('computes progress percentage accurately', () => {

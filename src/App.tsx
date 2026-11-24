@@ -6,6 +6,7 @@ import { HomeView } from './features/home/HomeView';
 import { QueryPipelineModule } from './features/queryPipeline/QueryPipelineModule';
 import { SlottedPageModule } from './features/slottedPage/SlottedPageModule';
 import { StorageHierarchyModule } from './features/storageHierarchy/StorageHierarchyModule';
+import { TerminalPlaygroundModule } from './features/terminalPlayground/TerminalPlaygroundModule';
 import { VolcanoVsSimdModule } from './features/volcanoSimd/VolcanoVsSimdModule';
 import { useAppViewModel } from './useAppViewModel';
 
@@ -22,6 +23,7 @@ export default function App() {
     <SlottedPageModule key="m3" t={vm.t} />,
     <BitInspectorModule key="m4" t={vm.t} />,
     <VolcanoVsSimdModule key="m5" t={vm.t} />,
+    <TerminalPlaygroundModule key="m6" t={vm.t} lang={vm.lang} />,
   ];
 
   return (

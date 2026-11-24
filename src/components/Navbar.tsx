@@ -9,11 +9,12 @@ import {
   Minimize2,
   Moon,
   Sun,
+  Terminal,
 } from 'lucide-react';
 import type { Locale, TranslationBundle } from '../core/i18n';
 import type { ThemeMode } from '../core/theme';
 
-const MODULE_ICONS = [Code2, HardDrive, Layers, Binary, Cpu] as const;
+const MODULE_ICONS = [Code2, HardDrive, Layers, Binary, Cpu, Terminal] as const;
 
 export interface NavbarProps {
   t: TranslationBundle;
