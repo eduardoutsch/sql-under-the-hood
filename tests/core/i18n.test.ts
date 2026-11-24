@@ -16,9 +16,9 @@ describe('i18n core dictionary and helpers', () => {
     expect(getTranslations('en').brandTitle).toBe('SQL Under the Hood');
   });
 
-  it('provides complete English and Portuguese translations for all 6 modules', () => {
-    expect(I18N.pt.modules).toHaveLength(6);
-    expect(I18N.en.modules).toHaveLength(6);
+  it('provides complete English and Portuguese translations for all 7 modules', () => {
+    expect(I18N.pt.modules).toHaveLength(7);
+    expect(I18N.en.modules).toHaveLength(7);
     expect(I18N.pt.m1.stages).toHaveLength(5);
     expect(I18N.en.m1.stages).toHaveLength(5);
     expect(getTranslations('pt').brandTitle).toBe('SQL por Baixo dos Panos');

@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { MODULE_COUNT } from './core/appNavigation';
 import { BitInspectorModule } from './features/bitInspector/BitInspectorModule';
 import { HomeView } from './features/home/HomeView';
+import { IndexesConcurrencyModule } from './features/indexesConcurrency/IndexesConcurrencyModule';
 import { QueryPipelineModule } from './features/queryPipeline/QueryPipelineModule';
 import { SlottedPageModule } from './features/slottedPage/SlottedPageModule';
 import { StorageHierarchyModule } from './features/storageHierarchy/StorageHierarchyModule';
@@ -24,6 +25,7 @@ export default function App() {
     <BitInspectorModule key="m4" t={vm.t} />,
     <VolcanoVsSimdModule key="m5" t={vm.t} />,
     <TerminalPlaygroundModule key="m6" t={vm.t} lang={vm.lang} />,
+    <IndexesConcurrencyModule key="m7" t={vm.t} lang={vm.lang} />,
   ];
 
   return (

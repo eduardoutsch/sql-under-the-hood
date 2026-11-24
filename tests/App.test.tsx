@@ -26,17 +26,17 @@ describe('App integration', () => {
 
     // Enter Module 1 from Home CTA
     await user.click(screen.getByText(I18N.pt.home.startBtn));
-    expect(screen.getByText(/Módulo 01 \/ 06/)).toBeInTheDocument();
+    expect(screen.getByText(/Módulo 01 \/ 07/)).toBeInTheDocument();
 
     // Navigate via Next Module and keyboard
     await user.click(screen.getByText(I18N.pt.nextMod));
-    expect(screen.getByText(/Módulo 02 \/ 06/)).toBeInTheDocument();
+    expect(screen.getByText(/Módulo 02 \/ 07/)).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'ArrowRight' });
-    expect(screen.getByText(/Módulo 03 \/ 06/)).toBeInTheDocument();
+    expect(screen.getByText(/Módulo 03 \/ 07/)).toBeInTheDocument();
 
     fireEvent.keyDown(window, { key: 'ArrowLeft' });
-    expect(screen.getByText(/Módulo 02 \/ 06/)).toBeInTheDocument();
+    expect(screen.getByText(/Módulo 02 \/ 07/)).toBeInTheDocument();
 
     // Click logo to return to Home page
     await user.click(screen.getByAltText(I18N.pt.brandTitle));

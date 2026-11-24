@@ -172,6 +172,26 @@ export interface TranslationBundle {
     compareDesc: string;
     whyDifferentLabel: string;
   };
+  m7: {
+    subtitle: string;
+    tabIndexes: string;
+    tabConcurrency: string;
+    tabExplain: string;
+    indexesTitle: string;
+    indexesDesc: string;
+    strategyLabel: string;
+    complexityLabel: string;
+    pagesReadLabel: string;
+    concurrencyTitle: string;
+    concurrencyDesc: string;
+    dirtyPageNote: string;
+    cleanPageNote: string;
+    readerSeesLabel: string;
+    redoNote: string;
+    explainTitle: string;
+    explainDesc: string;
+    joinsTitle: string;
+  };
   home: {
     badge: string;
     headline: string;
@@ -182,6 +202,10 @@ export interface TranslationBundle {
     howToUseTitle: string;
     howToUseSteps: { title: string; body: string }[];
     exploreModulesTitle: string;
+    bestPracticesTitle: string;
+    bestPractices: string[];
+    referencesTitle: string;
+    references: string[];
   };
 }
 
@@ -210,6 +234,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       { id: 3, short: '4. Bits & Alinhamento', title: 'Inspetor de Bits: Null Bitmaps & Alinhamento de CPU' },
       { id: 4, short: '5. Volcano vs SIMD', title: 'Corrida na CPU: Iterador Volcano vs. Execução Vetorizada SIMD' },
       { id: 5, short: '6. Terminais SQL', title: 'Playground 3 Motores: PostgreSQL, MySQL & SQLite' },
+      { id: 6, short: '7. Índices & MVCC', title: 'Índices B+Tree vs. Bitmap, Concorrência (MVCC) & EXPLAIN PLAN' },
     ],
     m1: {
       subtitle:
@@ -372,6 +397,30 @@ export const I18N: Record<Locale, TranslationBundle> = {
         'Selecione uma consulta abaixo para ver como o mesmo SQL se comporta de forma diferente em cada motor:',
       whyDifferentLabel: 'Por que muda?',
     },
+    m7: {
+      subtitle:
+        'Explore B+Tree vs. Bitmap, a armadilha da coerção implícita, snapshots MVCC (Redo/Undo) e planos EXPLAIN.',
+      tabIndexes: 'B+Tree vs. Bitmap',
+      tabConcurrency: 'Concorrência (Redo & Undo)',
+      tabExplain: 'EXPLAIN & Joins',
+      indexesTitle: 'Estruturas de Acesso: B+Tree, Bitmap e Coerção Implícita',
+      indexesDesc:
+        'Compare como tipos compatíveis, coerção implícita (TO_NUMBER) e baixa cardinalidade mudam a leitura de páginas de 8 KB:',
+      strategyLabel: 'Estratégia Escolhida',
+      complexityLabel: 'Complexidade',
+      pagesReadLabel: 'Páginas Lidas',
+      concurrencyTitle: 'Concorrência MVCC: Leituras sem Bloqueio (Undo) e COMMIT Rápido (Redo)',
+      concurrencyDesc:
+        'Simule uma transação alterando uma linha enquanto outra consulta lê um snapshot consistente:',
+      dirtyPageNote: 'Página suja em RAM; ainda não gravada no arquivo de dados.',
+      cleanPageNote: 'Página consistente no Buffer Pool.',
+      readerSeesLabel: 'Leitor concorrente enxerga (Snapshot)',
+      redoNote: 'No COMMIT, apenas o log sequencial Redo é gravado na hora; blocos 8 KB descem depois.',
+      explainTitle: 'Lendo a Árvore do EXPLAIN PLAN (de baixo para cima)',
+      explainDesc:
+        'Clique em Passo para percorrer a árvore de iteradores das folhas (access/filter) até a raiz:',
+      joinsTitle: 'Três Algoritmos Clássicos de JOIN',
+    },
     home: {
       badge: 'BEM-VINDO',
       headline: 'Entenda como o banco de dados lê suas perguntas.',
@@ -413,6 +462,20 @@ export const I18N: Record<Locale, TranslationBundle> = {
         },
       ],
       exploreModulesTitle: 'Módulos interativos (clique para abrir)',
+      bestPracticesTitle: 'Boas práticas & Referências do Seminário (PUC Minas)',
+      bestPractices: [
+        'Compare tipos iguais: evita coerção implícita (TO_NUMBER) que inutiliza índices.',
+        'Use variáveis de ligação (:bind) para fazer soft parse e reaproveitar planos compilados.',
+        'Cuidado com NOT IN quando houver risco de NULL na subconsulta (retorna 0 linhas).',
+        'Consulte o EXPLAIN PLAN para conferir se virou Join eficiente ou laço lento O(N × M).',
+      ],
+      referencesTitle: 'Referências bibliográficas',
+      references: [
+        'Oracle Database SQL Language Reference, Concepts & SQL Tuning Guide, Release 19c.',
+        'Pavlo, A. CMU 15-445/645 Intro to Database Systems — Lecture #02: Modern SQL, 2024.',
+        'Chamberlin, D. 50 Years of Queries. Communications of the ACM, 2024.',
+        'Sebesta, R. W. Concepts of Programming Languages, 12ª ed.',
+      ],
     },
   },
   en: {
@@ -439,6 +502,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       { id: 3, short: '4. Bits & Alignment', title: 'Bit-Level Inspector: Null Bitmaps & Word Alignment' },
       { id: 4, short: '5. Volcano vs SIMD', title: 'CPU Execution Race: Volcano Iterator vs. Vectorized SIMD' },
       { id: 5, short: '6. SQL Terminals', title: '3-Engine Playground: PostgreSQL, MySQL & SQLite' },
+      { id: 6, short: '7. Indexes & MVCC', title: 'B+Tree vs. Bitmap Indexes, MVCC Concurrency & EXPLAIN PLAN' },
     ],
     m1: {
       subtitle:
@@ -601,6 +665,30 @@ export const I18N: Record<Locale, TranslationBundle> = {
         'Pick a query below to see how the exact same SQL behaves differently across the three engines:',
       whyDifferentLabel: 'Why it differs',
     },
+    m7: {
+      subtitle:
+        'Explore B+Tree vs. Bitmap indexes, the implicit coercion trap, MVCC snapshots (Redo/Undo), and EXPLAIN plans.',
+      tabIndexes: 'B+Tree vs. Bitmap',
+      tabConcurrency: 'Concurrency (Redo & Undo)',
+      tabExplain: 'EXPLAIN & Joins',
+      indexesTitle: 'Access Structures: B+Tree, Bitmap & Implicit Coercion',
+      indexesDesc:
+        'Compare how matching types, implicit coercion (TO_NUMBER), and low cardinality affect 8 KB page reads:',
+      strategyLabel: 'Chosen Strategy',
+      complexityLabel: 'Complexity',
+      pagesReadLabel: 'Pages Read',
+      concurrencyTitle: 'MVCC Concurrency: Non-Blocking Reads (Undo) & Fast COMMIT (Redo)',
+      concurrencyDesc:
+        'Simulate a writer updating a row while a concurrent reader inspects a consistent snapshot:',
+      dirtyPageNote: 'Dirty page in RAM; not flushed to datafiles yet.',
+      cleanPageNote: 'Consistent page in Buffer Pool.',
+      readerSeesLabel: 'Concurrent reader sees (Snapshot)',
+      redoNote: 'On COMMIT, only the sequential Redo log is flushed immediately; 8 KB blocks flush later.',
+      explainTitle: 'Reading an EXPLAIN PLAN Tree (Bottom-Up)',
+      explainDesc:
+        'Click Step to walk the iterator tree from the leaves (access/filter) up to the root:',
+      joinsTitle: 'Three Classic JOIN Algorithms',
+    },
     home: {
       badge: 'WELCOME',
       headline: 'See how a database answers your questions.',
@@ -642,6 +730,20 @@ export const I18N: Record<Locale, TranslationBundle> = {
         },
       ],
       exploreModulesTitle: 'Interactive modules (click to open)',
+      bestPracticesTitle: 'Best Practices & Seminar References (PUC Minas)',
+      bestPractices: [
+        'Compare matching types: avoids implicit coercion (TO_NUMBER) that disables B+Tree indexes.',
+        'Use bind variables (:bind) to trigger soft parses and reuse compiled execution plans.',
+        'Watch out for NOT IN when a subquery can return NULL (always evaluates to 0 rows).',
+        'Inspect EXPLAIN PLAN to verify whether a query uses a fast Join or an O(N × M) nested scan.',
+      ],
+      referencesTitle: 'References',
+      references: [
+        'Oracle Database SQL Language Reference, Concepts & SQL Tuning Guide, Release 19c.',
+        'Pavlo, A. CMU 15-445/645 Intro to Database Systems — Lecture #02: Modern SQL, 2024.',
+        'Chamberlin, D. 50 Years of Queries. Communications of the ACM, 2024.',
+        'Sebesta, R. W. Concepts of Programming Languages, 12th ed.',
+      ],
     },
   },
 };

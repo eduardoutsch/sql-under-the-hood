@@ -55,6 +55,7 @@ export function useAppViewModel() {
     t.m4.subtitle,
     t.m5.subtitle,
     t.m6.subtitle,
+    t.m7.subtitle,
   ];
 
   useEffect(() => {

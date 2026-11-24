@@ -81,7 +81,7 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
       </AccordionPanel>
 
       {/* Module Directory (Collapsed by default) */}
-      <AccordionPanel title={t.home.exploreModulesTitle} badge="01–06" defaultOpen={false}>
+      <AccordionPanel title={t.home.exploreModulesTitle} badge="01–07" defaultOpen={false}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {t.modules.map((mod, idx) => (
             <button
@@ -96,6 +96,31 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
               <div className="font-bold text-sm sm:text-base text-stone-900">{mod.title}</div>
             </button>
           ))}
+        </div>
+      </AccordionPanel>
+
+      {/* Best Practices & Seminar References (Slide 16) */}
+      <AccordionPanel title={t.home.bestPracticesTitle} badge="SLIDE 16" defaultOpen={false}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ul className="p-4 rounded-lg bg-[#EFE9DC]/70 border-2 border-stone-900 space-y-2 text-sm text-stone-900 list-disc pl-8">
+            {t.home.bestPractices.map((tip) => (
+              <li key={tip} className="leading-relaxed">
+                {tip}
+              </li>
+            ))}
+          </ul>
+          <div className="p-4 rounded-lg bg-[#FFFDF8] border-2 border-stone-900 space-y-2">
+            <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+              {t.home.referencesTitle}
+            </div>
+            <ul className="space-y-1.5 text-xs sm:text-sm text-stone-800 list-disc pl-5">
+              {t.home.references.map((ref) => (
+                <li key={ref} className="leading-relaxed">
+                  {ref}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </AccordionPanel>
     </div>
