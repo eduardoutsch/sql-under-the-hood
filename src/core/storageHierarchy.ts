@@ -38,7 +38,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       barWidth: 'w-[6%]',
       color: 'bg-[#D94E28]',
       text: 'text-[#B83B1D]',
-      animDurationSec: 0.45,
+      animDurationSec: 1,
     },
     {
       name: 'L2 Cache',
@@ -47,7 +47,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       barWidth: 'w-[14%]',
       color: 'bg-emerald-700',
       text: 'text-emerald-800',
-      animDurationSec: 0.9,
+      animDurationSec: 4,
     },
     {
       name: 'DRAM (Buffer Pool)',
@@ -56,7 +56,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       barWidth: 'w-[32%]',
       color: 'bg-blue-700',
       text: 'text-blue-800',
-      animDurationSec: 2.0,
+      animDurationSec: 100,
     },
     {
       name: 'NVMe SSD',
@@ -65,7 +65,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       barWidth: 'w-[68%]',
       color: 'bg-amber-600',
       text: 'text-amber-800',
-      animDurationSec: 4.5,
+      animDurationSec: 16000,
     },
     {
       name: 'HDD Magnético',
@@ -74,7 +74,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       barWidth: 'w-full',
       color: 'bg-rose-700',
       text: 'text-rose-800',
-      animDurationSec: 9.0,
+      animDurationSec: 2000000,
     },
   ];
 }
