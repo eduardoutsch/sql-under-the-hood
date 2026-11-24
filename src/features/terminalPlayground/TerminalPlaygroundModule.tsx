@@ -28,7 +28,7 @@ export function TerminalPlaygroundModule({ t, lang }: TerminalPlaygroundModulePr
 
   const batScript = buildBootstrapBatScript();
   const cliCommand = `git clone ${TERMINAL_REPO_URL} && cd terminal-sequel && setup.bat`;
-  const runAllCommand = `.\\run-all.ps1 -Query "${selectedExample.sql.replace(/"/g, '\\"')}"`;
+  const runAllCommand = `.\\scripts\\run-all.ps1 -Query "${selectedExample.sql.replace(/"/g, '\\"')}"`;
 
   const handleDownloadBat = () => {
     const blob = new Blob([batScript], { type: 'application/x-bat;charset=utf-8' });
