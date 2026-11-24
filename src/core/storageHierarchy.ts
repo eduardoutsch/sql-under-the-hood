@@ -14,6 +14,7 @@ export interface HardwareTier {
   name: string;
   real: string;
   human: string;
+  l1Passes: string;
   barWidth: string;
   color: string;
   text: string;
@@ -26,7 +27,7 @@ export interface BufferFetchResult {
 }
 
 /**
- * Build the 5 hardware memory/storage tiers with localized human-scale equivalents.
+ * Build the 6 hardware memory/storage tiers with localized human-scale equivalents (1 ns = 0.25 s).
  */
 export function getHardwareTiers(locale: Locale): HardwareTier[] {
   const isPt = locale === 'pt';
@@ -35,6 +36,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       name: 'L1 Cache',
       real: '1 ns',
       human: isPt ? '0,25 seg' : '0.25 sec',
+      l1Passes: isPt ? '1× L1 (referência)' : '1× L1 (baseline)',
       barWidth: 'w-[6%]',
       color: 'bg-[#D94E28]',
       text: 'text-[#B83B1D]',
@@ -44,16 +46,28 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       name: 'L2 Cache',
       real: '4 ns',
       human: isPt ? '1 seg' : '1 sec',
+      l1Passes: isPt ? '4 acessos L1' : '4 L1 passes',
       barWidth: 'w-[14%]',
       color: 'bg-emerald-700',
       text: 'text-emerald-800',
       animDurationSec: 1,
     },
     {
-      name: 'DRAM (Buffer Pool)',
+      name: isPt ? 'Buffer Pool (Cache em RAM)' : 'Buffer Pool (RAM Cache)',
+      real: '60 ns',
+      human: isPt ? '15 seg' : '15 sec',
+      l1Passes: isPt ? '60 acessos L1' : '60 L1 passes',
+      barWidth: 'w-[24%]',
+      color: 'bg-cyan-700',
+      text: 'text-cyan-800',
+      animDurationSec: 15,
+    },
+    {
+      name: isPt ? 'DRAM (RAM Principal)' : 'DRAM (Main RAM)',
       real: '100 ns',
       human: isPt ? '25 seg' : '25 sec',
-      barWidth: 'w-[32%]',
+      l1Passes: isPt ? '100 acessos L1' : '100 L1 passes',
+      barWidth: 'w-[36%]',
       color: 'bg-blue-700',
       text: 'text-blue-800',
       animDurationSec: 25,
@@ -62,6 +76,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       name: 'NVMe SSD',
       real: '16,000 ns',
       human: isPt ? '1,1 horas' : '1.1 hours',
+      l1Passes: isPt ? '16.000 acessos L1' : '16,000 L1 passes',
       barWidth: 'w-[68%]',
       color: 'bg-amber-600',
       text: 'text-amber-800',
@@ -71,6 +86,7 @@ export function getHardwareTiers(locale: Locale): HardwareTier[] {
       name: 'HDD Magnético',
       real: '2,000,000 ns',
       human: isPt ? '5,8 dias' : '5.8 days',
+      l1Passes: isPt ? '2.000.000 acessos L1' : '2,000,000 L1 passes',
       barWidth: 'w-full',
       color: 'bg-rose-700',
       text: 'text-rose-800',

@@ -7,11 +7,11 @@ import {
 } from '../../src/core/storageHierarchy';
 
 describe('storageHierarchy pure domain logic', () => {
-  it('returns 5 localized hardware latency tiers', () => {
+  it('returns 6 localized hardware latency tiers', () => {
     const ptTiers = getHardwareTiers('pt');
     const enTiers = getHardwareTiers('en');
-    expect(ptTiers).toHaveLength(5);
-    expect(enTiers).toHaveLength(5);
+    expect(ptTiers).toHaveLength(6);
+    expect(enTiers).toHaveLength(6);
     expect(ptTiers[0].human).toBe('0,25 seg');
     expect(enTiers[0].human).toBe('0.25 sec');
   });

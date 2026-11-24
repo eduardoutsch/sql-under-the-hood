@@ -172,8 +172,11 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
               <div key={tier.name} className="bg-[#EFE9DC]/60 border-2 border-stone-900/80 rounded-lg p-3">
                 <div className="flex flex-wrap items-center justify-between text-xs sm:text-sm font-mono mb-2 gap-2">
                   <span className={`font-bold ${tier.text}`}>{tier.name}</span>
-                  <div className="flex items-center gap-4">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                     <span className="text-stone-800 font-semibold">{tier.real}</span>
+                    <span className="px-2 py-0.5 rounded bg-[#FFFDF8] border border-stone-900/40 text-stone-800 text-xs font-semibold">
+                      = {tier.l1Passes}
+                    </span>
                     <span className="px-2.5 py-0.5 rounded bg-[#1C1917] text-amber-300 font-semibold">
                       ⏱ {tier.human}
                     </span>
