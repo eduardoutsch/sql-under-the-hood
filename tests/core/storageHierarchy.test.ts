@@ -12,8 +12,8 @@ describe('storageHierarchy pure domain logic', () => {
     const enTiers = getHardwareTiers('en');
     expect(ptTiers).toHaveLength(5);
     expect(enTiers).toHaveLength(5);
-    expect(ptTiers[0].human).toBe('1 seg');
-    expect(enTiers[0].human).toBe('1 sec');
+    expect(ptTiers[0].human).toBe('0,25 seg');
+    expect(enTiers[0].human).toBe('0.25 sec');
   });
 
   it('computes physical heap file byte offset', () => {

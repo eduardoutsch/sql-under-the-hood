@@ -289,7 +289,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       subtitle:
         'A CPU trabalha em nanossegundos; o disco, em milissegundos. Veja como o Buffer Pool evita ir ao disco toda hora.',
       startPulse: 'Disparar Pulso de Leitura',
-      humanScale: 'Escala Humana (1 ns = 1 s)',
+      humanScale: 'Escala Humana (1 ns = 0,25 s)',
       realLatency: 'Latência Real',
       bufferSimTitle: 'Simulador de Buffer Pool & Heap File',
       pageSizeLabel: 'Tamanho da Página',
@@ -557,7 +557,7 @@ export const I18N: Record<Locale, TranslationBundle> = {
       subtitle:
         'CPUs run in nanoseconds while disks take milliseconds. See how the Buffer Pool avoids disk reads.',
       startPulse: 'Trigger Read Pulse',
-      humanScale: 'Human Scale (1 ns = 1 sec)',
+      humanScale: 'Human Scale (1 ns = 0.25 sec)',
       realLatency: 'Real Latency',
       bufferSimTitle: 'Buffer Pool & Disk Heap File Simulator',
       pageSizeLabel: 'Page Size',
