@@ -63,6 +63,7 @@ export function StorageHierarchyModule({ t, lang }: StorageHierarchyModuleProps)
 
         {vm.lastStatus && (
           <div
+            key={vm.fetchSeq}
             className={`animate-springIn px-3 sm:px-4 py-2.5 rounded-lg font-mono text-xs sm:text-sm font-bold border-2 border-stone-900 flex flex-wrap items-center justify-between gap-2 ${
               vm.lastStatus === 'hit'
                 ? 'bg-emerald-100 text-emerald-950'

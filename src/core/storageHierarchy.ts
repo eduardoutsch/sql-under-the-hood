@@ -97,8 +97,8 @@ export function computeByteOffset(pageNumber: number, pageSizeKb: number): numbe
 }
 
 /**
- * Simulate fetching a page into the 3-frame DRAM Buffer Pool.
- * Returns a cache hit if present, or evicts the oldest frame on miss when full.
+ * Simulate fetching a page into the 3-frame DRAM Buffer Pool (LRU).
+ * On hit, promotes the page to the most-recently-used slot; on miss, evicts the LRU frame when full.
  */
 export function fetchBufferPage(
   currentPool: readonly number[],
@@ -106,7 +106,8 @@ export function fetchBufferPage(
   capacity: number = BUFFER_POOL_CAPACITY
 ): BufferFetchResult {
   if (currentPool.includes(pageNumber)) {
-    return { status: 'hit', nextPool: [...currentPool] };
+    const withoutPage = currentPool.filter((p) => p !== pageNumber);
+    return { status: 'hit', nextPool: [...withoutPage, pageNumber] };
   }
   const next = [...currentPool, pageNumber];
   const nextPool = next.length > capacity ? next.slice(next.length - capacity) : next;

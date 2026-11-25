@@ -19,6 +19,7 @@ export function useStorageHierarchyViewModel(lang: Locale) {
   const [bufferPool, setBufferPool] = useState<number[]>([0, 3]);
   const [activePage, setActivePage] = useState(2);
   const [lastStatus, setLastStatus] = useState<BufferFetchStatus | null>(null);
+  const [fetchSeq, setFetchSeq] = useState(0);
   const [notesOpen, setNotesOpen] = useState(false);
   const [bubblePlacement] = useState(() => pickChatBubblePlacement());
 
@@ -31,6 +32,7 @@ export function useStorageHierarchyViewModel(lang: Locale) {
     bufferPool,
     activePage,
     lastStatus,
+    fetchSeq,
     notesOpen,
     bubblePlacement,
     tiers,
@@ -43,6 +45,7 @@ export function useStorageHierarchyViewModel(lang: Locale) {
       const result = fetchBufferPage(bufferPool, pageNum);
       setLastStatus(result.status);
       setBufferPool(result.nextPool);
+      setFetchSeq((s) => s + 1);
     },
     clearBufferPool: () => {
       setBufferPool([]);

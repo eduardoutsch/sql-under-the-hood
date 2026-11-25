@@ -22,11 +22,12 @@ describe('storageHierarchy pure domain logic', () => {
     expect(computeByteOffset(-1, 8)).toBe(0);
   });
 
-  it('reports cache hit when page is already in buffer pool without mutating pool', () => {
-    const pool = [0, 3];
-    const result = fetchBufferPage(pool, 3);
+  it('promotes hit page to most-recently-used slot (LRU) without mutating input', () => {
+    const pool = [0, 3, 2];
+    const result = fetchBufferPage(pool, 0);
     expect(result.status).toBe('hit');
-    expect(result.nextPool).toEqual([0, 3]);
+    expect(result.nextPool).toEqual([3, 2, 0]);
+    expect(pool).toEqual([0, 3, 2]);
   });
 
   it('reports cache miss and evicts oldest frame when capacity is exceeded', () => {
