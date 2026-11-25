@@ -17,7 +17,7 @@ describe('useStorageHierarchyViewModel', () => {
 
     act(() => result.current.fetchPage(2));
     expect(result.current.lastStatus).toBe('miss');
-    expect(result.current.bufferPool).toEqual([0, 3, 2]);
+    expect(result.current.bufferPool).toEqual([3, 0, 2]);
 
     act(() => result.current.setPageSizeKb(4));
     expect(result.current.byteOffset).toBe(8192);

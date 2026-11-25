@@ -24,8 +24,8 @@ export default function App() {
     <SlottedPageModule key="m3" t={vm.t} />,
     <BitInspectorModule key="m4" t={vm.t} />,
     <VolcanoVsSimdModule key="m5" t={vm.t} />,
-    <TerminalPlaygroundModule key="m6" t={vm.t} lang={vm.lang} />,
-    <IndexesConcurrencyModule key="m7" t={vm.t} lang={vm.lang} />,
+    <IndexesConcurrencyModule key="m6" t={vm.t} lang={vm.lang} />,
+    <TerminalPlaygroundModule key="m7" t={vm.t} lang={vm.lang} />,
   ];
 
   return (

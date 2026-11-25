@@ -15,7 +15,7 @@ import {
 import type { Locale, TranslationBundle } from '../core/i18n';
 import type { ThemeMode } from '../core/theme';
 
-const MODULE_ICONS = [Code2, HardDrive, Layers, Binary, Cpu, Terminal, GitBranch] as const;
+const MODULE_ICONS = [Code2, HardDrive, Layers, Binary, Cpu, GitBranch, Terminal] as const;
 
 export interface NavbarProps {
   t: TranslationBundle;

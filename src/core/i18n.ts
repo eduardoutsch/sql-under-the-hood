@@ -233,8 +233,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
       { id: 2, short: '3. Slotted Page 8KB', title: 'Layout Físico: Slotted Page de 8 KB (PostgreSQL)' },
       { id: 3, short: '4. Bits & Alinhamento', title: 'Inspetor de Bits: Null Bitmaps & Alinhamento de CPU' },
       { id: 4, short: '5. Volcano vs SIMD', title: 'Corrida na CPU: Iterador Volcano vs. Execução Vetorizada SIMD' },
-      { id: 5, short: '6. Terminais SQL', title: 'Playground 3 Motores: PostgreSQL, MySQL & SQLite' },
-      { id: 6, short: '7. Índices & MVCC', title: 'Índices B+Tree vs. Bitmap, Concorrência (MVCC) & EXPLAIN PLAN' },
+      { id: 5, short: '6. Índices & MVCC', title: 'Índices B+Tree vs. Bitmap, Concorrência (MVCC) & EXPLAIN PLAN' },
+      { id: 6, short: '7. Terminais SQL', title: 'Playground 3 Motores: PostgreSQL, MySQL & SQLite' },
     ],
     m1: {
       subtitle:
@@ -501,8 +501,8 @@ export const I18N: Record<Locale, TranslationBundle> = {
       { id: 2, short: '3. 8KB Slotted Page', title: 'Physical Storage: 8 KB Slotted Page (PostgreSQL)' },
       { id: 3, short: '4. Bits & Alignment', title: 'Bit-Level Inspector: Null Bitmaps & Word Alignment' },
       { id: 4, short: '5. Volcano vs SIMD', title: 'CPU Execution Race: Volcano Iterator vs. Vectorized SIMD' },
-      { id: 5, short: '6. SQL Terminals', title: '3-Engine Playground: PostgreSQL, MySQL & SQLite' },
-      { id: 6, short: '7. Indexes & MVCC', title: 'B+Tree vs. Bitmap Indexes, MVCC Concurrency & EXPLAIN PLAN' },
+      { id: 5, short: '6. Indexes & MVCC', title: 'B+Tree vs. Bitmap Indexes, MVCC Concurrency & EXPLAIN PLAN' },
+      { id: 6, short: '7. SQL Terminals', title: '3-Engine Playground: PostgreSQL, MySQL & SQLite' },
     ],
     m1: {
       subtitle:
