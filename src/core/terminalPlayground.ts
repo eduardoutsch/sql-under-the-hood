@@ -112,6 +112,36 @@ export const PECULIARITY_EXAMPLES: EnginePeculiarityExample[] = [
       sqlite: { ok: true, output: '┌───────┐\n│ name  │\n├───────┤\n│ Kanye │\n└───────┘' },
     },
   },
+  {
+    id: 'coercion',
+    labelPt: "Coerção ('10' vs 10)",
+    labelEn: "Type Coercion ('10' vs 10)",
+    sql: "SELECT name FROM student WHERE name = 10;",
+    notePt:
+      'PostgreSQL tem tipagem estrita (rejeita texto = inteiro); MySQL converte silenciosamente para número; SQLite usa afinidade dinâmica.',
+    noteEn:
+      'PostgreSQL enforces strict typing (rejects text = integer); MySQL silently coerces to number; SQLite uses dynamic type affinity.',
+    engines: {
+      postgres: { ok: false, output: 'ERROR:  operator does not exist: character varying = integer\nHINT:  No operator matches the given name and argument types.' },
+      mysql: { ok: true, output: 'Empty set, 4 warnings (0.00 sec)\n-- Warning 1292: Truncated incorrect DOUBLE value' },
+      sqlite: { ok: true, output: '(0 rows — TEXT affinity keeps strings unequal to INTEGER 10)' },
+    },
+  },
+  {
+    id: 'explain-subquery',
+    labelPt: 'EXPLAIN (Subconsulta IN)',
+    labelEn: 'EXPLAIN (IN Subquery)',
+    sql: 'EXPLAIN SELECT name FROM student WHERE sid IN (SELECT sid FROM enrolled);',
+    notePt:
+      'Por baixo do capô (Slide 15): PostgreSQL gera árvore textual (Hash Semi Join); MySQL usa EXPLAIN TREE (Nested Loop c/ índice); SQLite compila em bytecode de VM.',
+    noteEn:
+      'Under the hood (Slide 15): PostgreSQL prints a Hash Semi Join tree; MySQL uses EXPLAIN TREE (index Nested Loop); SQLite compiles to VM bytecode.',
+    engines: {
+      postgres: { ok: true, output: 'Hash Semi Join  (cost=1.12..2.34 rows=4)\n  Hash Cond: (student.sid = enrolled.sid)\n  -> Seq Scan on student\n  -> Hash -> Seq Scan on enrolled' },
+      mysql: { ok: true, output: '-> Nested loop inner join\n  -> Table scan on enrolled\n  -> Single-row index lookup on student using PRIMARY' },
+      sqlite: { ok: true, output: 'QUERY PLAN\n|--SCAN student\n`--USING INDEX sqlite_autoindex_enrolled_1\n-- (EXPLAIN shows 24 VDBE bytecode opcodes)' },
+    },
+  },
 ];
 
 /**

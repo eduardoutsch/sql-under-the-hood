@@ -24,6 +24,13 @@ describe('HomeView component', () => {
     expect(tutorialBtn).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText(I18N.pt.home.howToUseSteps[0].title)).toBeVisible();
 
+    // Language topics accordion expands on click
+    const langBtn = screen.getByRole('button', { name: /SQL como Linguagem/i });
+    expect(langBtn).toHaveAttribute('aria-expanded', 'false');
+    await user.click(langBtn);
+    expect(langBtn).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText(I18N.pt.home.languageTopics[0].title)).toBeVisible();
+
     // Module directory cards open selected module
     await user.click(screen.getByText('3. Slotted Page 8KB'));
     expect(onSelectModule).toHaveBeenCalledWith(2);

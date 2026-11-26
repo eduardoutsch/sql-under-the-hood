@@ -62,6 +62,31 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
         </div>
       </AccordionPanel>
 
+      {/* SQL as a Language: Seminar Topics (Slides 2-4, 7, 9-10) */}
+      <AccordionPanel title={t.home.languageTopicsTitle} badge="SLIDES 2–10" defaultOpen={false}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {t.home.languageTopics.map((topic) => (
+            <div
+              key={topic.title}
+              className="p-4 rounded-lg bg-[#EFE9DC]/70 border-2 border-stone-900 space-y-2 flex flex-col justify-between"
+            >
+              <div className="space-y-1.5">
+                <div className="text-[11px] font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+                  {topic.badge}
+                </div>
+                <h3 className="font-bold text-base text-stone-900">{topic.title}</h3>
+                <p className="text-sm text-stone-800 leading-relaxed">{topic.body}</p>
+              </div>
+              {topic.code && (
+                <pre className="p-2.5 rounded bg-[#1C1917] text-amber-300 font-mono text-xs overflow-x-auto border border-stone-900">
+                  {topic.code}
+                </pre>
+              )}
+            </div>
+          ))}
+        </div>
+      </AccordionPanel>
+
       {/* How to use this site (Collapsed by default) */}
       <AccordionPanel title={t.home.howToUseTitle} badge="TUTORIAL" defaultOpen={false}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -120,6 +145,9 @@ export function HomeView({ t, onSelectModule }: HomeViewProps) {
                 </li>
               ))}
             </ul>
+            <p className="pt-2 border-t border-stone-900/20 text-xs font-mono text-stone-700">
+              {t.home.seminarCredits}
+            </p>
           </div>
         </div>
       </AccordionPanel>

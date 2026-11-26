@@ -19,6 +19,11 @@ describe('TerminalPlaygroundModule', () => {
     await user.click(screen.getByText(PECULIARITY_EXAMPLES[1].labelEn));
     expect(screen.getByText(PECULIARITY_EXAMPLES[1].sql)).toBeInTheDocument();
     expect(screen.getByText(PECULIARITY_EXAMPLES[1].noteEn)).toBeInTheDocument();
+
+    // Switch to Slide 15 EXPLAIN subquery example
+    const explainExample = PECULIARITY_EXAMPLES.find((ex) => ex.id === 'explain-subquery')!;
+    await user.click(screen.getByText(explainExample.labelEn));
+    expect(screen.getByText(explainExample.sql)).toBeInTheDocument();
   });
 
   it('triggers a .bat file download when clicking Download', async () => {

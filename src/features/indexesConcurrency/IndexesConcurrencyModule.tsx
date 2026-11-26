@@ -201,6 +201,9 @@ export function IndexesConcurrencyModule({ t, lang }: IndexesConcurrencyModulePr
               <p className="text-xs text-stone-800">{t.m7.redoNote}</p>
             </div>
           </div>
+          <div className="p-3.5 rounded-lg bg-[#EFE9DC]/60 border-2 border-stone-900 text-xs sm:text-sm text-stone-900">
+            {t.m7.sgaPgaNote}
+          </div>
         </section>
       )}
 
@@ -281,6 +284,14 @@ export function IndexesConcurrencyModule({ t, lang }: IndexesConcurrencyModulePr
                 </div>
               ))}
             </div>
+          </section>
+
+          <section className="bg-[#FFFDF8] border-2 border-stone-900 shadow-[4px_4px_0px_#1c1917] rounded-xl p-4 sm:p-6 space-y-3">
+            <h3 className="text-base sm:text-lg font-bold text-stone-900">{t.m7.plsqlTitle}</h3>
+            <pre className="p-3 rounded-lg bg-[#1C1917] text-amber-300 font-mono text-xs sm:text-sm overflow-x-auto border-2 border-stone-900">
+              {t.m7.plsqlCode}
+            </pre>
+            <p className="text-xs sm:text-sm text-stone-800 leading-relaxed">{t.m7.plsqlNote}</p>
           </section>
         </div>
       )}

@@ -70,6 +70,12 @@ export interface TranslationBundle {
     jitMode: string;
     stepVm: string;
     jitDesc: string;
+    evalOrderTitle: string;
+    evalOrderSteps: string[];
+    evalOrderNote: string;
+    algebraBadge: string;
+    algebraNote: string;
+    bindVarNote: string;
   };
   m2: {
     subtitle: string;
@@ -191,6 +197,10 @@ export interface TranslationBundle {
     explainTitle: string;
     explainDesc: string;
     joinsTitle: string;
+    sgaPgaNote: string;
+    plsqlTitle: string;
+    plsqlCode: string;
+    plsqlNote: string;
   };
   home: {
     badge: string;
@@ -199,6 +209,8 @@ export interface TranslationBundle {
     startBtn: string;
     whatIsSqlTitle: string;
     whatIsSqlPoints: { title: string; body: string }[];
+    languageTopicsTitle: string;
+    languageTopics: { badge: string; title: string; body: string; code?: string }[];
     howToUseTitle: string;
     howToUseSteps: { title: string; body: string }[];
     exploreModulesTitle: string;
@@ -206,6 +218,7 @@ export interface TranslationBundle {
     bestPractices: string[];
     referencesTitle: string;
     references: string[];
+    seminarCredits: string;
   };
 }
 
@@ -284,6 +297,15 @@ export const I18N: Record<Locale, TranslationBundle> = {
       stepVm: 'sqlite3_step()',
       jitDesc:
         'O LLVM compila a leitura da tupla e o filtro WHERE price > 100 direto para instruções da CPU.',
+      evalOrderTitle: 'Ordem Semântica de Avaliação (vs. Ordem Escrita)',
+      evalOrderSteps: ['1. FROM / JOIN', '2. WHERE', '3. GROUP BY', '4. HAVING', '5. SELECT', '6. ORDER BY'],
+      evalOrderNote:
+        'Apelidos criados no SELECT (passo 5) não existem no WHERE (passo 2) — erro ORA-00904! Já o ORDER BY (passo 6) enxerga apelidos.',
+      algebraBadge: 'Álgebra Relacional: π_{id, name}(σ_{price > 100}(users))',
+      algebraNote:
+        'Predicate Pushdown empurra filtros para antes dos JOINs; Subquery Unnesting converte IN / EXISTS em Semi-Join para evitar O(N × M).',
+      bindVarNote:
+        'Dica Oracle 19c: usando variáveis de ligação (:mat), o banco faz soft parse e reaproveita o plano compilado na SGA.',
     },
     m2: {
       subtitle:
@@ -420,6 +442,12 @@ export const I18N: Record<Locale, TranslationBundle> = {
       explainDesc:
         'Clique em Passo para percorrer a árvore de iteradores das folhas (access/filter) até a raiz:',
       joinsTitle: 'Três Algoritmos Clássicos de JOIN',
+      sgaPgaNote:
+        'SGA (Buffer Pool compartilhado + planos compilados :bind) vs. PGA (memória privada da sessão para ORDER BY, GROUP BY e tabelas Hash).',
+      plsqlTitle: 'O Limite Procedural (PL/SQL)',
+      plsqlCode: 'CREATE PROCEDURE ajusta(p_id IN NUMBER, p_tot IN OUT NOCOPY NUMBER) ...',
+      plsqlNote:
+        'SQL declara conjuntos sem efeitos colaterais; quando há estado mutável, laços passo a passo e passagem por valor/referência (NOCOPY), entra o PL/SQL.',
     },
     home: {
       badge: 'BEM-VINDO',
@@ -442,11 +470,36 @@ export const I18N: Record<Locale, TranslationBundle> = {
           body: 'Para responder rápido, o banco lê o pedido, acha onde os dados estão no disco e filtra tudo na memória.',
         },
       ],
+      languageTopicsTitle: 'SQL como Linguagem: Semântica & Projeto (Slides 2–4, 7, 9–10)',
+      languageTopics: [
+        {
+          badge: 'SLIDE 2 · HISTÓRIA',
+          title: 'Proposta Declarativa & Dialetos',
+          body: 'Do modelo relacional (Codd, 1970) e SEQUEL (1974) ao 1º SQL comercial da Oracle (1979) e padrão ANSI/ISO (1986). Declara-se o resultado, não o algoritmo; cada SGBD varia em datas, strings e regras como FROM dual.',
+        },
+        {
+          badge: 'SLIDES 3–4 · BAGS & VARIÁVEIS',
+          title: 'Multiconjuntos (Bags) & "Cadê as Variáveis?"',
+          body: 'SQL aceita duplicatas (bags) e não garante ordem sem ORDER BY. Em vez de variáveis em RAM, tabelas são objetos no Dicionário de Dados que vivem até um DROP TABLE e são resolvidas no parse.',
+          code: 'CREATE TABLE aluno (matricula NUMBER(8), nota NUMBER(4,2));',
+        },
+        {
+          badge: 'SLIDE 7 · ESCOPO & BNF',
+          title: 'Ordem Semântica & Gramática BNF',
+          body: 'Erros léxicos/sintáticos (SELEC → ORA-00900) falham no Parser antes de ler dados. Na semântica, o motor avalia FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY, então apelidos do SELECT falham no WHERE (ORA-00904).',
+        },
+        {
+          badge: 'SLIDES 9–10 · LÓGICA & EXPRESSIVIDADE',
+          title: 'Lógica Ternária (NULL), Janelas (OVER) & WITH',
+          body: 'Comparar com NULL gera UNKNOWN (1 NOT IN (2, NULL) devolve 0 linhas!). Janelas OVER (PARTITION BY ...) calculam rankings sem esmagar linhas como o GROUP BY, e CTEs recursivas (WITH) percorrem árvores/grafos.',
+          code: 'RANK() OVER (PARTITION BY depto ORDER BY salario DESC)',
+        },
+      ],
       howToUseTitle: 'Como usar este site (Tutorial rápido)',
       howToUseSteps: [
         {
           title: '1. Escolha um módulo no topo',
-          body: 'As abas de 1 a 5 mostram cada etapa, do texto em SQL até os bits na memória.',
+          body: 'As abas de 1 a 7 mostram cada etapa, do texto em SQL e álgebra até os bits e terminais.',
         },
         {
           title: '2. Clique nos botões para testar',
@@ -475,7 +528,10 @@ export const I18N: Record<Locale, TranslationBundle> = {
         'Pavlo, A. CMU 15-445/645 Intro to Database Systems — Lecture #02: Modern SQL, 2024.',
         'Chamberlin, D. 50 Years of Queries. Communications of the ACM, 2024.',
         'Sebesta, R. W. Concepts of Programming Languages, 12ª ed.',
+        'Aula / Vídeo complementar: https://www.youtube.com/watch?v=MzigBKf84aY',
       ],
+      seminarCredits:
+        'Seminário de Linguagens de Programação · Bernardo Rodrigues Pereira, David Nunes Ribeiro e Eduardo Utsch Gonçalves · Prof. Felipe de Castro Belém · PUC Minas',
     },
   },
   en: {
@@ -552,6 +608,15 @@ export const I18N: Record<Locale, TranslationBundle> = {
       stepVm: 'sqlite3_step()',
       jitDesc:
         'LLVM compiles tuple reading and WHERE price > 100 straight into CPU instructions.',
+      evalOrderTitle: 'Semantic Evaluation Order (vs. Written Order)',
+      evalOrderSteps: ['1. FROM / JOIN', '2. WHERE', '3. GROUP BY', '4. HAVING', '5. SELECT', '6. ORDER BY'],
+      evalOrderNote:
+        'Aliases created in SELECT (step 5) do not exist in WHERE (step 2) — ORA-00904! ORDER BY (step 6) can reference them.',
+      algebraBadge: 'Relational Algebra: π_{id, name}(σ_{price > 100}(users))',
+      algebraNote:
+        'Predicate Pushdown pushes filters below JOINs; Subquery Unnesting rewrites IN / EXISTS as a Semi-Join to avoid O(N × M).',
+      bindVarNote:
+        'Oracle 19c tip: using bind variables (:mat) triggers a soft parse and reuses the compiled plan in the SGA.',
     },
     m2: {
       subtitle:
@@ -688,6 +753,12 @@ export const I18N: Record<Locale, TranslationBundle> = {
       explainDesc:
         'Click Step to walk the iterator tree from the leaves (access/filter) up to the root:',
       joinsTitle: 'Three Classic JOIN Algorithms',
+      sgaPgaNote:
+        'SGA (shared Buffer Pool + compiled :bind plans) vs. PGA (private session RAM for ORDER BY, GROUP BY, and Hash tables).',
+      plsqlTitle: 'The Procedural Boundary (PL/SQL)',
+      plsqlCode: 'CREATE PROCEDURE ajusta(p_id IN NUMBER, p_tot IN OUT NOCOPY NUMBER) ...',
+      plsqlNote:
+        'SQL declares side-effect-free sets; when mutable state, step-by-step loops, and value/reference passing (NOCOPY) are needed, PL/SQL takes over.',
     },
     home: {
       badge: 'WELCOME',
@@ -710,11 +781,36 @@ export const I18N: Record<Locale, TranslationBundle> = {
           body: 'Before answering, the database reads your sentence, picks the shortest path on disk, and uses memory and the CPU to filter rows.',
         },
       ],
+      languageTopicsTitle: 'SQL as a Language: Semantics & Design (Slides 2–4, 7, 9–10)',
+      languageTopics: [
+        {
+          badge: 'SLIDE 2 · HISTORY',
+          title: 'Declarative Design & Dialects',
+          body: 'From Codd’s relational model (1970) and SEQUEL (1974) to Oracle’s 1st commercial SQL (1979) and ANSI/ISO (1986). You declare the result, not the search algorithm; dialects still differ on dates, strings, and rules like FROM dual.',
+        },
+        {
+          badge: 'SLIDES 3–4 · BAGS & VARIABLES',
+          title: 'Multisets (Bags) & "Where Are the Variables?"',
+          body: 'SQL allows duplicates (bags) and guarantees no order without ORDER BY. Instead of RAM variables, tables are Data Dictionary objects whose lifetime lasts until DROP TABLE and whose names resolve at parse time.',
+          code: 'CREATE TABLE aluno (matricula NUMBER(8), nota NUMBER(4,2));',
+        },
+        {
+          badge: 'SLIDE 7 · SCOPE & BNF',
+          title: 'Semantic Order & BNF Grammar',
+          body: 'Lexical/syntax errors (SELEC → ORA-00900) fail in the Parser before reading data. Semantically, the engine evaluates FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY, so SELECT aliases fail in WHERE (ORA-00904).',
+        },
+        {
+          badge: 'SLIDES 9–10 · LOGIC & EXPRESSIVENESS',
+          title: '3-Valued Logic (NULL), Windows (OVER) & WITH',
+          body: 'Comparing with NULL yields UNKNOWN (1 NOT IN (2, NULL) returns 0 rows!). Window functions OVER (PARTITION BY ...) compute rankings without collapsing rows like GROUP BY, and recursive WITH CTEs traverse trees/graphs.',
+          code: 'RANK() OVER (PARTITION BY depto ORDER BY salario DESC)',
+        },
+      ],
       howToUseTitle: 'How to use this site (Quick tutorial)',
       howToUseSteps: [
         {
           title: '1. Pick a module at the top',
-          body: 'Tabs 1 to 5 show each step, from SQL text down to bits in memory.',
+          body: 'Tabs 1 to 7 show each step, from SQL text and algebra down to bits and live terminals.',
         },
         {
           title: '2. Click buttons to experiment',
@@ -743,7 +839,10 @@ export const I18N: Record<Locale, TranslationBundle> = {
         'Pavlo, A. CMU 15-445/645 Intro to Database Systems — Lecture #02: Modern SQL, 2024.',
         'Chamberlin, D. 50 Years of Queries. Communications of the ACM, 2024.',
         'Sebesta, R. W. Concepts of Programming Languages, 12th ed.',
+        'Companion lecture video: https://www.youtube.com/watch?v=MzigBKf84aY',
       ],
+      seminarCredits:
+        'Programming Languages Seminar · Bernardo Rodrigues Pereira, David Nunes Ribeiro & Eduardo Utsch Gonçalves · Prof. Felipe de Castro Belém · PUC Minas',
     },
   },
 };

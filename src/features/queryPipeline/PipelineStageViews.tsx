@@ -76,6 +76,32 @@ export function AstStageView({ isRewriter, t }: { isRewriter: boolean; t: Transl
           </div>
         </div>
       </div>
+
+      {/* Presentation Slides 5, 7 & 11: Semantic Evaluation Order vs. Relational Algebra */}
+      {!isRewriter ? (
+        <div className="w-full max-w-2xl p-3.5 rounded-lg bg-[#EFE9DC]/80 border-2 border-stone-900 space-y-2">
+          <div className="text-xs font-mono font-bold text-[#B83B1D] uppercase tracking-wider">
+            {t.m1.evalOrderTitle}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {t.m1.evalOrderSteps.map((step) => (
+              <span
+                key={step}
+                className="px-2 py-0.5 rounded bg-[#FFFDF8] border border-stone-900/50 font-mono text-[11px] font-bold text-stone-900"
+              >
+                {step}
+              </span>
+            ))}
+          </div>
+          <p className="text-xs text-stone-800 leading-relaxed">{t.m1.evalOrderNote}</p>
+          <p className="text-xs font-mono text-stone-700">{t.m1.bindVarNote}</p>
+        </div>
+      ) : (
+        <div className="w-full max-w-2xl p-3.5 rounded-lg bg-blue-50 border-2 border-stone-900 space-y-1.5">
+          <div className="text-xs font-mono font-bold text-blue-950">{t.m1.algebraBadge}</div>
+          <p className="text-xs text-stone-800 leading-relaxed">{t.m1.algebraNote}</p>
+        </div>
+      )}
     </div>
   );
 }
